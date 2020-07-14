@@ -1,0 +1,94 @@
+service: etl-discrete-groundwater-rdb
+
+provider:
+  name: aws
+  region: ${opt:region, 'us-west-2'}
+  stage: ${opt:stage, 'TEST'}
+  runtime: java11
+  memorySize: 768
+  timeout: 60
+  logRetentionInDays: 30
+  deploymentBucket:
+    name: iow-cloud-applications
+  stackTags:
+    "wma:applicationId": "ETL Discrete Groundwater as RDB"
+    "wma:contact": "Jim Kreft jkreft@usgs.gov"
+    "wma:environment": ${self:provider.stage}
+    "wma:taggingVersion": "1.0"
+    "wma:costCenter": TBD
+    commitIdentifier: ${git:sha1}
+
+custom:
+  exportGitVariables: false
+  accountNumber : ${ssm:/iow/aws/accountNumber}
+  vpc:
+    securityGroupIds: ${ssm:/iow/retriever-capture/${self:provider.stage}/securityGroupIds~split}
+    subnetIds: ${ssm:/iow/aws/vpc/${self:provider.stage}/subnetIds~split}
+  observationDb:
+    connectInfo: ${ssm:/aws/reference/secretsmanager/WQP-EXTERNAL-${self:provider.stage}~true}
+
+functions:
+  loadRdb:
+    handler: gov.usgs.wma.waterdata.LoadDiscreteGroundWaterRdbHandler
+    role: arn:aws:iam::${self:custom.accountNumber}:role/csr-Lambda-Role
+    environment:
+      FUNCTION_NAME: loadRdb
+      AWS_DEPLOYMENT_REGION: ${self:provider.region}
+      OBSERVATION_DATABASE_ADDRESS: ${self:custom.observationDb.connectInfo.DATABASE_ADDRESS}
+      OBSERVATION_DATABASE_PORT: ${self:custom.observationDb.connectInfo.DATABASE_PORT}
+      OBSERVATION_DATABASE_NAME: ${self:custom.observationDb.connectInfo.DATABASE_NAME}
+      OBSERVATION_SCHEMA_NAME: ${self:custom.observationDb.connectInfo.NWIS_SCHEMA_NAME}
+      OBSERVATION_SCHEMA_OWNER_USERNAME: ${self:custom.observationDb.connectInfo.NWIS_SCHEMA_OWNER_USERNAME}
+      OBSERVATION_SCHEMA_OWNER_PASSWORD: ${self:custom.observationDb.connectInfo.NWIS_SCHEMA_OWNER_PASSWORD}
+      ROOT_LOG_LEVEL: INFO
+    vpc: ${self:custom.vpc}
+
+resources:
+  Resources:
+    snsTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        DisplayName: ${self:service}-${self:provider.stage}-topic
+        TopicName: ${self:service}-${self:provider.stage}-topic
+    concurrencyAlarm:
+      Type: AWS::CloudWatch::Alarm
+      Properties:
+        AlarmName: ${self:service}-${self:provider.stage}-concurrency-alarm
+        AlarmDescription: Notify when concurrency exceeds the specified threshold
+        Namespace: 'AWS/Lambda'
+        Dimensions:
+          - Name: FunctionName
+            Value:
+              Ref: LoadRdbLambdaFunction
+        MetricName: ConcurrentExecutions
+        Statistic: Maximum
+        ComparisonOperator: GreaterThanOrEqualToThreshold
+        Threshold: 150
+        Period: 60
+        EvaluationPeriods: 1
+        AlarmActions:
+          - Ref: snsTopic
+    errorAlarm:
+      Type: AWS::CloudWatch::Alarm
+      Properties:
+        AlarmName: ${self:service}-${self:provider.stage}-error-alarm
+        AlarmDescription: Notify when number of errors exceeds the specified threshold
+        Namespace: 'AWS/Lambda'
+        Dimensions:
+          - Name: FunctionName
+            Value:
+              Ref: LoadRdbLambdaFunction
+        MetricName: Errors
+        Statistic: Sum
+        ComparisonOperator: GreaterThanOrEqualToThreshold
+        Threshold: 10
+        Period: 60
+        EvaluationPeriods: 1
+        AlarmActions:
+          - Ref: snsTopic
+
+plugins:
+  - serverless-plugin-git-variables
+
+package:
+  artifact: etl-discrete-groundwater-rdb-aws.jar
