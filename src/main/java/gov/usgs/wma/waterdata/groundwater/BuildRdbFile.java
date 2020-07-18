@@ -8,6 +8,7 @@ import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 /**
  * AWS Entry point and orchestration of GW RDB file export.
@@ -58,8 +59,13 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 		List<DiscreteGroundWater> levels = dao.selectDiscreteGroundWater(states);
 
 		String suffix = locationFolderUtil.locationFolderFilenameDecorator(locationFolder);
-		String filename = s3bucket.createFilename("dev", suffix, "meta");
+		if (StringUtils.isEmpty(suffix)) {
+			throw new RuntimeException("Given location folder has no state entry: " + locationFolder);
+		}
+
 		// nwisca.gw_lev_01.06.20200715_030500.full.rdb
+		String filename = s3bucket.createFilename("dev", suffix, "meta");
+
 		try (Writer writer = s3bucket.makeFile(filename)) {
 
 			RdbWriter rdbWriter = new RdbWriter(writer);
