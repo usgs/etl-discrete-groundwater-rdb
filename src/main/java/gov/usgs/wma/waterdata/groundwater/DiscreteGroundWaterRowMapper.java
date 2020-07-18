@@ -6,8 +6,15 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 
+/**
+ * Simple SpringFramework RowMapper to GW ORM object
+ * @author duselman
+ */
 public class DiscreteGroundWaterRowMapper implements RowMapper<DiscreteGroundWater> {
 
+	/**
+	 * Translates JDBC RowSet row to ORM instance.
+	 */
 	@Override
 	public DiscreteGroundWater mapRow(ResultSet rs, int rowNum) throws SQLException {
 		DiscreteGroundWater discreteGroundWater = new DiscreteGroundWater();

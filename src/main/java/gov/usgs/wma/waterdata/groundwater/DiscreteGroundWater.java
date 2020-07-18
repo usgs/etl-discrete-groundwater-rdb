@@ -2,9 +2,11 @@ package gov.usgs.wma.waterdata.groundwater;
 
 import java.sql.Timestamp;
 
-//import java.math.BigDecimal;
-//import org.postgis.PGgeometry;
-
+/**
+ * ORM of necessary columns from the Observation GW table.
+ *
+ * @author duselman
+ */
 public class DiscreteGroundWater {
 
 	//site_no

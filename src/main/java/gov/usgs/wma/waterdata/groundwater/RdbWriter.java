@@ -11,6 +11,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StringUtils;
 
+/**
+ * Wrapper of utility methods to write an RDB file format.
+ * @author duselman
+ */
 public class RdbWriter {
 	private static final Logger LOG = LoggerFactory.getLogger(RdbWriter.class);
 
@@ -23,6 +27,9 @@ public class RdbWriter {
 		this.rdb = dest;
 	}
 
+	/**
+	 * Writes the header of the RDB file. Currently this is fixed but could be jinja for flexibility.
+	 */
 	public void writeHeader() {
 		try {
 			String head = new String(FileCopyUtils.copyToByteArray(header.getInputStream()));
@@ -33,6 +40,10 @@ public class RdbWriter {
 		}
 	}
 
+	/**
+	 * Marshals GW samples as a RDB row.
+	 * @param dgw the sample to write.
+	 */
 	public void writeRow(DiscreteGroundWater dgw) {
 		writeValue(  5, dgw.agencyCode);
 		writeValue( 15, dgw.siteIdentificationNumber);

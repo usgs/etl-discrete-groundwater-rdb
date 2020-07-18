@@ -16,6 +16,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
 
+/**
+ * Groundwater observation data access
+ *
+ * @author duselman
+ */
 @Component
 public class DiscreteGroundWaterDao {
 	private static final Logger LOG = LoggerFactory.getLogger(DiscreteGroundWaterDao.class);
@@ -27,7 +32,13 @@ public class DiscreteGroundWaterDao {
 	@Value("classpath:sql/getDiscreteGroundWater.sql")
 	protected Resource selectQuery;
 
-	// Most location folders are states names, some are a collection of a few states
+	/**
+	 * Fetches GW data from the database and converts it to a lsit of the ORM instance.
+	 * @param states list of state names to fetch.
+	 * 				  Most location folders are states names, some are a collection of a few states
+	 *
+	 * @return list of discrete ground water measurements
+	 */
 	public List<DiscreteGroundWater> selectDiscreteGroundWater(List<String> states) {
 		try {
 			String sql = new String(FileCopyUtils.copyToByteArray(selectQuery.getInputStream()));

@@ -17,6 +17,10 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
 
+/**
+ * Simple data access object for state postal abbreviations.
+ * @author duselman
+ */
 @Component
 public class StatePostCodeDao {
 	private static final Logger LOG = LoggerFactory.getLogger(StatePostCodeDao.class);
@@ -28,7 +32,12 @@ public class StatePostCodeDao {
 	@Value("classpath:sql/getStatePostCode.sql")
 	protected Resource selectQuery;
 
-	// Most location folders are states names, some are a collection of a few states
+	/**
+	 * Fetches the postal code of the given USA state name.
+	 * Most location folders are states names, some are a collection of a few states
+	 * @param state   full name of a USA state
+	 * @return postal code for the given state
+	 */
 	public String getPostCode(String state) {
 		try {
 			String sql = new String(FileCopyUtils.copyToByteArray(selectQuery.getInputStream()));
