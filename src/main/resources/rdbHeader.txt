@@ -1,0 +1,4 @@
+#	USGS	ground	water	levels
+#
+agency_cd	site_no	lev_dt	lev_tm	lev_va	lev_ent_cd	sl_datum_cd	sl_lev_va	lev_src_cd	lev_agency_cd	lev_acy_cd	lev_status_cd	lev_meth_cd	lev_md	lev_dtm	lev_dt_acy_cd	lev_tz_cd	lev_utc_dt	lev_age_cd
+5ss	15ss	8ss	4ss	7ss	1ss	10ss	8ss	1ss	5ss	1ss	1ss	1ss	25ds	25ds	1ss	6ss	25ds	1ss

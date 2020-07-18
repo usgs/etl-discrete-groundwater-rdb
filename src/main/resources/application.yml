@@ -1,0 +1,13 @@
+spring:
+  datasource-observation:
+    url: jdbc:postgresql://${OBSERVATION_DATABASE_ADDRESS}:${OBSERVATION_DATABASE_PORT}/${OBSERVATION_DATABASE_NAME}?currentSchema=${OBSERVATION_SCHEMA_NAME}
+    username: ${OBSERVATION_SCHEMA_OWNER_USERNAME}
+    password: ${OBSERVATION_SCHEMA_OWNER_PASSWORD}
+    hikari:
+      maximum-pool-size: 2
+      auto-commit: false
+
+logging:
+  level:
+    root: ${ROOT_LOG_LEVEL}
+    com.zaxxer: OFF
