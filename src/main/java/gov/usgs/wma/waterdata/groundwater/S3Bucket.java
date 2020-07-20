@@ -16,7 +16,7 @@ public class S3Bucket {
 	 * @return a file name for an RDB file.
 	 */
 	public String createFilename(String tier, String suffix, String metadata) {
-		return "ts" + "<tier>" + suffix + ".gw_lev_01.06." + "<date meta>" + ".full.rdb";
+		return "ts" + "<tier>" + suffix + ".gw_lev_01.06." + metadata + ".full.rdb";
 	}
 
 	/**
@@ -24,7 +24,7 @@ public class S3Bucket {
 	 * @param filename unique name for the RDB file
 	 * @return writer instance
 	 */
-	public Writer makeFile(String filename) {
+	public Writer openFile(String filename) {
 		// TODO Auto-generated method stub
 		return null;
 	}

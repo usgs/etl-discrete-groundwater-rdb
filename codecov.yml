@@ -2,4 +2,4 @@ ignore:
   # Spring Boot Application file - no testable logic
   - "**/Application.java"
   # SpringBootRequestHandler -  no testable logic
-  - "**/LoadDiscreteGroundWaterRdbHandler.java"
+  - "**/BuildRdbFile.java"

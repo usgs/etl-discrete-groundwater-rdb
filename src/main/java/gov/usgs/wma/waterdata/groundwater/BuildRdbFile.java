@@ -65,7 +65,7 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 		// nwisca.gw_lev_01.06.20200715_030500.full.rdb
 		String filename = s3bucket.createFilename("dev", suffix, "meta");
 
-		try (Writer writer = s3bucket.makeFile(filename)) {
+		try (Writer writer = s3bucket.openFile(filename)) {
 
 			dao.sendDiscreteGroundWater(states, new RdbWriter(writer));
 

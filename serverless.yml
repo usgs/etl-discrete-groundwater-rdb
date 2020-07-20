@@ -29,7 +29,7 @@ custom:
 
 functions:
   loadRdb:
-    handler: gov.usgs.wma.waterdata.LoadDiscreteGroundWaterRdbHandler
+    handler: gov.usgs.wma.waterdata.groundwater.BuildRdbFile
     role: arn:aws:iam::${self:custom.accountNumber}:role/csr-Lambda-Role
     environment:
       FUNCTION_NAME: loadRdb
