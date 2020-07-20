@@ -56,7 +56,6 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 		ResultObject result = new ResultObject();
 
 		List<String> states = LocationFolder.locationFolderToSates(locationFolder);
-		List<DiscreteGroundWater> levels = dao.selectDiscreteGroundWater(states);
 
 		String suffix = locationFolderUtil.locationFolderFilenameDecorator(locationFolder);
 		if (StringUtils.isEmpty(suffix)) {
@@ -68,9 +67,7 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 
 		try (Writer writer = s3bucket.makeFile(filename)) {
 
-			RdbWriter rdbWriter = new RdbWriter(writer);
-			rdbWriter.writeHeader();
-			levels.stream().forEach(dgw -> rdbWriter.writeRow(dgw));
+			dao.sendDiscreteGroundWater(states, new RdbWriter(writer));
 
 		} catch (IOException e) {
 			throw new RuntimeException("Error opening S3 file stream.", e);

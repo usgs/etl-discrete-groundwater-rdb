@@ -2,7 +2,6 @@ package gov.usgs.wma.waterdata.groundwater;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -17,7 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
 
 /**
- * Groundwater observation data access
+ * Ground water observation data access
  *
  * @author duselman
  */
@@ -33,18 +32,18 @@ public class DiscreteGroundWaterDao {
 	protected Resource selectQuery;
 
 	/**
-	 * Fetches GW data from the database and converts it to a lsit of the ORM instance.
+	 * Fetches GW data from the database and converts it to a list of the ORM instance.
 	 * @param states list of state names to fetch.
 	 * 				  Most location folders are states names, some are a collection of a few states
 	 *
 	 * @return list of discrete ground water measurements
 	 */
-	public List<DiscreteGroundWater> selectDiscreteGroundWater(List<String> states) {
+	public void sendDiscreteGroundWater(List<String> states, RdbWriter writer) {
+		DiscreteGroundWaterRowMapper rowMapper = new DiscreteGroundWaterRowMapper(writer);
+
 		try {
 			String sql = new String(FileCopyUtils.copyToByteArray(selectQuery.getInputStream()));
-			List<DiscreteGroundWater> rows = jdbcTemplate.query(sql,
-					new DiscreteGroundWaterRowMapper(), Collections.singletonMap("states", states));
-			return rows;
+			jdbcTemplate.query(sql, rowMapper, Collections.singletonMap("states", states));
 
 		} catch (EmptyResultDataAccessException e) {
 			LOG.info(e.getLocalizedMessage());
@@ -52,6 +51,5 @@ public class DiscreteGroundWaterDao {
 			LOG.error("Unable to get SQL statement", e);
 			throw new RuntimeException(e);
 		}
-		return new LinkedList<>();
 	}
 }

@@ -25,6 +25,7 @@ public class RdbWriter {
 
 	public RdbWriter(Writer dest) {
 		this.rdb = dest;
+		writeHeader();
 	}
 
 	/**

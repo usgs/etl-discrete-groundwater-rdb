@@ -12,6 +12,12 @@ import org.springframework.jdbc.core.RowMapper;
  */
 public class DiscreteGroundWaterRowMapper implements RowMapper<DiscreteGroundWater> {
 
+	private RdbWriter writer;
+
+	public DiscreteGroundWaterRowMapper(RdbWriter writer) {
+		this.writer = writer;
+	}
+
 	/**
 	 * Translates JDBC RowSet row to ORM instance.
 	 */
@@ -36,6 +42,7 @@ public class DiscreteGroundWaterRowMapper implements RowMapper<DiscreteGroundWat
 		discreteGroundWater.verticalDatumCode = rs.getString("vertical_datum_code");
 		discreteGroundWater.parameterCode = rs.getString("parameter_code");
 
+		writer.writeRow(discreteGroundWater);
 		return discreteGroundWater;
 	}
 }
