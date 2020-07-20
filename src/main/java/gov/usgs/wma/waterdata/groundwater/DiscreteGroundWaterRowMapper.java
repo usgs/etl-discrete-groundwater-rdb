@@ -10,7 +10,7 @@ import org.springframework.jdbc.core.RowMapper;
  * Simple SpringFramework RowMapper to GW ORM object
  * @author duselman
  */
-public class DiscreteGroundWaterRowMapper implements RowMapper<DiscreteGroundWater> {
+public class DiscreteGroundWaterRowMapper implements RowMapper<String> {
 
 	private RdbWriter writer;
 
@@ -22,7 +22,7 @@ public class DiscreteGroundWaterRowMapper implements RowMapper<DiscreteGroundWat
 	 * Translates JDBC RowSet row to ORM instance.
 	 */
 	@Override
-	public DiscreteGroundWater mapRow(ResultSet rs, int rowNum) throws SQLException {
+	public String mapRow(ResultSet rs, int rowNum) throws SQLException {
 		DiscreteGroundWater discreteGroundWater = new DiscreteGroundWater();
 		discreteGroundWater.agencyCode = rs.getString("agency_code");
 		discreteGroundWater.approvalStatusCode = rs.getString("approval_status_code");
@@ -43,6 +43,6 @@ public class DiscreteGroundWaterRowMapper implements RowMapper<DiscreteGroundWat
 		discreteGroundWater.parameterCode = rs.getString("parameter_code");
 
 		writer.writeRow(discreteGroundWater);
-		return discreteGroundWater;
+		return "written";
 	}
 }
