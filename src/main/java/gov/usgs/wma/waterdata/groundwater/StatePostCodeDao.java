@@ -29,7 +29,7 @@ public class StatePostCodeDao {
 	@Qualifier("jdbcTemplateObservation")
 	protected JdbcTemplate jdbcTemplate;
 
-	@Value("classpath:sql/getStatePostCode.sql")
+	@Value("classpath:sql/selectStatePostCode.sql")
 	protected Resource selectQuery;
 
 	/**

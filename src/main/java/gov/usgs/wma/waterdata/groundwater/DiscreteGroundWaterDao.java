@@ -28,15 +28,14 @@ public class DiscreteGroundWaterDao {
 	@Qualifier("jdbcTemplateObservation")
 	protected JdbcTemplate jdbcTemplate;
 
-	@Value("classpath:sql/getDiscreteGroundWater.sql")
+	@Value("classpath:sql/selectDiscreteGroundWater.sql")
 	protected Resource selectQuery;
 
 	/**
 	 * Fetches GW data from the database and converts it to a list of the ORM instance.
 	 * @param states list of state names to fetch.
-	 * 				  Most location folders are states names, some are a collection of a few states
-	 *
-	 * @return list of discrete ground water measurements
+	 * 				 Most location folders are states names, some are a collection of a few states
+	 * @param writer instance that will write each row to an RDB file
 	 */
 	public void sendDiscreteGroundWater(List<String> states, RdbWriter writer) {
 		DiscreteGroundWaterRowMapper rowMapper = new DiscreteGroundWaterRowMapper(writer);
