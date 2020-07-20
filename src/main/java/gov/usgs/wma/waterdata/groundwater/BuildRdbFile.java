@@ -18,16 +18,20 @@ import org.springframework.util.StringUtils;
 public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BuildRdbFile.class);
-	private final DiscreteGroundWaterDao dao;
-	private final LocationFolder locationFolderUtil;
-	private final S3Bucket s3bucket;
-
 
 	@Autowired
-	public BuildRdbFile(DiscreteGroundWaterDao dao, LocationFolder locationFolder, S3Bucket s3bucket) {
-		this.dao = dao;
-		this.locationFolderUtil = locationFolder;
-		this.s3bucket = s3bucket;
+	private S3BucketUtil s3BucketUtil;
+
+	@Autowired
+	private DiscreteGroundWaterDao dao;
+
+	@Autowired
+	private LocationFolder locationFolderUtil;
+
+
+
+
+	public BuildRdbFile() {
 	}
 
 	/**
@@ -61,16 +65,18 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 		if (StringUtils.isEmpty(suffix)) {
 			throw new RuntimeException("Given location folder has no state entry: " + locationFolder);
 		}
+		// TODO need to know how to create filename metadata
+		String filename = s3BucketUtil.createFilename(suffix, "meta");
 
-		// nwisca.gw_lev_01.06.20200715_030500.full.rdb
-		String filename = s3bucket.createFilename("dev", suffix, "meta");
-
-		try (Writer writer = s3bucket.openFile(filename)) {
+		try (   S3Bucket s3bucket = s3BucketUtil.openS3(filename);
+				Writer writer = s3bucket.getWriter();) {
 
 			dao.sendDiscreteGroundWater(states, new RdbWriter(writer));
 
 		} catch (IOException e) {
-			throw new RuntimeException("Error opening S3 file stream.", e);
+			throw new RuntimeException("Error opening S3 file stream to file, " + filename, e);
+		} catch (Exception e) {
+			throw new RuntimeException("Error processing file to S3 related to file, " + filename, e);
 		}
 
 		// TODO add something to the result object

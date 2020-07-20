@@ -22,10 +22,19 @@ public class RdbWriter {
 	protected Resource header;
 
 	private Writer rdb;
+	private long headerLineCount = 0;
+	private long dataLineCount = 0;
 
 	public RdbWriter(Writer dest) {
 		this.rdb = dest;
 		writeHeader();
+	}
+
+	public long getHeaderRows() {
+		return headerLineCount;
+	}
+	public long getDataRows() {
+		return dataLineCount;
 	}
 
 	/**
@@ -34,6 +43,7 @@ public class RdbWriter {
 	public void writeHeader() {
 		try {
 			String head = new String(FileCopyUtils.copyToByteArray(header.getInputStream()));
+			headerLineCount = head.lines().count();
 			rdb.append(head);
 		} catch (IOException e) {
 			LOG.error("Unable to get SQL statement", e);
@@ -73,10 +83,18 @@ public class RdbWriter {
 		writeValue(  1, dgw.approvalStatusCode);
 		// TODO pCode to follow
 		writeValue(  1, "\n");
+
+		dataLineCount++;
 	}
 	public void writeValue(int length, String value) {
 		try {
-			rdb.append(value).append('\t');
+			// Trim the value to the proper field length.
+			String trimmedValue = value;
+			if (value.length() > length) {
+				// TODO test if length means endIndex
+				trimmedValue = value.substring(0, length);
+			}
+			rdb.append(trimmedValue).append('\t');
 		} catch (IOException e) {
 			throw new RuntimeException("Error writing RDB row to stream.", e);
 		}

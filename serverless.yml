@@ -41,6 +41,7 @@ functions:
       OBSERVATION_SCHEMA_OWNER_USERNAME: ${self:custom.observationDb.connectInfo.NWIS_SCHEMA_OWNER_USERNAME}
       OBSERVATION_SCHEMA_OWNER_PASSWORD: ${self:custom.observationDb.connectInfo.NWIS_SCHEMA_OWNER_PASSWORD}
       ROOT_LOG_LEVEL: INFO
+      TIER: ${opt:stage, 'TEST'}
     vpc: ${self:custom.vpc}
 
 resources:

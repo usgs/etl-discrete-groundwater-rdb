@@ -1,3 +1,4 @@
+---
 spring:
   datasource-observation:
     url: jdbc:postgresql://${OBSERVATION_DATABASE_ADDRESS}:${OBSERVATION_DATABASE_PORT}/${OBSERVATION_DATABASE_NAME}?currentSchema=${OBSERVATION_SCHEMA_NAME}
@@ -11,3 +12,10 @@ logging:
   level:
     root: ${ROOT_LOG_LEVEL}
     com.zaxxer: OFF
+    
+properties:
+  tier: ${TIER}
+  region: us-west-2
+  # TODO serverless should create this S3Bucket and use ${} env injection
+  bucket: iow-rdb-files-test
+...
