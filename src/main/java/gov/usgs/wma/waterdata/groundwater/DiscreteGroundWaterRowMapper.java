@@ -26,7 +26,7 @@ public class DiscreteGroundWaterRowMapper implements RowMapper<String> {
 		DiscreteGroundWater discreteGroundWater = new DiscreteGroundWater();
 		discreteGroundWater.agencyCode = rs.getString("agency_code");
 		discreteGroundWater.approvalStatusCode = rs.getString("approval_status_code");
-		discreteGroundWater.dateMeasured = rs.getString("date_measure");
+		discreteGroundWater.dateMeasured = rs.getString("date_measured");
 		discreteGroundWater.dateMeasuredRaw = rs.getTimestamp("date_measured_raw");
 		discreteGroundWater.dateTimeAccuracyCode = rs.getString("date_time_accuracy_code");
 		discreteGroundWater.levelAccuracyCode = rs.getString("level_accuracy_code");

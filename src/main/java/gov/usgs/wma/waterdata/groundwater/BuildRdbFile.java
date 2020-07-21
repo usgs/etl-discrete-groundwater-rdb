@@ -71,7 +71,7 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 		try (   S3Bucket s3bucket = s3BucketUtil.openS3(filename);
 				Writer writer = s3bucket.getWriter();) {
 
-			RdbWriter rdbWriter = new RdbWriter(writer);
+			RdbWriter rdbWriter = new RdbWriter(writer).writeHeader();
 			dao.sendDiscreteGroundWater(states, rdbWriter);
 
 			result.setCount( (int)rdbWriter.getDataRows() );
