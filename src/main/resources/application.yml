@@ -15,7 +15,6 @@ logging:
     
 properties:
   tier: ${TIER}
-  region: us-west-2
-  # TODO serverless should create this S3Bucket and use ${} env injection
+  region: ${AWS_REGION}
   bucket: ${S3_BUCKET_NAME}
 ...

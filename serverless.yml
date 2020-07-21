@@ -44,6 +44,7 @@ functions:
       ROOT_LOG_LEVEL: INFO
       TIER: ${opt:stage, 'TEST'}
       S3_BUCKET_NAME: ${self:custom.bucketName}
+      AWS_REGION: ${self:provider.region}
     vpc: ${self:custom.vpc}
 
 resources:
