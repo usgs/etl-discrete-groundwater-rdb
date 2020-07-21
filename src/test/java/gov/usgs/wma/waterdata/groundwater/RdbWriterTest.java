@@ -114,7 +114,6 @@ class RdbWriterTest {
 
 		// POST SETUP
 		String writtenValue = out.toString();
-		System.out.println(writtenValue);
 
 		// ASSERTIONS
 		assertNotNull(writtenValue);
@@ -144,7 +143,6 @@ class RdbWriterTest {
 
 		// POST SETUP
 		String writtenValue = out.toString();
-		System.out.println(writtenValue);
 
 		// ASSERTIONS
 		assertTrue(writtenValue.contains("\t23.06\tL\t"));
@@ -164,7 +162,6 @@ class RdbWriterTest {
 
 		// POST SETUP
 		String writtenValue = out.toString();
-		System.out.println(writtenValue);
 
 		// ASSERTIONS
 		assertTrue(writtenValue.contains("\tS\tW\t430.23\t"));

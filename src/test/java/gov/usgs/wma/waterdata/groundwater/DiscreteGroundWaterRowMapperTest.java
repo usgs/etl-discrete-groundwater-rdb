@@ -97,7 +97,6 @@ class DiscreteGroundWaterRowMapperTest {
 		// POST SETUP
 		rdbWriter.close();
 		String writtenValue = out.toString();
-		System.out.println(writtenValue);
 
 		// ASSERTIONS
 		assertNotNull(writtenValue);
