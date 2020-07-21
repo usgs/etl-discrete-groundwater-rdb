@@ -17,5 +17,5 @@ properties:
   tier: ${TIER}
   region: us-west-2
   # TODO serverless should create this S3Bucket and use ${} env injection
-  bucket: iow-rdb-files-test
+  bucket: ${S3_BUCKET_NAME}
 ...

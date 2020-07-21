@@ -26,6 +26,7 @@ custom:
     subnetIds: ${ssm:/iow/aws/vpc/${self:provider.stage}/subnetIds~split}
   observationDb:
     connectInfo: ${ssm:/aws/reference/secretsmanager/WQP-EXTERNAL-${self:provider.stage}~true}
+  bucketName: iow-rdb-files-${self:provider.stage}
 
 functions:
   loadRdb:
@@ -42,10 +43,15 @@ functions:
       OBSERVATION_SCHEMA_OWNER_PASSWORD: ${self:custom.observationDb.connectInfo.NWIS_SCHEMA_OWNER_PASSWORD}
       ROOT_LOG_LEVEL: INFO
       TIER: ${opt:stage, 'TEST'}
+      S3_BUCKET_NAME: ${self:custom.bucketName}
     vpc: ${self:custom.vpc}
 
 resources:
   Resources:
+    Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.bucketName}
     snsTopic:
       Type: AWS::SNS::Topic
       Properties:
