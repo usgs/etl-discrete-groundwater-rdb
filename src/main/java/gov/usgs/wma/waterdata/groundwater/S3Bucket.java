@@ -14,12 +14,12 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
  */
 public class S3Bucket implements AutoCloseable {
 
-	private String region;
-	private String bucket;
-	private String keyName;
-	private File file;
-	private FileWriter writer;
-	private boolean preserveFile = false;
+	protected String region;
+	protected String bucket;
+	protected String keyName;
+	protected File file;
+	protected FileWriter writer;
+	protected boolean disposeFile = true;
 
 	S3Bucket(String region, String bucket, String keyName, File file) {
 		this.region = region;
@@ -28,21 +28,26 @@ public class S3Bucket implements AutoCloseable {
 		this.file = file;
 	}
 
+	protected AmazonS3 buildS3() {
+		AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(region).build();
+		return s3;
+	}
+
 	@Override
 	public void close() throws Exception {
 		try {
 			writer.close();
-			AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(region).build();
+			AmazonS3 s3 = buildS3();
 			s3.putObject(bucket, keyName, file);
 		} finally {
-			if (!preserveFile) {
+			if (disposeFile) {
 				file.delete();
 			}
 		}
 	}
 
-	public void setPreserveFile(boolean preserveFile) {
-		this.preserveFile = preserveFile;
+	public void setDisposeFile(boolean disposeFile) {
+		this.disposeFile = disposeFile;
 	}
 
 	public Writer getWriter() {

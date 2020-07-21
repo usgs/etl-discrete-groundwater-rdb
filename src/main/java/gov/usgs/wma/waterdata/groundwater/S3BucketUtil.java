@@ -34,10 +34,10 @@ public class S3BucketUtil {
 		if ("QA".equals(properties.getTier())) {
 			tier = "qa";
 		} else if (properties.getTier().toLowerCase().startsWith("prod")) {
-			tier = "prod";
+			tier = "pr"; // TODO verify that this is what NWISWeb uses
 		}
 
-		return "ts" + tier + suffix + ".gw_lev_01.06." + metadata + ".full"; // .rdb added in temp file create
+		return "ts" + tier + suffix.toLowerCase() + ".gw_lev_01.06." + metadata + ".full"; // .rdb added in temp file create
 	}
 
 	/**
