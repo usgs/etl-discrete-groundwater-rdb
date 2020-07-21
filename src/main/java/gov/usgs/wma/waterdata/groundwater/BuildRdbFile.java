@@ -71,7 +71,10 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 		try (   S3Bucket s3bucket = s3BucketUtil.openS3(filename);
 				Writer writer = s3bucket.getWriter();) {
 
-			dao.sendDiscreteGroundWater(states, new RdbWriter(writer));
+			RdbWriter rdbWriter = new RdbWriter(writer);
+			dao.sendDiscreteGroundWater(states, rdbWriter);
+
+			result.setCount( (int)rdbWriter.getDataRows() );
 
 		} catch (IOException e) {
 			throw new RuntimeException("Error opening S3 file stream to file, " + filename, e);
@@ -79,7 +82,7 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 			throw new RuntimeException("Error processing file to S3 related to file, " + filename, e);
 		}
 
-		// TODO add something to the result object
+		// currently returning the rows count written to the file
 		return result;
 	}
 }

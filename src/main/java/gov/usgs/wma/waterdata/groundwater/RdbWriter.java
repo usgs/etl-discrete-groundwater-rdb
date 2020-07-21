@@ -81,7 +81,7 @@ public class RdbWriter {
 		writeValue(  6, dgw.timezoneCode);
 		writeValue( 25, dgw.timeMeasuredUtc);
 		writeValue(  1, dgw.approvalStatusCode);
-		// TODO pCode to follow
+		// TODO pCode to follow after comparing the current format to existing.
 		writeValue(  1, "\n");
 
 		dataLineCount++;
