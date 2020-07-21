@@ -31,7 +31,7 @@ public class LocationFolder {
 	 * @param locationFolder
 	 * @return list of state names in the given location folder
 	 */
-	public static List<String> locationFolderToSates(String locationFolder) {
+	public static List<String> toSates(String locationFolder) {
 		List<String> states = new ArrayList<>();
 
 		// if this changes from single use lambda to some library then pull these to static class level
@@ -71,8 +71,8 @@ public class LocationFolder {
 	 * @param locationFolder
 	 * @return
 	 */
-	public String locationFolderFilenameDecorator(String locationFolder) {
-		if ("MD-DE-DC".equals(locationFolder)) {
+	public String filenameDecorator(String locationFolder) {
+		if ("MD-DE-DC".equals(locationFolder)) { // TODO verify these file translations
 			return locationFolder;
 		} else if ("MA-RI".equals(locationFolder)) {
 			return locationFolder;

@@ -59,9 +59,9 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 		LOG.debug("the request object location folder: {}", locationFolder);
 		ResultObject result = new ResultObject();
 
-		List<String> states = LocationFolder.locationFolderToSates(locationFolder);
+		List<String> states = LocationFolder.toSates(locationFolder);
 
-		String suffix = locationFolderUtil.locationFolderFilenameDecorator(locationFolder);
+		String suffix = locationFolderUtil.filenameDecorator(locationFolder);
 		if (StringUtils.isEmpty(suffix)) {
 			throw new RuntimeException("Given location folder has no state entry: " + locationFolder);
 		}
