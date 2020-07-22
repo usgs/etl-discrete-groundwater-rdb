@@ -24,14 +24,14 @@ class S3BucketUtilTest {
 		s3util = new S3BucketUtil(properties);
 
 		metadata = "some-date-metadata";
-		suffix = "LC"; // state postal code in real use case
+		suffix = "WI";
 	}
 
 
 	@Test
 	void testFilenameTEST() throws Exception {
 		// SETUP
-		String expect = "tstslc.gw_lev_01.06." + metadata + ".full";
+		String expect = "tstest.WI.gw_lev_01.06." + metadata + ".full";
 
 		// ACTION UNDER TEST
 		String filename = s3util.createFilename(suffix, metadata);
@@ -44,7 +44,7 @@ class S3BucketUtilTest {
 	void testFilenameQA() throws Exception {
 		// SETUP
 		properties.tier = "QA";
-		String expect = "tsqalc.gw_lev_01.06." + metadata + ".full";
+		String expect = "tsqa.WI.gw_lev_01.06." + metadata + ".full";
 
 		// ACTION UNDER TEST
 		String filename = s3util.createFilename(suffix, metadata);
@@ -57,7 +57,7 @@ class S3BucketUtilTest {
 	void testFilenamePROD() throws Exception {
 		// SETUP
 		properties.tier = "PROD-INTERNAL";
-		String expect = "tsprlc.gw_lev_01.06." + metadata + ".full";
+		String expect = "tspr.WI.gw_lev_01.06." + metadata + ".full";
 
 		// ACTION UNDER TEST
 		String filename = s3util.createFilename(suffix, metadata);

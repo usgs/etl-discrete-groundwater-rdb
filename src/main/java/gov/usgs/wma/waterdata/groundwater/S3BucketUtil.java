@@ -30,14 +30,15 @@ public class S3BucketUtil {
 	 * @return a file name for an RDB file.
 	 */
 	public String createFilename(String suffix, String metadata) {
-		String tier = "ts";
+		String tier = "test";
 		if ("QA".equals(properties.getTier())) {
 			tier = "qa";
 		} else if (properties.getTier().toLowerCase().startsWith("prod")) {
-			tier = "pr"; // TODO verify that this is what NWISWeb uses
+			tier = "pr";
 		}
 
-		return "ts" + tier + suffix.toLowerCase() + ".gw_lev_01.06." + metadata + ".full"; // .rdb added in temp file create
+		// .rdb added in temp file create
+		return "ts" + tier +"."+ suffix.toUpperCase() +".gw_lev_01.06."+ metadata +".full";
 	}
 
 	/**
