@@ -4,6 +4,11 @@ import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Date;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -67,7 +72,6 @@ class S3BucketUtilTest {
 		assertEquals(expect, filename);
 	}
 
-
 	@Test
 	void testOpenS3File() throws Exception {
 		// SETUP
@@ -94,5 +98,13 @@ class S3BucketUtilTest {
 				s3.file.delete();
 			}
 		}
+	}
+
+	@Test
+	void testSimpleDate() throws Exception {
+		LocalDateTime localDT = LocalDateTime.of(2000, 11, 22, 02, 03, 04);
+		Date datetime = Timestamp.valueOf(localDT);
+		String actual = new SimpleDateFormat("YYYYMMdd_HHmmss").format(datetime);
+		assertEquals("20001122_020304", actual);
 	}
 }

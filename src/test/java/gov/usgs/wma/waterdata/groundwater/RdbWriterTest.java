@@ -166,5 +166,4 @@ class RdbWriterTest {
 		// ASSERTIONS
 		assertTrue(writtenValue.contains("\tS\tW\t430.23\t"));
 	}
-
 }

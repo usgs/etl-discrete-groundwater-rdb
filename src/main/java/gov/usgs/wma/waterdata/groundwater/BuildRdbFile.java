@@ -2,6 +2,9 @@ package gov.usgs.wma.waterdata.groundwater;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Function;
 
@@ -27,8 +30,6 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 
 	@Autowired
 	private LocationFolder locationFolderUtil;
-
-
 
 
 	public BuildRdbFile() {
@@ -65,12 +66,12 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 		if (StringUtils.isEmpty(suffix)) {
 			throw new RuntimeException("Given location folder has no state entry: " + locationFolder);
 		}
-		// TODO need to know how to create filename metadata
-		String filename = s3BucketUtil.createFilename(suffix, "meta");
+		String metadata = new SimpleDateFormat("YYYYMMdd_HHmmss").format(LocalDateTime.now());
+		String filename = s3BucketUtil.createFilename(suffix, metadata);
 
-		try (   S3Bucket s3bucket = s3BucketUtil.openS3(filename);
-				Writer writer = s3bucket.getWriter();) {
+		try (   S3Bucket s3bucket = s3BucketUtil.openS3(filename);) {
 
+			Writer writer = s3bucket.getWriter();
 			RdbWriter rdbWriter = new RdbWriter(writer).writeHeader();
 			dao.sendDiscreteGroundWater(states, rdbWriter);
 

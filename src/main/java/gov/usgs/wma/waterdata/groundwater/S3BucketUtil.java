@@ -38,7 +38,8 @@ public class S3BucketUtil {
 		}
 
 		// .rdb added in temp file create
-		return "ts" + tier +"."+ suffix.toUpperCase() +".gw_lev_01.06."+ metadata +".full";
+		// ts is not joined with a dot while all the others are joined by a dot
+		return "ts" + String.join(".", tier, suffix.toUpperCase(), "gw_lev_01.06", metadata, "full");
 	}
 
 	/**
