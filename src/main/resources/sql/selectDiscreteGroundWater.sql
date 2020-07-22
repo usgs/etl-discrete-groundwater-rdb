@@ -16,7 +16,9 @@ select
     d.time_measured_utc,
     d.approval_status_code,
     d.parameter_code
-from discrete_ground_water d
-join monitoring_location m
-  on m.monitoring_location_id = d.monitoring_location_id
-where m.state in (:states) -- proxy for location folder
+  from discrete_ground_water d
+  join monitoring_location m
+    on m.monitoring_location_id = d.monitoring_location_id
+ where m.state in (:states) -- proxy for location folder
+ order by d.monitoring_location_identifier, d.date_measured_raw
+ 
