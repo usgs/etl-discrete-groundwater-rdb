@@ -25,7 +25,7 @@ public class DiscreteGroundWaterDao {
 	private static final Logger LOG = LoggerFactory.getLogger(DiscreteGroundWaterDao.class);
 
 	@Autowired
-	@Qualifier("jdbcTemplateObservation")
+	@Qualifier("jdbcTemplate")
 	protected JdbcTemplate jdbcTemplate;
 
 	@Value("classpath:sql/selectDiscreteGroundWater.sql")

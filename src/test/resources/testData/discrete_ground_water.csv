@@ -1,0 +1,4 @@
+"site_identification_number","agency_code","level_feet_below_land_surface","vertical_datum_code","level_feet_above_vertical_datum","measurement_source_code","measuring_agency_code","level_accuracy_code","site_status_code","measurement_method_code","date_measured","date_measured_raw","date_time_accuracy_code","timezone_code","time_measured_utc","approval_status_code","parameter_code"
+"430955070484001","USGS","7.90",null,null,"U","","2","","S","1962-06-27","1962-06-27 12:00:00","D","UTC",null,"A","72019"
+"430932070453901","USGS","6.60",null,null,"U","","2","","S","1967-06-29","1967-06-29 12:00:00","D","UTC",null,"A","72019"
+"430833070461301","USGS","19.98",null,null,"U","","2","","S","1962-06-22","1962-06-22 12:00:00","D","UTC",null,"A","72019"

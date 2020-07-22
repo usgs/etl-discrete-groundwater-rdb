@@ -3,7 +3,6 @@ select
     d.agency_code,
     d.level_feet_below_land_surface,
     d.vertical_datum_code,
-    d.vertical_datum_code,
     d.level_feet_above_vertical_datum,
     d.measurement_source_code,
     d.measuring_agency_code,
@@ -17,7 +16,7 @@ select
     d.time_measured_utc,
     d.approval_status_code,
     d.parameter_code
-from discrete_ground_water d,
+from discrete_ground_water d
 join monitoring_location m
   on m.monitoring_location_id = d.monitoring_location_id
 where m.state in (:states) -- proxy for location folder

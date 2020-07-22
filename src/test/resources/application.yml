@@ -1,36 +1,19 @@
 ---
 spring:
-  datasource-observation:
-    driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/obs?currentSchema=nwis
-    username: nwis
-    password: nwis
-  dataSource:
-    driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/obs?currentSchema=nwis
-    username: nwis
-    password: nwis
+  datasource:
+    url: jdbc:postgresql://${OBSERVATION_DATABASE_ADDRESS}:${OBSERVATION_DATABASE_PORT}/${OBSERVATION_DATABASE_NAME}?currentSchema=${OBSERVATION_SCHEMA_NAME}
+    username: ${OBSERVATION_SCHEMA_OWNER_USERNAME}
+    password: ${OBSERVATION_SCHEMA_OWNER_PASSWORD}
+    hikari:
+      maximum-pool-size: 2
+      auto-commit: false
 
 logging:
   level:
-    root: DEBUG
+    root: ${ROOT_LOG_LEVEL}
     com.zaxxer: OFF
-    
-properties:
-  tier: localhost
-  region: local-region
-  bucket: local-bucket
 
-#    driverClassName: org.postgresql.Driver
-#    url: jdbc:postgresql://${OBSERVATION_DATABASE_ADDRESS}:${OBSERVATION_DATABASE_PORT}/${OBSERVATION_DATABASE_NAME}?currentSchema=${OBSERVATION_SCHEMA_NAME}
-#    username: ${OBSERVATION_SCHEMA_OWNER_USERNAME}
-#    password: ${OBSERVATION_SCHEMA_OWNER_PASSWORD}
-#  dataSource:
-#    type: com.zaxxer.hikari.HikariDataSource
-#    url: jdbc:h2:mem:TEST
-#    driver-class-name: org.h2.Driver
-#    username: username
-#    password: password
-#    hikari:
-#      idle-timeout: 10000
-...
+#properties:
+#  tier: ${TIER}
+#  region: ${AWS_REGION}
+#  bucket: ${S3_BUCKET_NAME}
