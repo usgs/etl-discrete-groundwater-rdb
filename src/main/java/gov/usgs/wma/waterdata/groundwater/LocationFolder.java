@@ -72,7 +72,7 @@ public class LocationFolder {
 	 * @return
 	 */
 	public String filenameDecorator(String locationFolder) {
-		if ("MD-DE-DC".equals(locationFolder)) { // TODO verify these file translations
+		if ("MD-DE-DC".equals(locationFolder)) {
 			return locationFolder;
 		} else if ("MA-RI".equals(locationFolder)) {
 			return locationFolder;

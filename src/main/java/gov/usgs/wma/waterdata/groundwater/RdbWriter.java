@@ -80,8 +80,7 @@ public class RdbWriter {
 		writeValue(  1, dgw.levelAccuracyCode);
 		writeValue(  1, dgw.siteStatusCode);
 		writeValue(  1, dgw.measurementMethodCode);
-		//writeValue( 25, dgw.createdDate); // omitted
-		//writeValue( 25, ""); // created date place holder  TODO needed?
+		//writeValue( 25, dgw.createdDate); // omitted, loader no longer references
 		writeValue( 25, dgw.dateMeasured);
 		writeValue( 25, new SimpleDateFormat("dd-MMM-YYYY HH:mm:ss").format(dgw.dateMeasuredRaw).toUpperCase());
 		writeValue(  1, dgw.dateTimeAccuracyCode);
