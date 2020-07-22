@@ -66,8 +66,7 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 		if (StringUtils.isEmpty(suffix)) {
 			throw new RuntimeException("Given location folder has no state entry: " + locationFolder);
 		}
-		String metadata = new SimpleDateFormat("YYYYMMdd_HHmmss").format(LocalDateTime.now());
-		String filename = s3BucketUtil.createFilename(suffix, metadata);
+		String filename = s3BucketUtil.createFilename(suffix);
 
 		try (   S3Bucket s3bucket = s3BucketUtil.openS3(filename);) {
 

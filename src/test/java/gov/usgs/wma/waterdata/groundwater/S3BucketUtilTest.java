@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,8 @@ class S3BucketUtilTest {
 	S3BucketUtil s3util;
 	String suffix;
 	String metadata;
+
+	Pattern fileTimestamp = Pattern.compile("^ts\\w{2,4}.WI\\.gw_lev_01\\.06\\.\\d{8}_\\d{6}\\.full$");
 
 	@BeforeEach
 	public void setup() {
@@ -37,40 +40,43 @@ class S3BucketUtilTest {
 	@Test
 	void testFilenameTEST() throws Exception {
 		// SETUP
-		String expect = "tstest.WI.gw_lev_01.06." + metadata + ".full";
+		String expectedStartWith = "tstest";
 
 		// ACTION UNDER TEST
-		String filename = s3util.createFilename(suffix, metadata);
-
+		String filename = s3util.createFilename(suffix);
+		System.out.println(filename);
 		// ASSERTIONS
 		assertNotNull(filename);
-		assertEquals(expect, filename);
+		assertTrue(filename.startsWith(expectedStartWith));
+		assertTrue(fileTimestamp.matcher(filename).matches());
 	}
 	@Test
 	void testFilenameQA() throws Exception {
 		// SETUP
 		properties.tier = "QA";
-		String expect = "tsqa.WI.gw_lev_01.06." + metadata + ".full";
+		String expectedStartWith = "tsqa";
 
 		// ACTION UNDER TEST
-		String filename = s3util.createFilename(suffix, metadata);
+		String filename = s3util.createFilename(suffix);
 
 		// ASSERTIONS
 		assertNotNull(filename);
-		assertEquals(expect, filename);
+		assertTrue(filename.startsWith(expectedStartWith));
+		assertTrue(fileTimestamp.matcher(filename).matches());
 	}
 	@Test
 	void testFilenamePROD() throws Exception {
 		// SETUP
 		properties.tier = "PROD-INTERNAL";
-		String expect = "tspr.WI.gw_lev_01.06." + metadata + ".full";
+		String expectedStartWith = "tspr";
 
 		// ACTION UNDER TEST
-		String filename = s3util.createFilename(suffix, metadata);
+		String filename = s3util.createFilename(suffix);
 
 		// ASSERTIONS
 		assertNotNull(filename);
-		assertEquals(expect, filename);
+		assertTrue(filename.startsWith(expectedStartWith));
+		assertTrue(fileTimestamp.matcher(filename).matches());
 	}
 
 	@Test

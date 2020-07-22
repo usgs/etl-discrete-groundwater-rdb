@@ -2,6 +2,9 @@ package gov.usgs.wma.waterdata.groundwater;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,13 +32,15 @@ public class S3BucketUtil {
 	 * @param metadata a date or data count number to identify this file from future files.
 	 * @return a file name for an RDB file.
 	 */
-	public String createFilename(String suffix, String metadata) {
+	public String createFilename(String suffix) {
 		String tier = "test";
 		if ("QA".equals(properties.getTier())) {
 			tier = "qa";
 		} else if (properties.getTier().toLowerCase().startsWith("prod")) {
 			tier = "pr";
 		}
+		String metadata = new SimpleDateFormat("YYYYMMdd_HHmmss")
+				.format(Timestamp.valueOf(LocalDateTime.now()));
 
 		// .rdb added in temp file create
 		// ts is not joined with a dot while all the others are joined by a dot
