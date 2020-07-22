@@ -9,6 +9,7 @@
     <properties>
         <java.version>11</java.version>
         <revision>0-DEFAULT</revision>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <licenses>
@@ -94,6 +95,7 @@
             <version>2.3.0</version>
         </dependency>
 
+        <!-- required for eclipse IDE, included with SpringBoot v2.3.0 when upgraded -->
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-launcher</artifactId>
@@ -112,6 +114,7 @@
             <version>1.6.2</version>
             <scope>test</scope>
         </dependency>
+        <!-- END: required for eclipse IDE -->
 
         <!-- TEST DEPENDENCIES-->
         <dependency>

@@ -2,9 +2,6 @@ package gov.usgs.wma.waterdata.groundwater;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Function;
 
