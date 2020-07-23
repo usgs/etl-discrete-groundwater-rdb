@@ -20,6 +20,7 @@ public class RdbWriter {
 	protected Writer rdb;
 	private long headerLineCount;
 	private long dataLineCount;
+	private String sepChar="";
 
 	public RdbWriter(Writer dest) {
 		this.rdb = dest;
@@ -57,7 +58,9 @@ public class RdbWriter {
 	 * @param dgw the sample to write.
 	 */
 	public RdbWriter writeRow(DiscreteGroundWater dgw) {
+		sepChar = "";
 		writeValue(  5, dgw.agencyCode);
+		sepChar = "\t";
 		writeValue( 15, dgw.siteIdentificationNumber);
 		writeValue(  8, new SimpleDateFormat("YYYYMMdd").format(dgw.dateMeasuredRaw));
 
@@ -111,7 +114,7 @@ public class RdbWriter {
 			if (value.length() > length) {
 				trimmedValue = value.substring(0, length);
 			}
-			rdb.append(trimmedValue).append('\t');
+			rdb.append(sepChar).append(trimmedValue);
 		} catch (IOException e) {
 			throw new RuntimeException("Error writing RDB row to stream.", e);
 		}

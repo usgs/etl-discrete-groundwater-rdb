@@ -7,6 +7,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.LinkedList;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -87,44 +90,79 @@ public class DiscreteGroundWaterDaoIT {
 	@DatabaseSetup("classpath:/testData/")
 	@Test
 	public void testSendDiscreteGroundWater_close() throws Exception {
+		// SETUP
 		out = Mockito.mock(ByteArrayOutputStream.class);
 		dest = new OutputStreamWriter(out);
 		writer = new RdbWriter(dest);
 
-		// get new data, return list of discrete gw objects
+		// ACTION UNDER TEST
 		dao.sendDiscreteGroundWater(states, writer);
 		writer.close();
 
+		// ASSERT closed
 		Mockito.verify(out, Mockito.atLeastOnce()).close();
 	}
 
 	@DatabaseSetup("classpath:/testData/")
 	@Test
 	public void testSendDiscreteGroundWater_rowCount_single_California() throws Exception {
-		//get new data, return list of discrete gw objects
+		// ACTION UNDER TEST
 		dao.sendDiscreteGroundWater(states, writer);
 		writer.close();
 
+		// ASSERT row count
 		assertEquals(14, writer.getDataRows());
 	}
 	@DatabaseSetup("classpath:/testData/")
 	@Test
 	public void testSendDiscreteGroundWater_rowCount_single_Texas() throws Exception {
-		//get new data, return list of discrete gw objects
+		// SETUP
 		states = List.of("Texas");
+
+		// ACTION UNDER TEST
 		dao.sendDiscreteGroundWater(states, writer);
 		writer.close();
 
+		// ASSERT row count
 		assertEquals(2, writer.getDataRows());
 	}
 	@DatabaseSetup("classpath:/testData/")
 	@Test
 	public void testSendDiscreteGroundWater_rowCount_multiple() throws Exception {
-		//get new data, return list of discrete gw objects
+		// SETUP
 		states = List.of("California", "Texas");
+
+		// ACTION UNDER TEST
 		dao.sendDiscreteGroundWater(states, writer);
 		writer.close();
 
+		// ASSERT row count
 		assertEquals(16, writer.getDataRows());
+	}
+	@DatabaseSetup("classpath:/testData/")
+	@Test
+	public void testSendDiscreteGroundWater_stateOrdered() throws Exception {
+		// SETUP
+		states = List.of("California", "Texas");
+
+		// ACTION UNDER TEST
+		dao.sendDiscreteGroundWater(states, writer);
+		writer.close();
+
+		// POST SETUP
+		LinkedList<String> rdbLines = new LinkedList<>();
+		rdbLines.addAll(
+				Arrays.stream( out.toString().split("\\n") )
+				.collect( Collectors.toList() ));
+
+		// The rows should be ordered by state first.
+		// Texas is after California and these two Texas sites should be last.
+		// and the order of the sites should be ordered secondarily.
+
+		// ASSERT sort
+		String siteNoLast = rdbLines.removeLast().split("\\t")[1];
+		assertEquals("285634095344401", siteNoLast);
+		String siteNoNext = rdbLines.removeLast().split("\\t")[1];
+		assertEquals("285634095174701", siteNoNext);
 	}
 }

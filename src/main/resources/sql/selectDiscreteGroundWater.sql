@@ -20,5 +20,5 @@ select
   join nwis.monitoring_location m
     on m.monitoring_location_id = d.monitoring_location_id
  where m.state in (:states) 
- order by d.monitoring_location_identifier, d.date_measured_raw
+ order by m.state, d.monitoring_location_identifier, d.date_measured_raw
  
