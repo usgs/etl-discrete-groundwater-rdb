@@ -6,14 +6,14 @@ spring:
     password: ${OBSERVATION_SCHEMA_OWNER_PASSWORD}
     hikari:
       maximum-pool-size: 2
-      auto-commit: false
+      auto-commit: true
 
 logging:
   level:
     root: ${ROOT_LOG_LEVEL}
     com.zaxxer: OFF
 
-#properties:
-#  tier: ${TIER}
-#  region: ${AWS_REGION}
-#  bucket: ${S3_BUCKET_NAME}
+properties:
+  tier: ${TIER}
+  region: ${AWS_REGION}
+  bucket: ${S3_BUCKET_NAME}

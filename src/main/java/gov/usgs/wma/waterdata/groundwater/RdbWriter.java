@@ -105,6 +105,9 @@ public class RdbWriter {
 		try {
 			// Trim the value to the proper field length.
 			String trimmedValue = value;
+			if (value == null) {
+				value = "";
+			}
 			if (value.length() > length) {
 				trimmedValue = value.substring(0, length);
 			}

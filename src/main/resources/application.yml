@@ -13,7 +13,7 @@ logging:
     root: ${ROOT_LOG_LEVEL}
     com.zaxxer: OFF
     
-#properties:
-#  tier: ${TIER}
-#  region: ${AWS_REGION}
-#  bucket: ${S3_BUCKET_NAME}
+properties:
+  tier: ${TIER}
+  region: ${AWS_REGION}
+  bucket: ${S3_BUCKET_NAME}

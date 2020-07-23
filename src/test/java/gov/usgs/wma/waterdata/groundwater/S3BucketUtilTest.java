@@ -44,7 +44,7 @@ class S3BucketUtilTest {
 
 		// ACTION UNDER TEST
 		String filename = s3util.createFilename(suffix);
-		System.out.println(filename);
+
 		// ASSERTIONS
 		assertNotNull(filename);
 		assertTrue(filename.startsWith(expectedStartWith));

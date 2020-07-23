@@ -20,7 +20,7 @@ public class DBTestConfig {
 	@Autowired
 	private DataSource dataSource;
 
-	@Value("${OBSERVATION_SCHEMA_NAME}")
+	@Value("${OBSERVATION_SCHEMA_NAME:nwis}")
 	private String schemaName;
 
 	@Bean
@@ -31,7 +31,7 @@ public class DBTestConfig {
 	@Bean
 	public DatabaseConfigBean dbUnitDatabaseConfig() {
 		DatabaseConfigBean dbUnitDbConfig = new DatabaseConfigBean();
-		//        dbUnitDbConfig.setTableType(new String[] {"PARTITIONED TABLE", "TABLE"});
+		//		dbUnitDbConfig.setTableType(new String[] {"PARTITIONED TABLE", "TABLE"});
 		dbUnitDbConfig.setAllowEmptyFields(true);
 		dbUnitDbConfig.setDatatypeFactory(new TSDataTypeFactory());
 		return dbUnitDbConfig;

@@ -41,14 +41,14 @@ public class StatePostCodeDao {
 	public String getPostCode(String state) {
 		try {
 			String sql = new String(FileCopyUtils.copyToByteArray(selectQuery.getInputStream()));
-			List<String> rows = jdbcTemplate.query(sql,
-					new RowMapper<String>() {
+			RowMapper<String> rowMapper = new RowMapper<String>() {
 				@Override
 				public String mapRow(ResultSet rs, int rowNum) throws SQLException {
 					return rs.getString("state_post_cd");
 				}
 
-			}, state);
+			};
+			List<String> rows = jdbcTemplate.query(sql, rowMapper, state);
 			if (rows.isEmpty()) {
 				return "";
 			}
