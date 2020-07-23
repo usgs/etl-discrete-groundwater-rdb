@@ -17,32 +17,32 @@ import com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean;
 @TestConfiguration
 public class DBTestConfig {
 
-    @Autowired
-    private DataSource dataSource;
+	@Autowired
+	private DataSource dataSource;
 
-    @Value("${OBSERVATION_SCHEMA_NAME}")
-    private String schemaName;
+	@Value("${OBSERVATION_SCHEMA_NAME}")
+	private String schemaName;
 
-    @Bean
-    public JdbcTemplate jdbcTemplate() {
-        return new JdbcTemplate(dataSource);
-    }
+	@Bean
+	public JdbcTemplate jdbcTemplate() {
+		return new JdbcTemplate(dataSource);
+	}
 
-    @Bean
-    public DatabaseConfigBean dbUnitDatabaseConfig() {
-        DatabaseConfigBean dbUnitDbConfig = new DatabaseConfigBean();
-//        dbUnitDbConfig.setTableType(new String[] {"PARTITIONED TABLE", "TABLE"});
-//        dbUnitDbConfig.setAllowEmptyFields(true);
-        dbUnitDbConfig.setDatatypeFactory(new TSDataTypeFactory());
-        return dbUnitDbConfig;
-    }
+	@Bean
+	public DatabaseConfigBean dbUnitDatabaseConfig() {
+		DatabaseConfigBean dbUnitDbConfig = new DatabaseConfigBean();
+		//        dbUnitDbConfig.setTableType(new String[] {"PARTITIONED TABLE", "TABLE"});
+		dbUnitDbConfig.setAllowEmptyFields(true);
+		dbUnitDbConfig.setDatatypeFactory(new TSDataTypeFactory());
+		return dbUnitDbConfig;
+	}
 
-    @Bean
-    public DatabaseDataSourceConnectionFactoryBean dbUnitDatabaseConnection() throws SQLException {
-        DatabaseDataSourceConnectionFactoryBean dbUnitDatabaseConnection = new DatabaseDataSourceConnectionFactoryBean();
-        dbUnitDatabaseConnection.setDatabaseConfig(dbUnitDatabaseConfig());
-        dbUnitDatabaseConnection.setDataSource(dataSource);
-        dbUnitDatabaseConnection.setSchema(schemaName);
-        return dbUnitDatabaseConnection;
-    }
+	@Bean
+	public DatabaseDataSourceConnectionFactoryBean dbUnitDatabaseConnection() throws SQLException {
+		DatabaseDataSourceConnectionFactoryBean dbUnitDatabaseConnection = new DatabaseDataSourceConnectionFactoryBean();
+		dbUnitDatabaseConnection.setDatabaseConfig(dbUnitDatabaseConfig());
+		dbUnitDatabaseConnection.setDataSource(dataSource);
+		dbUnitDatabaseConnection.setSchema(schemaName);
+		return dbUnitDatabaseConnection;
+	}
 }

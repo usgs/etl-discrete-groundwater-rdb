@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
 
@@ -42,7 +43,8 @@ public class DiscreteGroundWaterDao {
 
 		try {
 			String sql = new String(FileCopyUtils.copyToByteArray(selectQuery.getInputStream()));
-			jdbcTemplate.query(sql, rowMapper, Collections.singletonMap("states", states));
+			NamedParameterJdbcTemplate namedParamJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+			namedParamJdbcTemplate.query(sql, Collections.singletonMap("states", states), rowMapper);
 
 		} catch (EmptyResultDataAccessException e) {
 			LOG.info(e.getLocalizedMessage());
