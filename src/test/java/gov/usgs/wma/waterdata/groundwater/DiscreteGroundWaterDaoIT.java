@@ -1,18 +1,19 @@
 package gov.usgs.wma.waterdata.groundwater;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static java.util.stream.Collectors.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.util.StringUtils.*;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import java.util.Arrays;
-import java.util.LinkedList;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +23,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.io.Resource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
@@ -262,5 +264,17 @@ public class DiscreteGroundWaterDaoIT {
 		// no above datum and L indicator
 		String lineC = rdbLines.get("335504116544201").get(2);
 		assertTrue( Pattern.compile("^.+\t246.0\tL\t\t\t.+$").matcher(lineC).matches() );
+	}
+
+	@Test
+	public void testSendDiscreteGroundWater_handleIOE() throws Exception {
+		// SETUP
+		Resource mockSQL = Mockito.mock(Resource.class);
+		Mockito.when(mockSQL.getInputStream()).thenThrow(new IOException());
+		dao.selectQuery = mockSQL;
+
+		// ACTION UNDER TEST
+		// ASSERTION
+		assertThrows(RuntimeException.class, ()->dao.sendDiscreteGroundWater(states, writer));
 	}
 }

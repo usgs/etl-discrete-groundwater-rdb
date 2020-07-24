@@ -54,12 +54,9 @@ public class StatePostCodeDao {
 			}
 			return rows.get(0);
 
-		} catch (EmptyResultDataAccessException e) {
-			LOG.info(e.getLocalizedMessage());
 		} catch (IOException e) {
 			LOG.error("Unable to get SQL statement", e);
 			throw new RuntimeException(e);
 		}
-		return "";
 	}
 }

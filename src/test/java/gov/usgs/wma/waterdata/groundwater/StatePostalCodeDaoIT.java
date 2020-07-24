@@ -2,13 +2,17 @@ package gov.usgs.wma.waterdata.groundwater;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.IOException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.io.Resource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
@@ -52,5 +56,17 @@ public class StatePostalCodeDaoIT {
 
 		assertEquals(6, 6);
 		assertEquals("CA", actual);
+	}
+
+	@Test
+	public void testPostalCode_handleIOE() throws Exception {
+		// SETUP
+		Resource mockSQL = Mockito.mock(Resource.class);
+		Mockito.when(mockSQL.getInputStream()).thenThrow(new IOException());
+		dao.selectQuery = mockSQL;
+
+		// ACTION UNDER TEST
+		// ASSERTION
+		assertThrows(RuntimeException.class, ()->dao.getPostCode("Bad State of Things"));
 	}
 }

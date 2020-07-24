@@ -1,10 +1,6 @@
 package gov.usgs.wma.waterdata.groundwater;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.io.File;
@@ -93,6 +89,21 @@ class S3BucketTest {
 		assertTrue(lines.contains(writeThis));
 	}
 
+	@Test
+	void testAccessingWritterThrows() throws Exception {
+		// SETUP
+		// Mockito cannot call "when" on private members
+		//		File mockFile = Mockito.mock(File.class);
+		//		Mockito.when(mockFile.isInvalid()).thenReturn(false);
+
+		// file mock that will return true for isInvalid
+		File mockFile = new File("$%#@~*()+=-{}[]|\\^");
+		s3.file = mockFile;
+
+		// ACTION UNDER TEST
+		// ASSERTIONS
+		assertThrows(RuntimeException.class, ()->s3.getWriter(), "Throws runtime when file not found or writer cannot be open.");
+	}
 
 	@Test
 	void testCloseAndTransportToS3() throws Exception {
