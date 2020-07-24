@@ -94,7 +94,11 @@ public class RdbWriter {
 		writeValue( 25, dgw.timeMeasuredUtc);
 		writeValue(  1, dgw.approvalStatusCode);
 		// TODO pCode to follow after comparing the current format to existing.
-		writeValue(  1, "\n");
+		try {
+			rdb.append("\n");
+		} catch (IOException e) {
+			throw new RuntimeException("Error writing RDB row to stream.", e);
+		}
 
 		dataLineCount++;
 		return this;

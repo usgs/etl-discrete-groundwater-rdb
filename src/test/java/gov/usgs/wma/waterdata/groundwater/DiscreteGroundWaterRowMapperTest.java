@@ -100,11 +100,12 @@ class DiscreteGroundWaterRowMapperTest {
 
 		// ASSERTIONS
 		assertNotNull(writtenValue);
-		assertTrue(writtenValue.contains("\tUSGS\t"));
+		assertTrue(writtenValue.startsWith("USGS\t")); // first USGS value
+		assertTrue(writtenValue.contains("\tUSGS\t")); // second USGS value
 		assertTrue(writtenValue.contains("\t4042342342\t"));
 		assertTrue(writtenValue.contains("\t2\t"));
 		assertTrue(writtenValue.contains("\tS\t"));
-		assertTrue(writtenValue.contains("\tT\t"));
+		assertTrue(writtenValue.contains("\tT")); // last value
 		assertTrue(writtenValue.contains("\t200705"));
 		assertTrue(writtenValue.contains("\t20070501\t"));
 		assertTrue(!writtenValue.contains("\t1200\t"));

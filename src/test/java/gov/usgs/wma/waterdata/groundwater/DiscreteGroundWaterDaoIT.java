@@ -247,7 +247,6 @@ public class DiscreteGroundWaterDaoIT {
 
 		// POST SETUP
 		String outlines = out.toString();
-		//		System.out.println(outlines);
 		Map<String, List<String>> rdbLines = Arrays
 				.stream( outlines.split("\\n") )
 				.collect( groupingBy(line->line.split("\\t")[1]) );
