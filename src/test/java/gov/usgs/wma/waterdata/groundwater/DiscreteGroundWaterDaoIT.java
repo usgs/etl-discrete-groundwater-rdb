@@ -1,13 +1,15 @@
 package gov.usgs.wma.waterdata.groundwater;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static java.util.stream.Collectors.*;
+import static org.springframework.util.StringUtils.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -153,7 +155,7 @@ public class DiscreteGroundWaterDaoIT {
 		LinkedList<String> rdbLines = new LinkedList<>();
 		rdbLines.addAll(
 				Arrays.stream( out.toString().split("\\n") )
-				.collect( Collectors.toList() ));
+				.collect( toList() ));
 
 		// The rows should be ordered by state first.
 		// Texas is after California and these two Texas sites should be last.
@@ -165,4 +167,75 @@ public class DiscreteGroundWaterDaoIT {
 		String siteNoNext = rdbLines.removeLast().split("\\t")[1];
 		assertEquals("285634095174701", siteNoNext);
 	}
+	@DatabaseSetup("classpath:/testData/")
+	@Test
+	public void testSendDiscreteGroundWater_dateOrder() throws Exception {
+		// SETUP
+		final String BAD_DATE = "999999999999";
+		states = List.of("California", "Texas");
+
+		// ACTION UNDER TEST
+		dao.sendDiscreteGroundWater(states, writer);
+		writer.close();
+
+		// POST SETUP
+		String outlines = out.toString();
+
+		// this is a injection of a bad date order to ensure negative result is caught
+		//outlines = outlines.replace("19980604", "20000000");
+
+		Map<String, List<String>> rdbLines = Arrays
+				.stream( outlines.split("\\n") )
+				.collect( groupingBy(line->line.split("\\t")[1],
+						mapping(line->{
+							String cols[]=line.split("\\t");
+							return cols[2]+(isEmpty(cols[3])?"1200":cols[3]);
+						}
+						,toList())) );
+		// display stream mapped sites with datetimes
+		//		rdbLines.keySet()
+		//		.stream()
+		//		.forEach(site->{
+		//			System.out.println();
+		//			System.out.println(site);
+		//			rdbLines.get(site)
+		//			.stream()
+		//			.forEachOrdered(System.out::println);
+		//		});
+
+		// reduce datetimes list to the max date of each site
+		// checks that each date is greater or equal to the next
+		// return all 9s if out of order
+		Map<String, String> siteDateReduce = rdbLines.entrySet()
+				.stream()
+				.collect(
+						toMap(
+								Map.Entry::getKey,
+								e->e.getValue()
+								.stream()
+								.reduce("0", (last, date) -> (date.compareTo(last)>=0)?date:BAD_DATE)
+								)
+						);
+		// display results of analysis of date order
+		//		siteDateReduce.entrySet()
+		//		.stream()
+		//		.forEach(System.out::println);
+
+		// ASSERT sort
+		// The site rows should be ordered by date time.
+		// checks all sites for out of order dates by asserting not all 9s
+		for (String site : siteDateReduce.keySet()) {
+			assertNotEquals(BAD_DATE, siteDateReduce.get(site),
+					site + " site dates are out of sort order");
+		}
+		// I suspected this, assertion exceptions are not detected in stream lambdas
+		// the above loop is in the local scope while streams are another, hiding failures
+		//		siteDateReduce.entrySet()
+		//		.stream()
+		//		.forEach(e->assertNotEquals(BAD_DATE, e.getKey()));
+	}
 }
+
+//System.out.println(rdbLines.keySet());
+//System.out.println(out.toString());
+//System.out.println(rdbLines.getLast());
