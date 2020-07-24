@@ -47,7 +47,7 @@ public class RdbWriter {
 			headerLineCount = head.lines().count();
 			rdb.append(head);
 		} catch (IOException e) {
-			LOG.error("Unable to get RDB Header template", e);
+			LOG.error("Unable to get RDB Header template", e.getMessage());
 			throw new RuntimeException(e);
 		}
 		return this;

@@ -55,7 +55,7 @@ public class StatePostCodeDao {
 			return rows.get(0);
 
 		} catch (IOException e) {
-			LOG.error("Unable to get SQL statement", e);
+			LOG.error("Unable to get State Postal Code SQL statement", e.getMessage());
 			throw new RuntimeException(e);
 		}
 	}

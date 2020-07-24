@@ -1,10 +1,8 @@
 package gov.usgs.wma.waterdata.groundwater;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -13,6 +11,7 @@ import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class S3BucketUtilTest {
 
@@ -105,6 +104,14 @@ class S3BucketUtilTest {
 				s3.file.delete();
 			}
 		}
+	}
+	@Test
+	void testOpenS3File_IOE() throws Exception {
+		// SETUP
+		String filename = "!@#$%^&*()-+={}[]|";
+
+		// ACTION UNDER TEST
+		assertThrows(RuntimeException.class, ()->s3util.openS3(filename));
 	}
 
 	@Test

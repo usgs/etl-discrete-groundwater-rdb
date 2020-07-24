@@ -54,8 +54,15 @@ public class StatePostalCodeDaoIT {
 	public void testStatePostalCode() throws Exception {
 		String actual = dao.getPostCode("California");
 
-		assertEquals(6, 6);
 		assertEquals("CA", actual);
+	}
+
+	@DatabaseSetup("classpath:/testStateData/")
+	@Test
+	public void testStatePostalCode_notFound() throws Exception {
+		String actual = dao.getPostCode("Unknown State of Things");
+
+		assertEquals("", actual);
 	}
 
 	@Test

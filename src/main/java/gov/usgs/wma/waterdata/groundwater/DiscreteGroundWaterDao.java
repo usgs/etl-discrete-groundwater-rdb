@@ -49,7 +49,7 @@ public class DiscreteGroundWaterDao {
 
 			namedParamJdbcTemplate.query(sql, params, rowMapper);
 		} catch (IOException e) {
-			LOG.error("Unable to get SQL statement", e);
+			LOG.error("Unable to get Discrete Groud Water SQL statement", e.getMessage());
 			throw new RuntimeException(e);
 		}
 	}
