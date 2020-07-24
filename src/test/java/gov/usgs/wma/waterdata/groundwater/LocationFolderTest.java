@@ -28,7 +28,7 @@ class LocationFolderTest {
 		List<String> expect = List.of("Wisconsin");
 
 		// ACTION UNDER TEST
-		List<String> actual = LocationFolder.toSates("Wisconsin");
+		List<String> actual = locationFolder.toStates("Wisconsin");
 
 		// ASSERTIONS
 		assertNotNull(actual);
@@ -40,7 +40,7 @@ class LocationFolderTest {
 		List<String> expect = List.of("Maryland","Delaware","District of Columbia");
 
 		// ACTION UNDER TEST
-		List<String> actual = LocationFolder.toSates("MD-DE-DC");
+		List<String> actual = locationFolder.toStates("MD-DE-DC");
 
 		// ASSERTIONS
 		assertNotNull(actual);
@@ -52,7 +52,7 @@ class LocationFolderTest {
 		List<String> expect = List.of("Massachusetts","Rhode Island");
 
 		// ACTION UNDER TEST
-		List<String> actual = LocationFolder.toSates("MA-RI");
+		List<String> actual = locationFolder.toStates("MA-RI");
 
 		// ASSERTIONS
 		assertNotNull(actual);
@@ -64,7 +64,7 @@ class LocationFolderTest {
 		List<String> expect = List.of("New Hampshire", "Vermont");
 
 		// ACTION UNDER TEST
-		List<String> actual = LocationFolder.toSates("NH-VT");
+		List<String> actual = locationFolder.toStates("NH-VT");
 
 		// ASSERTIONS
 		assertNotNull(actual);

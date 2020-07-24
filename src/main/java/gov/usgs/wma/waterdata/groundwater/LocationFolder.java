@@ -31,7 +31,7 @@ public class LocationFolder {
 	 * @param locationFolder
 	 * @return list of state names in the given location folder
 	 */
-	public static List<String> toSates(String locationFolder) {
+	public List<String> toStates(String locationFolder) {
 		List<String> states = new ArrayList<>();
 
 		// if this changes from single use lambda to some library then pull these to static class level

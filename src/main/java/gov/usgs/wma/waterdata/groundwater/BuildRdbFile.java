@@ -1,6 +1,5 @@
 package gov.usgs.wma.waterdata.groundwater;
 
-import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 import java.util.function.Function;
@@ -20,13 +19,13 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 	private static final Logger LOG = LoggerFactory.getLogger(BuildRdbFile.class);
 
 	@Autowired
-	private S3BucketUtil s3BucketUtil;
+	protected S3BucketUtil s3BucketUtil;
 
 	@Autowired
-	private DiscreteGroundWaterDao dao;
+	protected DiscreteGroundWaterDao dao;
 
 	@Autowired
-	private LocationFolder locationFolderUtil;
+	protected LocationFolder locationFolderUtil;
 
 
 	public BuildRdbFile() {
@@ -57,7 +56,7 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 		LOG.debug("the request object location folder: {}", locationFolder);
 		ResultObject result = new ResultObject();
 
-		List<String> states = LocationFolder.toSates(locationFolder);
+		List<String> states = locationFolderUtil.toStates(locationFolder);
 
 		String suffix = locationFolderUtil.filenameDecorator(locationFolder);
 		if (StringUtils.isEmpty(suffix)) {
@@ -68,18 +67,19 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 		try (   S3Bucket s3bucket = s3BucketUtil.openS3(filename);) {
 
 			Writer writer = s3bucket.getWriter();
-			RdbWriter rdbWriter = new RdbWriter(writer).writeHeader();
+			RdbWriter rdbWriter = createRdbWriter(writer).writeHeader();
 			dao.sendDiscreteGroundWater(states, rdbWriter);
 
 			result.setCount( (int)rdbWriter.getDataRows() );
-
-		} catch (IOException e) {
-			throw new RuntimeException("Error opening S3 file stream to file, " + filename, e);
 		} catch (Exception e) {
-			throw new RuntimeException("Error processing file to S3 related to file, " + filename, e);
+			throw new RuntimeException("Error writing RDB file to S3, " + filename, e);
 		}
 
 		// currently returning the rows count written to the file
 		return result;
+	}
+
+	protected RdbWriter createRdbWriter(Writer dest) {
+		return new RdbWriter(dest);
 	}
 }
