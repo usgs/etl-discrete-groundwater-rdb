@@ -7,7 +7,6 @@ import java.io.Writer;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 
 /**
  * Manager class for S3 Bucket actions.

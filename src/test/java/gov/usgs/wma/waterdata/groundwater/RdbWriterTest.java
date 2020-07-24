@@ -1,14 +1,11 @@
 package gov.usgs.wma.waterdata.groundwater;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.hamcrest.CoreMatchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;

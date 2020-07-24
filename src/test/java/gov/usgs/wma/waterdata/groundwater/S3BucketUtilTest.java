@@ -2,7 +2,6 @@ package gov.usgs.wma.waterdata.groundwater;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -11,7 +10,6 @@ import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 class S3BucketUtilTest {
 
