@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -161,7 +162,7 @@ public class DiscreteGroundWaterDaoIT {
 		// Texas is after California and these two Texas sites should be last.
 		// and the order of the sites should be ordered secondarily.
 
-		// ASSERT sort
+		// ASSERT state sort
 		String siteNoLast = rdbLines.removeLast().split("\\t")[1];
 		assertEquals("285634095344401", siteNoLast);
 		String siteNoNext = rdbLines.removeLast().split("\\t")[1];
@@ -221,7 +222,7 @@ public class DiscreteGroundWaterDaoIT {
 		//		.stream()
 		//		.forEach(System.out::println);
 
-		// ASSERT sort
+		// ASSERT date sort
 		// The site rows should be ordered by date time.
 		// checks all sites for out of order dates by asserting not all 9s
 		for (String site : siteDateReduce.keySet()) {
@@ -234,8 +235,33 @@ public class DiscreteGroundWaterDaoIT {
 		//		.stream()
 		//		.forEach(e->assertNotEquals(BAD_DATE, e.getKey()));
 	}
-}
+	@DatabaseSetup("classpath:/testData/")
+	@Test
+	public void testSendDiscreteGroundWater_byLandOrBySea() throws Exception {
+		// SETUP
+		states = List.of("California", "Texas");
 
-//System.out.println(rdbLines.keySet());
-//System.out.println(out.toString());
-//System.out.println(rdbLines.getLast());
+		// ACTION UNDER TEST
+		dao.sendDiscreteGroundWater(states, writer);
+		writer.close();
+
+		// POST SETUP
+		String outlines = out.toString();
+		//		System.out.println(outlines);
+		Map<String, List<String>> rdbLines = Arrays
+				.stream( outlines.split("\\n") )
+				.collect( groupingBy(line->line.split("\\t")[1]) );
+
+		// ASSERT measure direction
+
+		// no below land and S indicator
+		String lineA = rdbLines.get("335504116544201").get(0);
+		assertTrue( Pattern.compile("^.+\t\t\tS\tNGVD29\t2180\t.+$").matcher(lineA).matches() );
+		String lineB = rdbLines.get("335504116544201").get(1);
+		assertTrue( Pattern.compile("^.+\t\t\tS\tNGVD29\t2184\t.+$").matcher(lineB).matches() );
+
+		// no above datum and L indicator
+		String lineC = rdbLines.get("335504116544201").get(2);
+		assertTrue( Pattern.compile("^.+\t246.0\tL\t\t\t.+$").matcher(lineC).matches() );
+	}
+}
