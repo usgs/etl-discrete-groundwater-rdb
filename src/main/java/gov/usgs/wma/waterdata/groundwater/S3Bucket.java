@@ -41,10 +41,6 @@ public class S3Bucket implements AutoCloseable {
 			AmazonS3 s3 = buildS3();
 			s3.putObject(bucket, keyName, file);
 
-			// this seem to be old API but again the array buffer would be in memory
-			//s3.putObject(PutObjectRequest.builder().bucket(bucket).key(keyName).build(),
-			//RequestBody.fromByteBuffer(getRandomByteBuffer(10_000)));
-
 			// this is not a stream, it is all in memory
 			//s3.putObject(bucket, keyName, "content");
 		} finally {
