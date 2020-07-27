@@ -80,8 +80,6 @@ class DiscreteGroundWaterRowMapperTest {
 
 		dgw.parameterCode = "NOT IMPL YET";
 
-		//07-MAY-2007 18:30:47	01-MAY-2007 12:00:00
-
 		return dgw;
 	}
 
@@ -95,7 +93,7 @@ class DiscreteGroundWaterRowMapperTest {
 		String written = rowHandler.mapRow(mrs, 1);
 
 		// POST SETUP
-		rdbWriter.close();
+		dest.close();
 		String writtenValue = out.toString();
 
 		// ASSERTIONS

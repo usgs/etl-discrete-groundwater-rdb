@@ -78,7 +78,9 @@ public class DiscreteGroundWaterDaoIT {
 
 		// ACTION UNDER TEST
 		dao.sendDiscreteGroundWater(states, writer);
-		writer.close();
+
+		// POST SETUP
+		dest.close();
 
 		// ASSERT closed
 		Mockito.verify(out, Mockito.atLeastOnce()).close();
@@ -89,7 +91,9 @@ public class DiscreteGroundWaterDaoIT {
 	public void testSendDiscreteGroundWater_rowCount_single_California() throws Exception {
 		// ACTION UNDER TEST
 		dao.sendDiscreteGroundWater(states, writer);
-		writer.close();
+
+		// POST SETUP
+		dest.close();
 
 		// ASSERT row count
 		assertEquals(14, writer.getDataRows());
@@ -102,7 +106,9 @@ public class DiscreteGroundWaterDaoIT {
 
 		// ACTION UNDER TEST
 		dao.sendDiscreteGroundWater(states, writer);
-		writer.close();
+
+		// POST SETUP
+		dest.close();
 
 		// ASSERT row count
 		assertEquals(2, writer.getDataRows());
@@ -115,7 +121,9 @@ public class DiscreteGroundWaterDaoIT {
 
 		// ACTION UNDER TEST
 		dao.sendDiscreteGroundWater(states, writer);
-		writer.close();
+
+		// POST SETUP
+		dest.close();
 
 		// ASSERT row count
 		assertEquals(16, writer.getDataRows());
@@ -128,7 +136,9 @@ public class DiscreteGroundWaterDaoIT {
 
 		// ACTION UNDER TEST
 		dao.sendDiscreteGroundWater(states, writer);
-		writer.close();
+
+		// POST SETUP
+		dest.close();
 
 		// POST SETUP
 		LinkedList<String> rdbLines = new LinkedList<>();
@@ -155,7 +165,9 @@ public class DiscreteGroundWaterDaoIT {
 
 		// ACTION UNDER TEST
 		dao.sendDiscreteGroundWater(states, writer);
-		writer.close();
+
+		// POST SETUP
+		dest.close();
 
 		// POST SETUP
 		String outlines = out.toString();
@@ -207,9 +219,10 @@ public class DiscreteGroundWaterDaoIT {
 			assertNotEquals(BAD_DATE, siteDateReduce.get(site),
 					site + " site dates are out of sort order");
 		}
-		// I suspected this, assertion exceptions are not detected in stream lambdas
-		// the above loop is in the local scope while streams are another, hiding failures
-		//		siteDateReduce.entrySet()
+		// I suspected this and was watching for it, assertion exceptions are
+		// not detected in stream lambdas. The above loop is in the local scope
+		// while streams are another. It hides failures.
+		// siteDateReduce.entrySet()
 		//		.stream()
 		//		.forEach(e->assertNotEquals(BAD_DATE, e.getKey()));
 	}
@@ -221,9 +234,9 @@ public class DiscreteGroundWaterDaoIT {
 
 		// ACTION UNDER TEST
 		dao.sendDiscreteGroundWater(states, writer);
-		writer.close();
 
 		// POST SETUP
+		dest.close();
 		String outlines = out.toString();
 		Map<String, List<String>> rdbLines = Arrays
 				.stream( outlines.split("\\n") )

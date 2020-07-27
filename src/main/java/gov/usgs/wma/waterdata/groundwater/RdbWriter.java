@@ -86,7 +86,7 @@ public class RdbWriter {
 		writeValue(  1, dgw.levelAccuracyCode);
 		writeValue(  1, dgw.siteStatusCode);
 		writeValue(  1, dgw.measurementMethodCode);
-		//writeValue( 25, dgw.createdDate); // omitted, loader no longer references
+		// omitting date created, loader no longer references either
 		writeValue( 25, dgw.dateMeasured);
 		writeValue( 25, new SimpleDateFormat("dd-MMM-YYYY HH:mm:ss").format(dgw.dateMeasuredRaw).toUpperCase());
 		writeValue(  1, dgw.dateTimeAccuracyCode);
@@ -124,25 +124,6 @@ public class RdbWriter {
 			rdb.append(sepChar).append(trimmedValue);
 		} catch (IOException e) {
 			throw new RuntimeException("Error writing RDB row to stream.", e);
-		}
-		return this;
-	}
-
-	public RdbWriter flush() {
-		try {
-			rdb.flush();
-		} catch (IOException e) {
-			// do not care about flush exceptions
-		}
-		return this;
-	}
-
-	public RdbWriter close() {
-		try {
-			flush();
-			rdb.close();
-		} catch (IOException e) {
-			// do not care about close exceptions
 		}
 		return this;
 	}

@@ -91,11 +91,14 @@ class S3BucketUtilTest {
 			assertEquals(properties.region, s3.region);
 			assertEquals(filename, s3.keyName);
 			assertNotNull(s3.file);
+
 			String tmpPath = s3.file.getAbsolutePath().toLowerCase();
 			assertTrue(tmpPath.contains("tmp") || tmpPath.contains("temp"));
 
-			assertEquals(true, s3.disposeFile); // default state is to dispose of the tmp file
-			assertNull(s3.writer); // initial state is without a writer
+			// default state is to dispose of the tmp file
+			assertEquals(true, s3.disposeFile);
+			// initial state is without a writer
+			assertNull(s3.writer);
 		} finally {
 			// CLEANUP
 			if (s3.file != null) {

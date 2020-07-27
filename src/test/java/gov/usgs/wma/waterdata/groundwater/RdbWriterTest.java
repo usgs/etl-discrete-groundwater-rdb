@@ -19,11 +19,13 @@ class RdbWriterTest {
 
 	ByteArrayOutputStream out;
 	Writer dest;
+	MockRdbWriter rdbWriter;
 
 	@BeforeEach
 	public void setup() {
 		out = new ByteArrayOutputStream();
 		dest = new OutputStreamWriter(out);
+		rdbWriter = new MockRdbWriter(dest);
 	}
 
 	DiscreteGroundWater makeDgw() {
@@ -51,8 +53,6 @@ class RdbWriterTest {
 
 		dgw.parameterCode = "NOT IMPL YET";
 
-		//07-MAY-2007 18:30:47	01-MAY-2007 12:00:00
-
 		return dgw;
 	}
 
@@ -61,9 +61,10 @@ class RdbWriterTest {
 		String givenValue = "valuePlusMore";
 
 		// ACTION UNDER TEST
-		new RdbWriter(dest).writeValue(5, givenValue).close();
+		rdbWriter.writeValue(5, givenValue);
 
 		// POST SETUP
+		rdbWriter.close();
 		String writtenValue = out.toString();
 
 		// ASSERTIONS
@@ -76,9 +77,10 @@ class RdbWriterTest {
 		String givenValue = "value";
 
 		// ACTION UNDER TEST
-		new RdbWriter(dest).writeValue(15, givenValue).close();
+		rdbWriter.writeValue(15, givenValue);
 
 		// POST SETUP
+		rdbWriter.close();
 		String writtenValue = out.toString();
 
 		// ASSERTIONS
@@ -89,9 +91,10 @@ class RdbWriterTest {
 	@Test
 	void testHeaderWriten() throws Exception {
 		// ACTION UNDER TEST
-		long count = new RdbWriter(dest).writeHeader().close().getHeaderRows();
+		rdbWriter.writeHeader();
 
 		// POST SETUP
+		long count = rdbWriter.close().getHeaderRows();
 		String writtenValue = out.toString();
 
 		// ASSERTIONS
@@ -111,9 +114,10 @@ class RdbWriterTest {
 		DiscreteGroundWater dgw = makeDgw();
 
 		// ACTION UNDER TEST
-		long count = new RdbWriter(dest).writeRow(dgw).close().getDataRows();
+		rdbWriter.writeRow(dgw);
 
 		// POST SETUP
+		long count = rdbWriter.close().getDataRows();
 		String writtenValue = out.toString();
 
 		// ASSERTIONS
@@ -141,9 +145,10 @@ class RdbWriterTest {
 		DiscreteGroundWater dgw = makeDgw();
 
 		// ACTION UNDER TEST
-		new RdbWriter(dest).writeRow(dgw).flush();
+		rdbWriter.writeRow(dgw);
 
 		// POST SETUP
+		rdbWriter.close();
 		String writtenValue = out.toString();
 
 		// ASSERTIONS
@@ -160,9 +165,10 @@ class RdbWriterTest {
 		dgw.levelFeetAboveVerticalDatum = "430.23";
 
 		// ACTION UNDER TEST
-		new RdbWriter(dest).writeRow(dgw).flush();
+		rdbWriter.writeRow(dgw);
 
 		// POST SETUP
+		rdbWriter.close();
 		String writtenValue = out.toString();
 
 		// ASSERTIONS
@@ -207,9 +213,10 @@ class RdbWriterTest {
 				return this;
 			}
 		};
-		//		Writer mockWriter = Mockito.mock(Writer.class);
-		//		Mockito.when(mockWriter.append("\n")).thenThrow(new IOException());
-		//		Mockito.when(mockWriter.append(Mockito.any(CharSequence.class))).thenReturn(mockWriter);
+		// This mock action failed to produce an exception for testing
+		// Writer mockWriter = Mockito.mock(Writer.class);
+		// Mockito.when(mockWriter.append("\n")).thenThrow(new IOException());
+		// Mockito.when(mockWriter.append(Mockito.any(CharSequence.class))).thenReturn(mockWriter);
 		RdbWriter rdbWriter = new RdbWriter(dest);
 		rdbWriter.rdb = mockWriter;
 		DiscreteGroundWater dgw = makeDgw();
@@ -217,5 +224,33 @@ class RdbWriterTest {
 		// ACTION UNDER TEST
 		// ASSERTIONS
 		assertThrows(RuntimeException.class, ()->rdbWriter.writeRow(dgw));
+	}
+
+	// Helper class to manage closing the Writer.
+	// These methods used to be located in the superclass.
+	// They were added only for testing and thus moved here.
+	class MockRdbWriter extends RdbWriter {
+		public MockRdbWriter(Writer dest) {
+			super(dest);
+		}
+
+		protected MockRdbWriter flush() {
+			try {
+				rdb.flush();
+			} catch (IOException e) {
+				// do not care about flush exceptions
+			}
+			return this;
+		}
+
+		protected MockRdbWriter close() {
+			try {
+				flush();
+				rdb.close();
+			} catch (IOException e) {
+				// do not care about close exceptions
+			}
+			return this;
+		}
 	}
 }
