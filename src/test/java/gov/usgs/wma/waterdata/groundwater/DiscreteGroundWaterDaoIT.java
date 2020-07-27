@@ -68,30 +68,6 @@ public class DiscreteGroundWaterDaoIT {
 		writer = new RdbWriter(dest);
 	}
 
-	/*
-
-
-	TODO BuildRdbFile closes the out not the DAO
-
-	@DatabaseSetup("classpath:/testData/")
-	@Test
-	public void testSendDiscreteGroundWater() throws Exception {
-
-		out = Mockito.mock(ByteArrayOutputStream.class);
-		dest = new OutputStreamWriter(out);
-		writer = new RdbWriter(dest);
-
-		// get new data, return list of discrete gw objects
-		dao.sendDiscreteGroundWater(states, writer);
-
-		Mockito.verify(out, Mockito.atLeastOnce()).close();
-	}
-
-
-	TODO also the DAO does not write the header
-	assertEquals(4, writer.getHeaderRows());
-
-	 */
 	@DatabaseSetup("classpath:/testData/")
 	@Test
 	public void testSendDiscreteGroundWater_close() throws Exception {

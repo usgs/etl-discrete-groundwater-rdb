@@ -64,7 +64,7 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 		}
 		String filename = s3BucketUtil.createFilename(suffix);
 
-		try (   S3Bucket s3bucket = s3BucketUtil.openS3(filename);) {
+		try (S3Bucket s3bucket = s3BucketUtil.openS3(filename);) {
 
 			Writer writer = s3bucket.getWriter();
 			RdbWriter rdbWriter = createRdbWriter(writer).writeHeader();

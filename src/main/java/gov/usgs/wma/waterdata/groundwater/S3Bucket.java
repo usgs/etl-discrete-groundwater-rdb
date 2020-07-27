@@ -2,7 +2,6 @@ package gov.usgs.wma.waterdata.groundwater;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -10,6 +9,7 @@ import java.util.zip.GZIPOutputStream;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.PutObjectResult;
 
 /**
  * Manager class for S3 Bucket actions.
@@ -31,29 +31,35 @@ public class S3Bucket implements AutoCloseable {
 		this.file = file;
 	}
 
-	protected AmazonS3 buildS3() {
-		AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(region).build();
-		return s3;
-	}
-
 	@Override
 	public void close() throws Exception {
 		try {
 			writer.close();
-			AmazonS3 s3 = buildS3();
-			s3.putObject(bucket, keyName, file);
-
-			// this is not a stream, it is all in memory
-			//s3.putObject(bucket, keyName, "content");
+			sendS3();
 		} finally {
-			if (disposeFile) {
+			if (isDisposeFile()) {
 				file.delete();
 			}
 		}
 	}
 
+	protected AmazonS3 buildS3() {
+		AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(region).build();
+		return s3;
+	}
+	protected PutObjectResult sendS3() {
+		AmazonS3 s3 = buildS3();
+		return s3.putObject(bucket, keyName, file);
+
+		// this is not a stream, it is all in memory
+		// s3.putObject(bucket, keyName, "content");
+	}
+
 	public void setDisposeFile(boolean disposeFile) {
 		this.disposeFile = disposeFile;
+	}
+	public boolean isDisposeFile() {
+		return disposeFile;
 	}
 
 	public Writer getWriter() {

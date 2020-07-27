@@ -25,13 +25,30 @@ class BuildRdbFileTest {
 	RequestObject req;
 	List<String> stateAsList;
 
+	boolean outStreamClosed;
+	boolean dstWriterClosed;
+
 	@BeforeEach
 	public void beforeEach() {
 		req = new RequestObject();
 		req.locationFolder = STATE;
 		stateAsList = List.of(STATE);
-		out = new ByteArrayOutputStream();
-		dest = new OutputStreamWriter(out);
+		outStreamClosed = false;
+		out = new ByteArrayOutputStream() {
+			@Override
+			public void close() throws IOException {
+				outStreamClosed = true;
+				super.close();
+			}
+		};
+		dstWriterClosed = false;
+		dest = new OutputStreamWriter(out) {
+			@Override
+			public void close() throws IOException {
+				dstWriterClosed = true;
+				super.close();
+			}
+		};
 		writer = new RdbWriter(dest) {
 			@Override
 			public long getDataRows() {
@@ -41,15 +58,17 @@ class BuildRdbFileTest {
 	}
 
 	@Test
-	void testHappyPath() {
+	void testHappyPath() throws Exception {
 		// SETUP
-
 		S3Bucket mockS3b = Mockito.mock(S3Bucket.class);
+		mockS3b.writer = dest;
 		Mockito.when(mockS3b.getWriter()).thenReturn(dest);
+		Mockito.doCallRealMethod().when(mockS3b).close();
+		Mockito.when(mockS3b.sendS3()).thenReturn(null);
 
-		S3BucketUtil mockS3 = Mockito.mock(S3BucketUtil.class);
-		Mockito.when(mockS3.createFilename(POSTCD)).thenReturn(FILENM);
-		Mockito.when(mockS3.openS3(FILENM)).thenReturn(mockS3b);
+		S3BucketUtil mockS3u = Mockito.mock(S3BucketUtil.class);
+		Mockito.when(mockS3u.createFilename(POSTCD)).thenReturn(FILENM);
+		Mockito.when(mockS3u.openS3(FILENM)).thenReturn(mockS3b);
 
 		DiscreteGroundWaterDao mockDao = Mockito.mock(DiscreteGroundWaterDao.class);
 
@@ -67,7 +86,7 @@ class BuildRdbFileTest {
 			}
 		};
 		builder.dao = mockDao;
-		builder.s3BucketUtil = mockS3;
+		builder.s3BucketUtil = mockS3u;
 		builder.locationFolderUtil = mockLoc;
 
 		// ACTION UNDER TEST
@@ -78,22 +97,26 @@ class BuildRdbFileTest {
 		assertEquals(6, res.getCount(), "The result object should contain the number of rows written.");
 		Mockito.verify(mockDao, Mockito.atLeastOnce()).sendDiscreteGroundWater(stateAsList, writer);
 		Mockito.verify(mockS3b, Mockito.atLeastOnce()).getWriter();
-		Mockito.verify(mockS3,  Mockito.atLeastOnce()).createFilename(POSTCD);
-		Mockito.verify(mockS3,  Mockito.atLeastOnce()).openS3(FILENM);
+		Mockito.verify(mockS3b, Mockito.atMostOnce()).getWriter();
+		Mockito.verify(mockS3b, Mockito.atLeastOnce()).close();
+		Mockito.verify(mockS3u, Mockito.atLeastOnce()).createFilename(POSTCD);
+		Mockito.verify(mockS3u, Mockito.atLeastOnce()).openS3(FILENM);
 		Mockito.verify(mockLoc, Mockito.atLeastOnce()).toStates(STATE);
 		Mockito.verify(mockLoc, Mockito.atLeastOnce()).filenameDecorator(STATE);
+		assertTrue(dstWriterClosed);
+		assertTrue(outStreamClosed);
 	}
 
 	@Test
-	void testBadLocationFolder() {
+	void testBadLocationFolder() throws Exception {
 		// SETUP
 
 		S3Bucket mockS3b = Mockito.mock(S3Bucket.class);
 		Mockito.when(mockS3b.getWriter()).thenReturn(dest);
 
-		S3BucketUtil mockS3 = Mockito.mock(S3BucketUtil.class);
-		Mockito.when(mockS3.createFilename(POSTCD)).thenReturn(FILENM);
-		Mockito.when(mockS3.openS3(FILENM)).thenReturn(mockS3b);
+		S3BucketUtil mockS3u = Mockito.mock(S3BucketUtil.class);
+		Mockito.when(mockS3u.createFilename(POSTCD)).thenReturn(FILENM);
+		Mockito.when(mockS3u.openS3(FILENM)).thenReturn(mockS3b);
 
 		DiscreteGroundWaterDao mockDao = Mockito.mock(DiscreteGroundWaterDao.class);
 
@@ -111,7 +134,7 @@ class BuildRdbFileTest {
 			}
 		};
 		builder.dao = mockDao;
-		builder.s3BucketUtil = mockS3;
+		builder.s3BucketUtil = mockS3u;
 		builder.locationFolderUtil = mockLoc;
 
 		// ACTION UNDER TEST
@@ -121,22 +144,27 @@ class BuildRdbFileTest {
 		assertEquals(0, writer.getHeaderRows(), "The header should NOT be written in the RDB file builder for bad location folder.");
 		Mockito.verify(mockDao, Mockito.never()).sendDiscreteGroundWater(stateAsList, writer);
 		Mockito.verify(mockS3b, Mockito.never()).getWriter();
-		Mockito.verify(mockS3,  Mockito.never()).createFilename(POSTCD);
-		Mockito.verify(mockS3,  Mockito.never()).openS3(FILENM);
+		Mockito.verify(mockS3b, Mockito.never()).close();
+		Mockito.verify(mockS3u, Mockito.never()).createFilename(POSTCD);
+		Mockito.verify(mockS3u, Mockito.never()).openS3(FILENM);
 		Mockito.verify(mockLoc, Mockito.atLeastOnce()).toStates(STATE);
 		Mockito.verify(mockLoc, Mockito.atLeastOnce()).filenameDecorator(STATE);
+		assertFalse(outStreamClosed);
+		assertFalse(dstWriterClosed);
 	}
 
 	@Test
-	void testIOException() {
+	void testIOException() throws Exception {
 		// SETUP
 
 		S3Bucket mockS3b = Mockito.mock(S3Bucket.class);
+		mockS3b.writer = dest;
 		Mockito.when(mockS3b.getWriter()).thenReturn(dest);
+		Mockito.doCallRealMethod().when(mockS3b).close();
 
-		S3BucketUtil mockS3 = Mockito.mock(S3BucketUtil.class);
-		Mockito.when(mockS3.createFilename(POSTCD)).thenReturn(FILENM);
-		Mockito.when(mockS3.openS3(FILENM)).thenReturn(mockS3b);
+		S3BucketUtil mockS3u = Mockito.mock(S3BucketUtil.class);
+		Mockito.when(mockS3u.createFilename(POSTCD)).thenReturn(FILENM);
+		Mockito.when(mockS3u.openS3(FILENM)).thenReturn(mockS3b);
 
 		DiscreteGroundWaterDao mockDao = Mockito.mock(DiscreteGroundWaterDao.class);
 
@@ -153,7 +181,7 @@ class BuildRdbFileTest {
 			}
 		};
 		builder.dao = mockDao;
-		builder.s3BucketUtil = mockS3;
+		builder.s3BucketUtil = mockS3u;
 		builder.locationFolderUtil = mockLoc;
 
 		// ACTION UNDER TEST
@@ -164,8 +192,12 @@ class BuildRdbFileTest {
 		Mockito.verify(mockLoc, Mockito.atLeastOnce()).toStates(STATE);
 		Mockito.verify(mockLoc, Mockito.atLeastOnce()).filenameDecorator(STATE);
 		Mockito.verify(mockS3b, Mockito.atLeastOnce()).getWriter();
-		Mockito.verify(mockS3,  Mockito.atLeastOnce()).createFilename(POSTCD);
-		Mockito.verify(mockS3,  Mockito.atLeastOnce()).openS3(FILENM);
+		Mockito.verify(mockS3b, Mockito.atMostOnce()).getWriter();
+		Mockito.verify(mockS3b, Mockito.atLeastOnce()).close();
+		Mockito.verify(mockS3u, Mockito.atLeastOnce()).createFilename(POSTCD);
+		Mockito.verify(mockS3u, Mockito.atLeastOnce()).openS3(FILENM);
 		Mockito.verify(mockDao, Mockito.never()).sendDiscreteGroundWater(stateAsList, writer);
+		assertTrue(outStreamClosed);
+		assertTrue(dstWriterClosed);
 	}
 }

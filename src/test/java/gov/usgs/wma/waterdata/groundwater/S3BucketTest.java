@@ -9,9 +9,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Writer;
-import java.nio.file.Files;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
@@ -107,8 +105,8 @@ class S3BucketTest {
 	void testAccessingWritterThrows() throws Exception {
 		// SETUP
 		// Mockito cannot call "when" on private members
-		//		File mockFile = Mockito.mock(File.class);
-		//		Mockito.when(mockFile.isInvalid()).thenReturn(false);
+		// File mockFile = Mockito.mock(File.class);
+		// Mockito.when(mockFile.isInvalid()).thenReturn(false);
 
 		// file mock that will return true for isInvalid
 		File mockFile = new File("$%#@~*()+=-{}[]|\\^");
@@ -131,7 +129,6 @@ class S3BucketTest {
 				AmazonS3 mocks3 = Mockito.mock(AmazonS3.class);
 				mockResult.setETag("MOCK-RAN");
 				when(mocks3.putObject(bucket, keyName, file)).thenReturn(mockResult);
-				//				putObject(bucket, keyName, file);
 				return mocks3;
 			}
 		};
