@@ -104,7 +104,7 @@ class S3BucketTest {
 		}
 	}
 
-	@Test
+	// this test does not throw an IOE on *nix, only Windows.
 	void testAccessingWritterThrows() throws Exception {
 		// SETUP
 		// Mockito cannot call "when" on private members

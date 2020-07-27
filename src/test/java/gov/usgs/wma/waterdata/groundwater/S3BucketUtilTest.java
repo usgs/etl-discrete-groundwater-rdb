@@ -106,7 +106,8 @@ class S3BucketUtilTest {
 			}
 		}
 	}
-	@Test
+
+	// this test does not throw an IOE on *nix, only Windows.
 	void testOpenS3File_IOE() throws Exception {
 		// SETUP
 		String filename = "!@#$%^&*()-+={}[]|";
