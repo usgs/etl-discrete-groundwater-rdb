@@ -20,7 +20,7 @@ public class DBTestConfig {
 	@Autowired
 	private DataSource dataSource;
 
-	@Value("${OBSERVATION_SCHEMA_NAME:nwis}")
+	@Value("${OBSERVATION_SCHEMA_NAME}")
 	private String schemaName;
 
 	@Bean

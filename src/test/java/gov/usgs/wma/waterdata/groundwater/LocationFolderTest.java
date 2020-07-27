@@ -136,6 +136,4 @@ class LocationFolderTest {
 		assertNotNull(actual);
 		assertEquals(expect, actual);
 	}
-
-
 }

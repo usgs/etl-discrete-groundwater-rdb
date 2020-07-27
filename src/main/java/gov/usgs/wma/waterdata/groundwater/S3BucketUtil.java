@@ -27,9 +27,7 @@ public class S3BucketUtil {
 	 * Simple helper method to construct an RDB filename.
 	 * Sample file name: nwisca.gw_lev_01.06.20200715_030500.full.rdb
 	 *
-	 * @param tier     deploy tier name. I.E. ts for test, qa for quality assurance, etc.
-	 * @param suffix   a label for the current file, typically the postal code name for the location folder.
-	 * @param metadata a date or data count number to identify this file from future files.
+	 * @param suffix a label for the current file, typically the postal code name for the location folder.
 	 * @return a file name for an RDB file.
 	 */
 	public String createFilename(String suffix) {

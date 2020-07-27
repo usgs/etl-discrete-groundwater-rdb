@@ -1,7 +1,9 @@
 package gov.usgs.wma.waterdata.groundwater;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
 @ConfigurationProperties(prefix="properties")
 public class Properties {
 	String tier;

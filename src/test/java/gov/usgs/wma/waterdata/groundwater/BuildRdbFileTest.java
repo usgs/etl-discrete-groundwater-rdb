@@ -34,6 +34,7 @@ class BuildRdbFileTest {
 		req.locationFolder = STATE;
 		stateAsList = List.of(STATE);
 		outStreamClosed = false;
+
 		out = new ByteArrayOutputStream() {
 			@Override
 			public void close() throws IOException {
@@ -41,7 +42,9 @@ class BuildRdbFileTest {
 				super.close();
 			}
 		};
+
 		dstWriterClosed = false;
+
 		dest = new OutputStreamWriter(out) {
 			@Override
 			public void close() throws IOException {
@@ -49,6 +52,7 @@ class BuildRdbFileTest {
 				super.close();
 			}
 		};
+
 		writer = new RdbWriter(dest) {
 			@Override
 			public long getDataRows() {
