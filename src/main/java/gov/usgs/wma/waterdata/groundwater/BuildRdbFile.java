@@ -49,8 +49,8 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 	 * Translates the location folder into a file decorator.
 	 * Fetches the GW Data and writes it to an S3 Bucket file.
 	 *
-	 * @param request an AQTS location folder
-	 * @return TBD (writes file to S3 Bucket)
+	 * @param locationFolder an AQTS location folder
+	 * @return result number of rows written to RDB file
 	 */
 	protected ResultObject processRequest(String locationFolder) {
 		LOG.debug("the request object location folder: {}", locationFolder);

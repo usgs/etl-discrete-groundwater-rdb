@@ -7,7 +7,7 @@ provider:
   runtime: java11
   memorySize: 768
   timeout: 60
-  logRetentionInDays: 30
+  logRetentionInDays: 90
   deploymentBucket:
     name: iow-cloud-applications
   stackTags:
@@ -32,6 +32,12 @@ functions:
   loadRdb:
     handler: gov.usgs.wma.waterdata.groundwater.BuildRdbFile
     role: arn:aws:iam::${self:custom.accountNumber}:role/csr-Lambda-Role
+    events:
+      - schedule:
+          name: etl-discrete-groundwater-rdb-${self:provider.stage}-event
+          description: "Schedule event to generate RDB file by invoking etl-discrete-groundwater-rdb lambda"
+          rate: cron(0 0 1 * ? *)
+          enabled: true
     environment:
       FUNCTION_NAME: loadRdb
       AWS_DEPLOYMENT_REGION: ${self:provider.region}
@@ -42,7 +48,7 @@ functions:
       OBSERVATION_SCHEMA_OWNER_USERNAME: ${self:custom.observationDb.connectInfo.NWIS_SCHEMA_OWNER_USERNAME}
       OBSERVATION_SCHEMA_OWNER_PASSWORD: ${self:custom.observationDb.connectInfo.NWIS_SCHEMA_OWNER_PASSWORD}
       ROOT_LOG_LEVEL: INFO
-      TIER: ${opt:stage, 'TEST'}
+      TIER: ${self:provider.stage}
       S3_BUCKET_NAME: ${self:custom.bucketName}
       AWS_REGION: ${self:provider.region}
     vpc: ${self:custom.vpc}

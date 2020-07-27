@@ -1,6 +1,5 @@
 package gov.usgs.wma.waterdata.groundwater;
 
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 

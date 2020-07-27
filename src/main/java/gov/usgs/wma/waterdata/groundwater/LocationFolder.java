@@ -23,7 +23,7 @@ public class LocationFolder {
 	}
 
 	/**
-	 * Converters an AQTS location folder to a collection of states. Most location folders
+	 * Converts an AQTS location folder to a collection of states. Most location folders
 	 * map to state names; however, there are a few that are not state names and contain a
 	 * collection of states. This returns the list for multiple states in a location folder
 	 * or the location folder as the singular entry as default.
