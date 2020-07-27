@@ -42,9 +42,9 @@ public class S3BucketUtil {
 		String metadata = new SimpleDateFormat("YYYYMMdd_HHmmss")
 				.format(Timestamp.valueOf(LocalDateTime.now()));
 
-		// .rdb added in temp file create
+		// .gz added in temp file create
 		// ts is not joined with a dot while all the others are joined by a dot
-		return "ts" + String.join(".", tier, suffix.toUpperCase(), "gw_lev_01.06", metadata, "full");
+		return "ts" + String.join(".", tier, suffix.toUpperCase(), "gw_lev_01.06", metadata, "full.rdb");
 	}
 
 	/**
@@ -54,7 +54,7 @@ public class S3BucketUtil {
 	 */
 	public S3Bucket openS3(String filename) {
 		try {
-			File tempFile = File.createTempFile(filename, ".rdb");
+			File tempFile = File.createTempFile(filename, ".gz");
 			return new S3Bucket(properties.getRegion(), properties.getBucket(), filename, tempFile);
 		} catch (IOException e) {
 			throw new RuntimeException("Cannot open temp file from the current runtime env.");

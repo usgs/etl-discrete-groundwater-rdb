@@ -18,7 +18,7 @@ class S3BucketUtilTest {
 	String suffix;
 	String metadata;
 
-	Pattern fileTimestamp = Pattern.compile("^ts\\w{2,4}.WI\\.gw_lev_01\\.06\\.\\d{8}_\\d{6}\\.full$");
+	Pattern fileTimestamp = Pattern.compile("^ts\\w{2,4}.WI\\.gw_lev_01\\.06\\.\\d{8}_\\d{6}\\.full.rdb$");
 
 	@BeforeEach
 	public void setup() {

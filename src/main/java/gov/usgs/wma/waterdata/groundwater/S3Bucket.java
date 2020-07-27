@@ -1,9 +1,12 @@
 package gov.usgs.wma.waterdata.groundwater;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.zip.GZIPOutputStream;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
@@ -18,7 +21,7 @@ public class S3Bucket implements AutoCloseable {
 	protected String bucket;
 	protected String keyName;
 	protected File file;
-	protected FileWriter writer;
+	protected Writer writer;
 	protected boolean disposeFile = true;
 
 	S3Bucket(String region, String bucket, String keyName, File file) {
@@ -55,7 +58,9 @@ public class S3Bucket implements AutoCloseable {
 
 	public Writer getWriter() {
 		try {
-			writer = new FileWriter(file);
+			FileOutputStream fos = new FileOutputStream(file);
+			GZIPOutputStream gzo = new GZIPOutputStream(fos);
+			writer = new OutputStreamWriter(gzo);
 			return writer;
 		} catch (IOException ioe) {
 			throw new RuntimeException("Cannot open temp file from the current runtime env.");

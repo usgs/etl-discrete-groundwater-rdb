@@ -3,10 +3,17 @@ package gov.usgs.wma.waterdata.groundwater;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -83,10 +90,17 @@ class S3BucketTest {
 		writer.write(writeThis);
 		writer.close();
 
-		List<String> lines = Files.readAllLines(s3.file.toPath());
+		// Much simpler without GZIP
+		// List<String> lines = Files.readAllLines(s3.file.toPath());
+		try (InputStream is = new FileInputStream(s3.file)) {
+			List<String> lines = new BufferedReader(
+					new InputStreamReader( new GZIPInputStream( is ) ) )
+					.lines()
+					.collect(Collectors.toList());
 
-		// ASSERTIONS
-		assertTrue(lines.contains(writeThis));
+			// ASSERTIONS
+			assertTrue(lines.contains(writeThis));
+		}
 	}
 
 	@Test
