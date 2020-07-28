@@ -7,6 +7,7 @@ import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 /**
@@ -14,6 +15,7 @@ import org.springframework.util.StringUtils;
  *
  * @author duselman
  */
+@Component
 public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BuildRdbFile.class);

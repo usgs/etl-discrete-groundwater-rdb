@@ -37,7 +37,7 @@ custom:
 
 functions:
   loadRdb:
-    handler: gov.usgs.wma.waterdata.groundwater.BuildRdbFile
+    handler: gov.usgs.wma.waterdata.groundwater.BuildRdbFileHandler
     role: arn:aws:iam::${self:custom.accountNumber}:role/csr-Lambda-Role
     events:
       - schedule:
