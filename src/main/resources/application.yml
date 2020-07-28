@@ -15,5 +15,5 @@ logging:
     
 properties:
   tier: ${TIER}
-  region: ${AWS_REGION}
+  region: ${AWS_REGION_APP}
   bucket: ${S3_BUCKET_NAME}
