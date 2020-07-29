@@ -69,6 +69,9 @@ class BuildRdbFileTest {
 		Mockito.when(mockS3b.getWriter()).thenReturn(dest);
 		Mockito.doCallRealMethod().when(mockS3b).close();
 		Mockito.when(mockS3b.sendS3()).thenReturn(null);
+		Mockito.when(mockS3b.getKeyName()).thenReturn(FILENM);
+		// In the actual code it has the .gz extension.
+		// This test does not require the extension for filename testing.
 
 		S3BucketUtil mockS3u = Mockito.mock(S3BucketUtil.class);
 		Mockito.when(mockS3u.createFilename(POSTCD)).thenReturn(FILENM);
@@ -99,6 +102,7 @@ class BuildRdbFileTest {
 		// ASSERTIONS
 		assertEquals(4, writer.getHeaderRows(), "The header should be written in the RDB file builder.");
 		assertEquals(6, res.getCount(), "The result object should contain the number of rows written.");
+		assertEquals(FILENM, res.getFilename(), "The result object should contain the filename placed in S3.");
 		Mockito.verify(mockDao, Mockito.atLeastOnce()).sendDiscreteGroundWater(stateAsList, writer);
 		Mockito.verify(mockS3b, Mockito.atLeastOnce()).getWriter();
 		Mockito.verify(mockS3b, Mockito.atMostOnce()).getWriter();

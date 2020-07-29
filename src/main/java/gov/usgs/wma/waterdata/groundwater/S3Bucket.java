@@ -31,6 +31,10 @@ public class S3Bucket implements AutoCloseable {
 		this.file = file;
 	}
 
+	public String getKeyName() {
+		return keyName;
+	}
+
 	@Override
 	public void close() throws Exception {
 		try {

@@ -73,6 +73,7 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 			dao.sendDiscreteGroundWater(states, rdbWriter);
 
 			result.setCount( (int)rdbWriter.getDataRows() );
+			result.setFilename(s3bucket.getKeyName());
 		} catch (Exception e) {
 			throw new RuntimeException("Error writing RDB file to S3, " + filename, e);
 		}
