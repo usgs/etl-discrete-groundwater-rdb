@@ -53,7 +53,7 @@ public class S3BucketUtil {
 	public S3Bucket openS3(String filename) {
 		try {
 			File tempFile = File.createTempFile(filename, ".gz");
-			return new S3Bucket(properties.getRegion(), properties.getBucket(), filename, tempFile);
+			return new S3Bucket(properties.getRegion(), properties.getBucket(), filename+".gz", tempFile);
 		} catch (IOException e) {
 			throw new RuntimeException("Cannot open temp file from the current runtime env.");
 		}
