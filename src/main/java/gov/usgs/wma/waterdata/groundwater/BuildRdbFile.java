@@ -29,6 +29,9 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 	@Autowired
 	protected LocationFolder locationFolderUtil;
 
+	@Autowired
+	protected Properties properties;
+
 
 	public BuildRdbFile() {
 	}
@@ -42,6 +45,9 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 	@Override
 	public  ResultObject apply(RequestObject request) {
 		String locationFolder = request.getLocationFolder();
+		if ("ALL".equals(locationFolder)) {
+			return new InvokeAll().invoke(properties, locationFolderUtil.getFolders());
+		}
 		return processRequest(locationFolder);
 	}
 

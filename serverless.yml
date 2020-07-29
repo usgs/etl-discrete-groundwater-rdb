@@ -57,6 +57,7 @@ functions:
       ROOT_LOG_LEVEL: INFO
       TIER: ${self:provider.stage}
       S3_BUCKET_NAME: ${self:custom.bucketName}-${self:custom.environments.${self:provider.stage}}
+      AWS_ACCOUNT: ${self:custom.accountNumber}
     vpc: ${self:custom.vpc}
 
 resources:
