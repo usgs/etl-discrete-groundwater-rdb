@@ -57,7 +57,7 @@ class S3BucketTest {
 		assertNotNull(s3);
 		assertEquals(properties.bucket, s3.bucket);
 		assertEquals(properties.region, s3.region);
-		assertEquals(filename, s3.keyName);
+		assertEquals(filename+".gz", s3.keyName);
 		assertNotNull(s3.file);
 
 		String tmpPath = s3.file.getAbsolutePath().toLowerCase();
