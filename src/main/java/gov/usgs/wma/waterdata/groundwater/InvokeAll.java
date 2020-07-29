@@ -16,9 +16,7 @@ public class InvokeAll {
 	public ResultObject invoke(Properties properties, Collection<String> folders) {
 
 		try {
-			AWSLambda awsLambda = AWSLambdaClientBuilder.standard()
-					.withCredentials(new ProfileCredentialsProvider())
-					.withRegion(Regions.US_WEST_2).build();
+			AWSLambda awsLambda = lambdaContext();
 
 			String arn = ARN.replace("_ACCOUNT_", properties.getAccount())
 					.replace("_TIER_", properties.getTier());
@@ -32,12 +30,7 @@ public class InvokeAll {
 								+" \"locationFolder\": \"_folder_\"".replace("_folder", folder)
 								+"}");
 
-				try {
-					awsLambda.invoke(invokeRequest);
-				} catch (ServiceException e) {
-					// do we want to throw, or try the next
-					throw new RuntimeException("Error invoking lambda: " + arn + " for " + folder, e);
-				}
+				invokeAsync(awsLambda, folder, invokeRequest);
 				count++;
 			}
 
@@ -48,5 +41,22 @@ public class InvokeAll {
 		} catch (ServiceException e) {
 			throw new RuntimeException("Error aquiring AWSLambda client.", e);
 		}
+	}
+
+	protected void invokeAsync(AWSLambda awsLambda, String forFolder, InvokeRequest invokeRequest) {
+		try {
+			awsLambda.invoke(invokeRequest);
+		} catch (ServiceException e) {
+			// do we want to throw, or try the next
+			throw new RuntimeException("Error invoking lambda: "
+					+ invokeRequest.getFunctionName() + " for " + forFolder, e);
+		}
+	}
+
+	protected AWSLambda lambdaContext() {
+		AWSLambda awsLambda = AWSLambdaClientBuilder.standard()
+				.withCredentials(new ProfileCredentialsProvider())
+				.withRegion(Regions.US_WEST_2).build();
+		return awsLambda;
 	}
 }

@@ -1,6 +1,7 @@
 package gov.usgs.wma.waterdata.groundwater;
 
 import java.io.Writer;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -46,9 +47,13 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 	public  ResultObject apply(RequestObject request) {
 		String locationFolder = request.getLocationFolder();
 		if ("ALL".equals(locationFolder)) {
-			return new InvokeAll().invoke(properties, locationFolderUtil.getFolders());
+			return processAllRequest(locationFolderUtil.getFolders());
 		}
 		return processRequest(locationFolder);
+	}
+
+	protected ResultObject processAllRequest(Collection<String> locationFolders) {
+		return new InvokeAll().invoke(properties, locationFolders);
 	}
 
 	/**

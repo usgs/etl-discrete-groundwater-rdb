@@ -3,6 +3,7 @@ package gov.usgs.wma.waterdata.groundwater;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -136,4 +137,19 @@ class LocationFolderTest {
 		assertNotNull(actual);
 		assertEquals(expect, actual);
 	}
+
+
+	@Test
+	void testLocationFoldersLoad() throws Exception {
+		// SETUP
+
+		// ACTION UNDER TEST
+		Collection<String> actual = locationFolder.getFolders();
+
+		// ASSERTIONS
+		assertNotNull(actual);
+		// At the time of this test, Pacific Islands contained no sites.
+		assertEquals(48, actual.size(), "Expect 47 location folders plus 1 for Pacific Islands for a total of 48");
+	}
+
 }

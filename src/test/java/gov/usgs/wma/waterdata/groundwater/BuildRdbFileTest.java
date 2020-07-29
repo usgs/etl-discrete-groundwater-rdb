@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -177,13 +178,13 @@ class BuildRdbFileTest {
 		DiscreteGroundWaterDao mockDao = Mockito.mock(DiscreteGroundWaterDao.class);
 
 		LocationFolder mockLoc = Mockito.mock(LocationFolder.class);
-		Mockito.when(mockLoc.toStates(STATE)).thenReturn(stateAsList);
+		Mockito.when(mockLoc.getFolders()).thenReturn(stateAsList);
 		Mockito.when(mockLoc.filenameDecorator(STATE)).thenReturn(POSTCD);
 
 		BuildRdbFile builder = new BuildRdbFile() {
 			@Override
 			protected RdbWriter createRdbWriter(Writer dest) {
-				RdbWriter writer = Mockito.mock(RdbWriter.class);
+				writer = Mockito.mock(RdbWriter.class);
 				Mockito.when(writer.writeHeader()).thenThrow(new IOException("Unit test IOE"));
 				return writer;
 			}
@@ -207,5 +208,45 @@ class BuildRdbFileTest {
 		Mockito.verify(mockDao, Mockito.never()).sendDiscreteGroundWater(stateAsList, writer);
 		assertTrue(outStreamClosed);
 		assertTrue(dstWriterClosed);
+	}
+
+	@Test
+	void testAllLocationFolder() throws Exception {
+		// SETUP
+		S3BucketUtil mockS3u = Mockito.mock(S3BucketUtil.class);
+		DiscreteGroundWaterDao mockDao = Mockito.mock(DiscreteGroundWaterDao.class);
+		LocationFolder mockLoc = Mockito.mock(LocationFolder.class);
+
+		BuildRdbFile builder = new BuildRdbFile() {
+			@Override
+			protected ResultObject processAllRequest(Collection<String> locationFolders) {
+				ResultObject result = new ResultObject();
+				result.setCount(-1);
+				result.setFilename("TESTING");
+				return result;
+			}
+		};
+		builder.dao = mockDao;
+		builder.s3BucketUtil = mockS3u;
+		builder.locationFolderUtil = mockLoc;
+
+		req.locationFolder = "ALL";
+
+		// ACTION UNDER TEST
+		ResultObject res = builder.apply(req);
+
+		// ASSERTIONS
+		assertEquals(-1, res.getCount());
+		assertEquals("TESTING", res.getFilename());
+		assertEquals(0, writer.getHeaderRows());
+		Mockito.verify(mockLoc, Mockito.atLeastOnce()).getFolders();
+		Mockito.verify(mockLoc, Mockito.atMostOnce()).getFolders();
+		Mockito.verify(mockLoc, Mockito.never()).toStates(STATE);
+		Mockito.verify(mockLoc, Mockito.never()).filenameDecorator(STATE);
+		Mockito.verify(mockS3u, Mockito.never()).createFilename(POSTCD);
+		Mockito.verify(mockS3u, Mockito.never()).openS3(FILENM);
+		Mockito.verify(mockDao, Mockito.never()).sendDiscreteGroundWater(stateAsList, writer);
+		assertFalse(outStreamClosed);
+		assertFalse(dstWriterClosed);
 	}
 }
