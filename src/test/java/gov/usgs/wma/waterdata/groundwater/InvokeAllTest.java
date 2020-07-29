@@ -45,7 +45,7 @@ class InvokeAllTest {
 				arn = invokeRequest.getFunctionName();
 			}
 			@Override
-			protected AWSLambda lambdaContext() {
+			protected AWSLambda lambdaContext(String region) {
 				return mockAws;
 			}
 		};
