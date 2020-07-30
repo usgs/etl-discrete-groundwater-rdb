@@ -45,7 +45,7 @@ functions:
           description: "Schedule event to generate RDB file by invoking etl-discrete-groundwater-rdb lambda"
           rate: cron(0 1 * * ? *)
           input:
-            locaitonFolder: ALL
+            locationFolder: ALL
           enabled: true
     environment:
       FUNCTION_NAME: loadRdb

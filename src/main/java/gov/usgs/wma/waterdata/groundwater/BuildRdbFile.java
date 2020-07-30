@@ -45,7 +45,9 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 	 */
 	@Override
 	public  ResultObject apply(RequestObject request) {
+		LOG.debug("the request object location folder: {}", request);
 		String locationFolder = request.getLocationFolder();
+
 		if ("ALL".equals(locationFolder)) {
 			return processAllRequest(locationFolderUtil.getLocationFolders());
 		}
@@ -66,7 +68,7 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 	 * @return result number of rows written to RDB file
 	 */
 	protected ResultObject processRequest(String locationFolder) {
-		LOG.debug("the request object location folder: {}", locationFolder);
+		LOG.debug("the request location folder: {}", locationFolder);
 		ResultObject result = new ResultObject();
 
 		List<String> states = locationFolderUtil.toStates(locationFolder);
