@@ -57,7 +57,7 @@ class RdbWriterTest {
 	}
 
 	@Test
-	void testColumnWritenTrimmedLength() throws Exception {
+	void testColumnWritenTrimmedLength() {
 		String givenValue = "valuePlusMore";
 
 		// ACTION UNDER TEST
@@ -73,7 +73,7 @@ class RdbWriterTest {
 	}
 
 	@Test
-	void testColumnWritenFullLength() throws Exception {
+	void testColumnWritenFullLength() {
 		String givenValue = "value";
 
 		// ACTION UNDER TEST
@@ -89,7 +89,7 @@ class RdbWriterTest {
 	}
 
 	@Test
-	void testHeaderWriten() throws Exception {
+	void testHeaderWriten() {
 		// ACTION UNDER TEST
 		rdbWriter.writeHeader();
 
@@ -109,7 +109,7 @@ class RdbWriterTest {
 	}
 
 	@Test
-	void testRowWriteGeneral() throws Exception {
+	void testRowWriteGeneral() {
 		// SETUP
 		DiscreteGroundWater dgw = makeDgw();
 
@@ -130,8 +130,8 @@ class RdbWriterTest {
 		assertTrue(writtenValue.contains("\tT")); // last value
 		assertTrue(writtenValue.contains("\t200705"));
 		assertTrue(writtenValue.contains("\t20070501\t"));
-		assertTrue(!writtenValue.contains("\t1200\t"));
-		assertTrue(!writtenValue.contains("\t1830\t"));
+		assertFalse(writtenValue.contains("\t1200\t"));
+		assertFalse(writtenValue.contains("\t1830\t"));
 		assertTrue(writtenValue.contains("\t07-MAY-2007 18:30:47\t"));
 		assertTrue(writtenValue.contains("\t01-MAY-2007 12:00:00\t")); // measured and UTC dates
 		assertTrue(writtenValue.contains("\tUTC\t"));
@@ -140,7 +140,7 @@ class RdbWriterTest {
 		assertEquals(1, count);
 	}
 	@Test
-	void testRowWriteBelowLand() throws Exception {
+	void testRowWriteBelowLand() {
 		// SETUP
 		DiscreteGroundWater dgw = makeDgw();
 
@@ -156,7 +156,7 @@ class RdbWriterTest {
 	}
 
 	@Test
-	void testRowWriteAboveSea() throws Exception {
+	void testRowWriteAboveSea() {
 		// SETUP
 		DiscreteGroundWater dgw = makeDgw();
 		dgw.levelFeetBelowLandSurface = "";
@@ -202,7 +202,7 @@ class RdbWriterTest {
 	}
 
 	@Test
-	void testRowWriteEofIoe() throws Exception {
+	void testRowWriteEofIoe() {
 		// SETUP
 		Writer mockWriter = new BufferedWriter(dest) {
 			@Override

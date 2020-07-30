@@ -40,7 +40,7 @@ public class StatePostCodeDao {
 	public String getPostCode(String state) {
 		try {
 			String sql = new String(FileCopyUtils.copyToByteArray(selectQuery.getInputStream()));
-			RowMapper<String> rowMapper = new RowMapper<String>() {
+			RowMapper<String> rowMapper = new RowMapper<>() {
 				@Override
 				public String mapRow(ResultSet rs, int rowNum) throws SQLException {
 					return rs.getString("state_post_cd");

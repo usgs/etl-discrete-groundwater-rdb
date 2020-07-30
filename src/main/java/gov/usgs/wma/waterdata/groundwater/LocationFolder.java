@@ -3,7 +3,6 @@ package gov.usgs.wma.waterdata.groundwater;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +34,7 @@ public class LocationFolder {
 	 * collection of states. This returns the list for multiple states in a location folder
 	 * or the location folder as the singular entry as default.
 	 *
-	 * @param locationFolder
+	 * @param locationFolder usually state names or collection of state names or abbreviations
 	 * @return list of state names in the given location folder
 	 */
 	public List<String> toStates(String locationFolder) {
@@ -75,8 +74,8 @@ public class LocationFolder {
 	 *    10: {'AI_Loc'   : 'Pacific Islands' , 'Loc_Abbrev'  : 'PI'       },
 	 * This class returns "PI" for this exceptional case. It can be updated for others as well.
 	 *
-	 * @param locationFolder
-	 * @return
+	 * @param locationFolder usually state name or a collection of state names or abbreviations
+	 * @return the postal codes for a location folder
 	 */
 	public String filenameDecorator(String locationFolder) {
 		if ("MD-DE-DC".equals(locationFolder)) {
@@ -96,15 +95,14 @@ public class LocationFolder {
 	 * The file was generated from the location folders file from the retriever project.
 	 * This file will require updates if the AQTS program adds location folders.
 	 * If this becomes a regular occurrence then a refactor will be useful at that time.
-	 * For now, there has been few (if any) additional location folders added in years.
+	 * For now, there have been few (if any) additional location folders added in years.
 	 * @return a collection of all the location folders.
 	 */
-	public Collection<String> getFolders() {
+	public List<String> getLocationFolders() {
 		try {
 			InputStream locations = getClass().getResourceAsStream("/rdb/locationFolders.txt");
 			String folders = new String(FileCopyUtils.copyToByteArray(locations));
-			List<String> locationFolders = folders.lines().collect(Collectors.toList());
-			return locationFolders;
+			return folders.lines().collect(Collectors.toList());
 		} catch (IOException e) {
 			throw new RuntimeException("Failed to load locaiton folders resource.", e);
 		}

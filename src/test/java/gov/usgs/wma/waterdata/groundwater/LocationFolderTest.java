@@ -24,7 +24,7 @@ class LocationFolderTest {
 
 
 	@Test
-	void testLocationFolderToStates() throws Exception {
+	void testLocationFolderToStates() {
 		// SETUP
 		List<String> expect = List.of("Wisconsin");
 
@@ -36,7 +36,7 @@ class LocationFolderTest {
 		assertEquals(expect, actual);
 	}
 	@Test
-	void testLocationFolderToStates_DC() throws Exception {
+	void testLocationFolderToStates_DC() {
 		// SETUP
 		List<String> expect = List.of("Maryland","Delaware","District of Columbia");
 
@@ -48,7 +48,7 @@ class LocationFolderTest {
 		assertEquals(expect, actual);
 	}
 	@Test
-	void testLocationFolderToStates_MA() throws Exception {
+	void testLocationFolderToStates_MA() {
 		// SETUP
 		List<String> expect = List.of("Massachusetts","Rhode Island");
 
@@ -60,7 +60,7 @@ class LocationFolderTest {
 		assertEquals(expect, actual);
 	}
 	@Test
-	void testLocationFolderToStates_VT() throws Exception {
+	void testLocationFolderToStates_VT() {
 		// SETUP
 		List<String> expect = List.of("New Hampshire", "Vermont");
 
@@ -73,7 +73,7 @@ class LocationFolderTest {
 	}
 
 	@Test
-	void testLocationFolderToPostalCode() throws Exception {
+	void testLocationFolderToPostalCode() {
 		// SETUP
 		String expect = "WI";
 
@@ -86,7 +86,7 @@ class LocationFolderTest {
 	}
 
 	@Test
-	void testLocationFolderToPostalCode_VT() throws Exception {
+	void testLocationFolderToPostalCode_VT() {
 		// SETUP
 		String expect = "NH-VT";
 
@@ -99,7 +99,7 @@ class LocationFolderTest {
 	}
 
 	@Test
-	void testLocationFolderToPostalCode_DC() throws Exception {
+	void testLocationFolderToPostalCode_DC() {
 		// SETUP
 		String expect = "MD-DE-DC";
 
@@ -112,7 +112,7 @@ class LocationFolderTest {
 	}
 
 	@Test
-	void testLocationFolderToPostalCode_MA() throws Exception {
+	void testLocationFolderToPostalCode_MA() {
 		// SETUP
 		String expect = "MA-RI";
 
@@ -126,7 +126,7 @@ class LocationFolderTest {
 
 
 	@Test
-	void testLocationFolderToPostalCode_PI() throws Exception {
+	void testLocationFolderToPostalCode_PI() {
 		// SETUP
 		String expect = "PI";
 
@@ -140,11 +140,11 @@ class LocationFolderTest {
 
 
 	@Test
-	void testLocationFoldersLoad() throws Exception {
+	void testLocationFoldersLoad() {
 		// SETUP
 
 		// ACTION UNDER TEST
-		Collection<String> actual = locationFolder.getFolders();
+		Collection<String> actual = locationFolder.getLocationFolders();
 
 		// ASSERTIONS
 		assertNotNull(actual);

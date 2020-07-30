@@ -52,7 +52,7 @@ class S3BucketTest {
 	}
 
 	@Test
-	void testOpenS3File() throws Exception {
+	void testOpenS3File() {
 		// ASSERTIONS
 		assertNotNull(s3);
 		assertEquals(properties.bucket, s3.bucket);
@@ -64,13 +64,13 @@ class S3BucketTest {
 		assertTrue(tmpPath.contains("tmp") || tmpPath.contains("temp"));
 
 		// default state is to dispose of the tmp file
-		assertEquals(true, s3.disposeFile);
+		assertTrue(s3.isFileDisposable);
 		// initial state is without a writer
 		assertNull(s3.writer);
 	}
 
 	@Test
-	void testDisposeFile_set() throws Exception {
+	void testDisposeFile_set() {
 		// SETUP
 
 		// ACTION UNDER TEST
@@ -78,7 +78,7 @@ class S3BucketTest {
 
 		// ASSERTIONS
 		assertNotNull(s3);
-		assertFalse(s3.disposeFile);
+		assertFalse(s3.isFileDisposable);
 	}
 
 	@Test
@@ -105,15 +105,14 @@ class S3BucketTest {
 	}
 
 	// this test does not throw an IOE on *nix, only Windows.
-	void testAccessingWritterThrows() throws Exception {
+	void testAccessingWriterThrows() {
 		// SETUP
 		// Mockito cannot call "when" on private members
 		// File mockFile = Mockito.mock(File.class);
 		// Mockito.when(mockFile.isInvalid()).thenReturn(false);
 
 		// file mock that will return true for isInvalid
-		File mockFile = new File("$%#@~*()+=-{}[]|\\^");
-		s3.file = mockFile;
+		s3.file = new File("$%#@~*()+=-{}[]|\\^");
 
 		// ACTION UNDER TEST
 		// ASSERTIONS

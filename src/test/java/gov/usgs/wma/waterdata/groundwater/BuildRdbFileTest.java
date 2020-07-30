@@ -178,7 +178,7 @@ class BuildRdbFileTest {
 		DiscreteGroundWaterDao mockDao = Mockito.mock(DiscreteGroundWaterDao.class);
 
 		LocationFolder mockLoc = Mockito.mock(LocationFolder.class);
-		Mockito.when(mockLoc.getFolders()).thenReturn(stateAsList);
+		Mockito.when(mockLoc.getLocationFolders()).thenReturn(stateAsList);
 		Mockito.when(mockLoc.filenameDecorator(STATE)).thenReturn(POSTCD);
 
 		BuildRdbFile builder = new BuildRdbFile() {
@@ -211,7 +211,7 @@ class BuildRdbFileTest {
 	}
 
 	@Test
-	void testAllLocationFolder() throws Exception {
+	void testAllLocationFolder() {
 		// SETUP
 		S3BucketUtil mockS3u = Mockito.mock(S3BucketUtil.class);
 		DiscreteGroundWaterDao mockDao = Mockito.mock(DiscreteGroundWaterDao.class);
@@ -239,8 +239,8 @@ class BuildRdbFileTest {
 		assertEquals(-1, res.getCount());
 		assertEquals("TESTING", res.getFilename());
 		assertEquals(0, writer.getHeaderRows());
-		Mockito.verify(mockLoc, Mockito.atLeastOnce()).getFolders();
-		Mockito.verify(mockLoc, Mockito.atMostOnce()).getFolders();
+		Mockito.verify(mockLoc, Mockito.atLeastOnce()).getLocationFolders();
+		Mockito.verify(mockLoc, Mockito.atMostOnce()).getLocationFolders();
 		Mockito.verify(mockLoc, Mockito.never()).toStates(STATE);
 		Mockito.verify(mockLoc, Mockito.never()).filenameDecorator(STATE);
 		Mockito.verify(mockS3u, Mockito.never()).createFilename(POSTCD);
