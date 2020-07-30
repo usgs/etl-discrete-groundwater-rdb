@@ -21,7 +21,7 @@ import org.springframework.util.FileCopyUtils;
 @Component
 public class LocationFolder {
 
-	private final StatePostCodeDao dao;
+	private StatePostCodeDao dao;
 
 	@Autowired
 	public LocationFolder(StatePostCodeDao dao) {

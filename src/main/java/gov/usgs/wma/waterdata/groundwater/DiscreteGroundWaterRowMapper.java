@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.RowMapper;
  */
 public class DiscreteGroundWaterRowMapper implements RowMapper<String> {
 
-	private final RdbWriter writer;
+	private RdbWriter writer;
 
 	public DiscreteGroundWaterRowMapper(RdbWriter writer) {
 		this.writer = writer;
