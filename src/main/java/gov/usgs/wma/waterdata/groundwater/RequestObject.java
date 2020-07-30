@@ -11,4 +11,11 @@ public class RequestObject {
 	public String getLocationFolder() {
 		return locationFolder;
 	}
+
+	@Override
+	public String toString() {
+		return "RequestObject{" +
+				"locationFolder='" + locationFolder + '\'' +
+				'}';
+	}
 }
