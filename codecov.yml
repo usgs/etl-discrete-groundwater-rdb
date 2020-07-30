@@ -1,0 +1,10 @@
+ignore:
+  # Spring Boot Application file - no testable logic
+  - "**/Application.java"
+  # SpringBootRequestHandler -  no testable logic
+  - "**/BuildRdbFile.java"
+  - "**/RequestObject.java"
+  - "**/ResultObject.java"
+  # Spring Properties POJO -  no testable logic
+  - "**/Properties.java"
+  

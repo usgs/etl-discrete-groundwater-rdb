@@ -1,0 +1,117 @@
+service: etl-discrete-groundwater-rdb
+
+provider:
+  name: aws
+  region: ${opt:region, 'us-west-2'}
+  stage: ${opt:stage, 'TEST'}
+  runtime: java11
+  memorySize: 768
+  timeout: 60
+  logRetentionInDays: 90
+  deploymentBucket:
+    name: iow-cloud-applications
+  stackTags:
+    "wma:applicationId": "ETL Discrete Groundwater as RDB"
+    "wma:contact": "Jim Kreft jkreft@usgs.gov"
+    "wma:environment": ${self:provider.stage}
+    "wma:taggingVersion": "1.0"
+    "wma:costCenter": TBD
+    commitIdentifier: ${git:sha1}
+
+custom:
+  environments:
+    TEST: test
+    QA: qa
+    PROD-INTERNAL: prod-internal
+    test: test
+    qa: qa
+    prod-internal: prod-internal
+  exportGitVariables: false
+  accountNumber : ${ssm:/iow/aws/accountNumber}
+  vpc:
+    securityGroupIds: ${ssm:/iow/retriever-capture/${self:provider.stage}/securityGroupIds~split}
+    subnetIds: ${ssm:/iow/aws/vpc/${self:provider.stage}/subnetIds~split}
+  observationDb:
+    connectInfo: ${ssm:/aws/reference/secretsmanager/WQP-EXTERNAL-${self:provider.stage}~true}
+  bucketName: iow-rdb-files
+
+functions:
+  loadRdb:
+    handler: gov.usgs.wma.waterdata.groundwater.BuildRdbFileHandler
+    role: arn:aws:iam::${self:custom.accountNumber}:role/csr-Lambda-Role
+    events:
+      - schedule:
+          name: etl-discrete-groundwater-rdb-${self:provider.stage}-event-all
+          description: "Schedule event to generate RDB file by invoking etl-discrete-groundwater-rdb lambda"
+          rate: cron(0 1 * * *)
+          input:
+            locaitonFolder: ALL
+          enabled: true
+    environment:
+      FUNCTION_NAME: loadRdb
+      AWS_DEPLOYMENT_REGION: ${self:provider.region}
+      OBSERVATION_DATABASE_ADDRESS: ${self:custom.observationDb.connectInfo.DATABASE_ADDRESS}
+      OBSERVATION_DATABASE_PORT: ${self:custom.observationDb.connectInfo.DATABASE_PORT}
+      OBSERVATION_DATABASE_NAME: ${self:custom.observationDb.connectInfo.DATABASE_NAME}
+      OBSERVATION_SCHEMA_NAME: ${self:custom.observationDb.connectInfo.NWIS_SCHEMA_NAME}
+      OBSERVATION_SCHEMA_OWNER_USERNAME: ${self:custom.observationDb.connectInfo.NWIS_SCHEMA_OWNER_USERNAME}
+      OBSERVATION_SCHEMA_OWNER_PASSWORD: ${self:custom.observationDb.connectInfo.NWIS_SCHEMA_OWNER_PASSWORD}
+      ROOT_LOG_LEVEL: INFO
+      TIER: ${self:provider.stage}
+      S3_BUCKET_NAME: ${self:custom.bucketName}-${self:custom.environments.${self:provider.stage}}
+      LAMBDA_ARN: arn:aws:lambda:${self:provider.region}:${self:custom.accountNumber}:function:etl-discrete-groundwater-rdb-${self:provider.stage}-loadRdb
+    vpc: ${self:custom.vpc}
+
+resources:
+  Resources:
+    Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.bucketName}-${self:custom.environments.${self:provider.stage}}
+    snsTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        DisplayName: ${self:service}-${self:provider.stage}-topic
+        TopicName: ${self:service}-${self:provider.stage}-topic
+    concurrencyAlarm:
+      Type: AWS::CloudWatch::Alarm
+      Properties:
+        AlarmName: ${self:service}-${self:provider.stage}-concurrency-alarm
+        AlarmDescription: Notify when concurrency exceeds the specified threshold
+        Namespace: 'AWS/Lambda'
+        Dimensions:
+          - Name: FunctionName
+            Value:
+              Ref: LoadRdbLambdaFunction
+        MetricName: ConcurrentExecutions
+        Statistic: Maximum
+        ComparisonOperator: GreaterThanOrEqualToThreshold
+        Threshold: 150
+        Period: 60
+        EvaluationPeriods: 1
+        AlarmActions:
+          - Ref: snsTopic
+    errorAlarm:
+      Type: AWS::CloudWatch::Alarm
+      Properties:
+        AlarmName: ${self:service}-${self:provider.stage}-error-alarm
+        AlarmDescription: Notify when number of errors exceeds the specified threshold
+        Namespace: 'AWS/Lambda'
+        Dimensions:
+          - Name: FunctionName
+            Value:
+              Ref: LoadRdbLambdaFunction
+        MetricName: Errors
+        Statistic: Sum
+        ComparisonOperator: GreaterThanOrEqualToThreshold
+        Threshold: 10
+        Period: 60
+        EvaluationPeriods: 1
+        AlarmActions:
+          - Ref: snsTopic
+
+plugins:
+  - serverless-plugin-git-variables
+
+package:
+  artifact: etl-discrete-groundwater-rdb-aws.jar

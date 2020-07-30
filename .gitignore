@@ -1,0 +1,11 @@
+/.settings/
+/target/
+/.attach_pid*
+/*.classpath
+/.flattened-pom.xml
+/.project
+/application.yml
+.idea/
+etl-discrete-groundwater-rdb.iml
+notes.txt
+.factorypath
