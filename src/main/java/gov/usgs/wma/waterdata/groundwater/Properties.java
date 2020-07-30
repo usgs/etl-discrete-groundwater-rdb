@@ -39,7 +39,7 @@ public class Properties {
 		return arn;
 	}
 
-	public void setAccount(String account) {
-		this.arn = account;
+	public void setArn(String arn) {
+		this.arn = arn;
 	}
 }

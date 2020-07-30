@@ -25,7 +25,7 @@ class InvokeAllTest {
 	public void before() {
 
 		properties = new Properties();
-		properties.setAccount("JUNIT-ACCOUNT");
+		properties.setArn("JUNIT-ACCOUNT");
 		properties.setRegion("JUNIT-WEST");
 		properties.setBucket("JUNIT-S3");
 		properties.setTier("JUNIT-TEST"); // TEST, QA, and PROD-INTERNAL
