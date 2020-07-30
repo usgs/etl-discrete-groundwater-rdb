@@ -18,14 +18,14 @@ import org.mockito.Mockito;
 class RdbWriterTest {
 
 	ByteArrayOutputStream out;
-	Writer dest;
+	Writer destination;
 	MockRdbWriter rdbWriter;
 
 	@BeforeEach
 	public void setup() {
 		out = new ByteArrayOutputStream();
-		dest = new OutputStreamWriter(out);
-		rdbWriter = new MockRdbWriter(dest);
+		destination = new OutputStreamWriter(out);
+		rdbWriter = new MockRdbWriter(destination);
 	}
 
 	DiscreteGroundWater makeDgw() {
@@ -180,7 +180,7 @@ class RdbWriterTest {
 		// SETUP
 		Writer mockWriter = Mockito.mock(Writer.class);
 		Mockito.when(mockWriter.append(Mockito.any(CharSequence.class))).thenThrow(new IOException());
-		RdbWriter rdbWriter = new RdbWriter(dest);
+		RdbWriter rdbWriter = new RdbWriter(destination);
 		rdbWriter.rdb = mockWriter;
 
 		// ACTION UNDER TEST
@@ -192,7 +192,7 @@ class RdbWriterTest {
 		// SETUP
 		Writer mockWriter = Mockito.mock(Writer.class);
 		Mockito.when(mockWriter.append(Mockito.any(CharSequence.class))).thenThrow(new IOException());
-		RdbWriter rdbWriter = new RdbWriter(dest);
+		RdbWriter rdbWriter = new RdbWriter(destination);
 		rdbWriter.rdb = mockWriter;
 		DiscreteGroundWater dgw = makeDgw();
 
@@ -204,7 +204,7 @@ class RdbWriterTest {
 	@Test
 	void testRowWriteEofIoe() {
 		// SETUP
-		Writer mockWriter = new BufferedWriter(dest) {
+		Writer mockWriter = new BufferedWriter(destination) {
 			@Override
 			public Writer append(CharSequence csq) throws IOException {
 				if (csq.equals("\n")) {
@@ -217,7 +217,7 @@ class RdbWriterTest {
 		// Writer mockWriter = Mockito.mock(Writer.class);
 		// Mockito.when(mockWriter.append("\n")).thenThrow(new IOException());
 		// Mockito.when(mockWriter.append(Mockito.any(CharSequence.class))).thenReturn(mockWriter);
-		RdbWriter rdbWriter = new RdbWriter(dest);
+		RdbWriter rdbWriter = new RdbWriter(destination);
 		rdbWriter.rdb = mockWriter;
 		DiscreteGroundWater dgw = makeDgw();
 
@@ -230,8 +230,8 @@ class RdbWriterTest {
 	// These methods used to be located in the superclass.
 	// They were added only for testing and thus moved here.
 	class MockRdbWriter extends RdbWriter {
-		public MockRdbWriter(Writer dest) {
-			super(dest);
+		public MockRdbWriter(Writer destination) {
+			super(destination);
 		}
 
 		protected MockRdbWriter flush() {

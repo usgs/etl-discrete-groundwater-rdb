@@ -43,7 +43,7 @@ functions:
       - schedule:
           name: etl-discrete-groundwater-rdb-${self:provider.stage}-event-all
           description: "Schedule event to generate RDB file by invoking etl-discrete-groundwater-rdb lambda"
-          rate: cron(0 0 1 * ? *)
+          rate: cron(0 1 * * *)
           input:
             locaitonFolder: ALL
           enabled: true

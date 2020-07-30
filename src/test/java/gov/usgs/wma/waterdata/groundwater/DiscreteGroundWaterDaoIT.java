@@ -58,14 +58,14 @@ public class DiscreteGroundWaterDaoIT {
 	protected List<String> states;
 	protected RdbWriter writer;
 	protected OutputStream out;
-	protected Writer dest;
+	protected Writer destination;
 
 	@BeforeEach
 	public void beforeEach() {
 		states = List.of("California");
 		out = new ByteArrayOutputStream();
-		dest = new OutputStreamWriter(out);
-		writer = new RdbWriter(dest);
+		destination = new OutputStreamWriter(out);
+		writer = new RdbWriter(destination);
 	}
 
 	@DatabaseSetup("classpath:/testData/")
@@ -73,14 +73,14 @@ public class DiscreteGroundWaterDaoIT {
 	public void testSendDiscreteGroundWater_close() throws Exception {
 		// SETUP
 		out = Mockito.mock(ByteArrayOutputStream.class);
-		dest = new OutputStreamWriter(out);
-		writer = new RdbWriter(dest);
+		destination = new OutputStreamWriter(out);
+		writer = new RdbWriter(destination);
 
 		// ACTION UNDER TEST
 		dao.sendDiscreteGroundWater(states, writer);
 
 		// POST SETUP
-		dest.close();
+		destination.close();
 
 		// ASSERT closed
 		Mockito.verify(out, Mockito.atLeastOnce()).close();
@@ -93,7 +93,7 @@ public class DiscreteGroundWaterDaoIT {
 		dao.sendDiscreteGroundWater(states, writer);
 
 		// POST SETUP
-		dest.close();
+		destination.close();
 
 		// ASSERT row count
 		assertEquals(14, writer.getDataRows());
@@ -108,7 +108,7 @@ public class DiscreteGroundWaterDaoIT {
 		dao.sendDiscreteGroundWater(states, writer);
 
 		// POST SETUP
-		dest.close();
+		destination.close();
 
 		// ASSERT row count
 		assertEquals(2, writer.getDataRows());
@@ -123,7 +123,7 @@ public class DiscreteGroundWaterDaoIT {
 		dao.sendDiscreteGroundWater(states, writer);
 
 		// POST SETUP
-		dest.close();
+		destination.close();
 
 		// ASSERT row count
 		assertEquals(16, writer.getDataRows());
@@ -138,7 +138,7 @@ public class DiscreteGroundWaterDaoIT {
 		dao.sendDiscreteGroundWater(states, writer);
 
 		// POST SETUP
-		dest.close();
+		destination.close();
 
 		// POST SETUP
 		LinkedList<String> rdbLines = new LinkedList<>();
@@ -167,7 +167,7 @@ public class DiscreteGroundWaterDaoIT {
 		dao.sendDiscreteGroundWater(states, writer);
 
 		// POST SETUP
-		dest.close();
+		destination.close();
 
 		// POST SETUP
 		String outlines = out.toString();
@@ -236,7 +236,7 @@ public class DiscreteGroundWaterDaoIT {
 		dao.sendDiscreteGroundWater(states, writer);
 
 		// POST SETUP
-		dest.close();
+		destination.close();
 		String outlines = out.toString();
 		Map<String, List<String>> rdbLines = Arrays
 				.stream( outlines.split("\\n") )

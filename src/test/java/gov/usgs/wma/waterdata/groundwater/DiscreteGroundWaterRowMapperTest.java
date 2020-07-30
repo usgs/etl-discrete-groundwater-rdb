@@ -21,13 +21,13 @@ import org.mockito.Mockito;
 class DiscreteGroundWaterRowMapperTest {
 
 	ByteArrayOutputStream out;
-	Writer dest;
+	Writer destination;
 	ResultSet mrs;
 
 	@BeforeEach
 	public void setup() {
 		out = new ByteArrayOutputStream();
-		dest = new OutputStreamWriter(out);
+		destination = new OutputStreamWriter(out);
 
 		mrs = Mockito.mock(ResultSet.class);
 		DiscreteGroundWater dgw = makeDgw();
@@ -87,14 +87,14 @@ class DiscreteGroundWaterRowMapperTest {
 	@Test
 	void testRowWriteGeneral() throws Exception {
 		// SETUP
-		RdbWriter rdbWriter = new RdbWriter(dest);
+		RdbWriter rdbWriter = new RdbWriter(destination);
 		DiscreteGroundWaterRowMapper rowHandler = new DiscreteGroundWaterRowMapper(rdbWriter);
 
 		// ACTION UNDER TEST
 		String written = rowHandler.mapRow(mrs, 1);
 
 		// POST SETUP
-		dest.close();
+		destination.close();
 		String writtenValue = out.toString();
 
 		// ASSERTIONS

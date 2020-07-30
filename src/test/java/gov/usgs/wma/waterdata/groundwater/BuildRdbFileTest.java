@@ -22,7 +22,7 @@ class BuildRdbFileTest {
 	final String FILENM = "mock-file-name";
 	RdbWriter writer;
 	OutputStream out;
-	Writer dest;
+	Writer destination;
 	RequestObject req;
 	List<String> stateAsList;
 
@@ -46,7 +46,7 @@ class BuildRdbFileTest {
 
 		dstWriterClosed = false;
 
-		dest = new OutputStreamWriter(out) {
+		destination = new OutputStreamWriter(out) {
 			@Override
 			public void close() throws IOException {
 				dstWriterClosed = true;
@@ -54,7 +54,7 @@ class BuildRdbFileTest {
 			}
 		};
 
-		writer = new RdbWriter(dest) {
+		writer = new RdbWriter(destination) {
 			@Override
 			public long getDataRows() {
 				return 6;
@@ -66,8 +66,8 @@ class BuildRdbFileTest {
 	void testHappyPath() throws Exception {
 		// SETUP
 		S3Bucket mockS3b = Mockito.mock(S3Bucket.class);
-		mockS3b.writer = dest;
-		Mockito.when(mockS3b.getWriter()).thenReturn(dest);
+		mockS3b.writer = destination;
+		Mockito.when(mockS3b.getWriter()).thenReturn(destination);
 		Mockito.doCallRealMethod().when(mockS3b).close();
 		Mockito.when(mockS3b.sendS3()).thenReturn(null);
 		Mockito.when(mockS3b.getKeyName()).thenReturn(FILENM);
@@ -86,8 +86,8 @@ class BuildRdbFileTest {
 
 		BuildRdbFile builder = new BuildRdbFile() {
 			@Override
-			protected RdbWriter createRdbWriter(Writer dest) {
-				if (dest != writer.rdb) {
+			protected RdbWriter createRdbWriter(Writer destination) {
+				if (destination != writer.rdb) {
 					throw new RuntimeException("For the unit test to be correctly setup the writers must be the same.");
 				}
 				return writer;
@@ -103,7 +103,7 @@ class BuildRdbFileTest {
 		// ASSERTIONS
 		assertEquals(4, writer.getHeaderRows(), "The header should be written in the RDB file builder.");
 		assertEquals(6, res.getCount(), "The result object should contain the number of rows written.");
-		assertEquals(FILENM, res.getFilename(), "The result object should contain the filename placed in S3.");
+		assertEquals(FILENM, res.getMessage(), "The result object should contain the filename placed in S3.");
 		Mockito.verify(mockDao, Mockito.atLeastOnce()).sendDiscreteGroundWater(stateAsList, writer);
 		Mockito.verify(mockS3b, Mockito.atLeastOnce()).getWriter();
 		Mockito.verify(mockS3b, Mockito.atMostOnce()).getWriter();
@@ -121,7 +121,7 @@ class BuildRdbFileTest {
 		// SETUP
 
 		S3Bucket mockS3b = Mockito.mock(S3Bucket.class);
-		Mockito.when(mockS3b.getWriter()).thenReturn(dest);
+		Mockito.when(mockS3b.getWriter()).thenReturn(destination);
 
 		S3BucketUtil mockS3u = Mockito.mock(S3BucketUtil.class);
 		Mockito.when(mockS3u.createFilename(POSTCD)).thenReturn(FILENM);
@@ -135,8 +135,8 @@ class BuildRdbFileTest {
 
 		BuildRdbFile builder = new BuildRdbFile() {
 			@Override
-			protected RdbWriter createRdbWriter(Writer dest) {
-				if (dest != writer.rdb) {
+			protected RdbWriter createRdbWriter(Writer destination) {
+				if (destination != writer.rdb) {
 					throw new RuntimeException("For the unit test to be correctly setup the writers must be the same.");
 				}
 				return writer;
@@ -167,8 +167,8 @@ class BuildRdbFileTest {
 		// SETUP
 
 		S3Bucket mockS3b = Mockito.mock(S3Bucket.class);
-		mockS3b.writer = dest;
-		Mockito.when(mockS3b.getWriter()).thenReturn(dest);
+		mockS3b.writer = destination;
+		Mockito.when(mockS3b.getWriter()).thenReturn(destination);
 		Mockito.doCallRealMethod().when(mockS3b).close();
 
 		S3BucketUtil mockS3u = Mockito.mock(S3BucketUtil.class);
@@ -183,7 +183,7 @@ class BuildRdbFileTest {
 
 		BuildRdbFile builder = new BuildRdbFile() {
 			@Override
-			protected RdbWriter createRdbWriter(Writer dest) {
+			protected RdbWriter createRdbWriter(Writer destination) {
 				writer = Mockito.mock(RdbWriter.class);
 				Mockito.when(writer.writeHeader()).thenThrow(new IOException("Unit test IOE"));
 				return writer;
@@ -222,7 +222,7 @@ class BuildRdbFileTest {
 			protected ResultObject processAllRequest(Collection<String> locationFolders) {
 				ResultObject result = new ResultObject();
 				result.setCount(-1);
-				result.setFilename("TESTING");
+				result.setMessage("TESTING");
 				return result;
 			}
 		};
@@ -237,7 +237,7 @@ class BuildRdbFileTest {
 
 		// ASSERTIONS
 		assertEquals(-1, res.getCount());
-		assertEquals("TESTING", res.getFilename());
+		assertEquals("TESTING", res.getMessage());
 		assertEquals(0, writer.getHeaderRows());
 		Mockito.verify(mockLoc, Mockito.atLeastOnce()).getLocationFolders();
 		Mockito.verify(mockLoc, Mockito.atMostOnce()).getLocationFolders();

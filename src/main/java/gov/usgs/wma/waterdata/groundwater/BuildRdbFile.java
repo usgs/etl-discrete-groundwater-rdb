@@ -84,7 +84,7 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 			dao.sendDiscreteGroundWater(states, rdbWriter);
 
 			result.setCount( (int)rdbWriter.getDataRows() );
-			result.setFilename(s3bucket.getKeyName());
+			result.setMessage("Count is rows written to file: " + s3bucket.getKeyName());
 		} catch (Exception e) {
 			throw new RuntimeException("Error writing RDB file to S3, " + filename, e);
 		}
@@ -93,7 +93,12 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 		return result;
 	}
 
-	protected RdbWriter createRdbWriter(Writer dest) {
-		return new RdbWriter(dest);
+	/**
+	 * Helper method that makes test injection easier.
+	 * @param destination destination writer
+	 * @return RDB wrapper writer instance
+	 */
+	protected RdbWriter createRdbWriter(Writer destination) {
+		return new RdbWriter(destination);
 	}
 }

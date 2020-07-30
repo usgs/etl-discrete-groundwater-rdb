@@ -22,8 +22,8 @@ public class RdbWriter {
 	private long dataLineCount;
 	private String sepChar="";
 
-	public RdbWriter(Writer dest) {
-		this.rdb = dest;
+	public RdbWriter(Writer destination) {
+		this.rdb = destination;
 		initRows();
 	}
 

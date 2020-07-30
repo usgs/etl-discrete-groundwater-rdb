@@ -15,14 +15,15 @@ import com.amazonaws.services.lambda.model.ServiceException;
 public class InvokeAll {
 	public static final Logger logger = LoggerFactory.getLogger(InvokeAll.class);
 
-	final String ARN="arn:aws:lambda:us-west-2:_ACCOUNT_:function:etl-discrete-groundwater-rdb-_TIER_-loadRdb";
+	final String ARN="arn:aws:lambda:_REGION_:_ACCOUNT_:function:etl-discrete-groundwater-rdb-_TIER_-loadRdb";
 
 	public ResultObject invoke(Properties properties, Collection<String> folders) {
 
 		try {
 			AWSLambda awsLambda = lambdaContext(properties.getRegion());
 
-			String arn = ARN.replace("_ACCOUNT_", properties.getAccount())
+			String arn = ARN.replace("_REGION_", properties.getRegion())
+					.replace("_ACCOUNT_", properties.getAccount())
 					.replace("_TIER_", properties.getTier());
 
 			int count = 0;
@@ -40,13 +41,19 @@ public class InvokeAll {
 
 			ResultObject result = new ResultObject();
 			result.setCount(count);
-			result.setFilename("N/A, count is location folders processed");
+			result.setMessage("Count is location folder processes submitted.");
 			return result;
 		} catch (ServiceException e) {
 			throw new RuntimeException("Error aquiring AWSLambda client.", e);
 		}
 	}
 
+	/**
+	 * Helper method for test invoke injection
+	 * @param awsLambda AWS Lambda context instance
+	 * @param forFolder location folder for this invocation
+	 * @param invokeRequest response instance from AWS
+	 */
 	protected void invokeAsync(AWSLambda awsLambda, String forFolder, InvokeRequest invokeRequest) {
 		try {
 			awsLambda.invoke(invokeRequest);
@@ -60,6 +67,11 @@ public class InvokeAll {
 		}
 	}
 
+	/**
+	 * Helper method for AWS Lambda context instance injection tests.
+	 * @param region the AWS region; typically us-west-2
+	 * @return AWS Lambda Context
+	 */
 	protected AWSLambda lambdaContext(String region) {
 		return AWSLambdaClientBuilder.standard().withRegion(region).build();
 	}

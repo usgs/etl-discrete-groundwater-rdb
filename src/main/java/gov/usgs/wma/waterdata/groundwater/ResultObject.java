@@ -7,7 +7,7 @@ package gov.usgs.wma.waterdata.groundwater;
  */
 public class ResultObject {
 	private Integer count;
-	private String filename;
+	private String message;
 
 	public Integer getCount() {
 		return count;
@@ -17,11 +17,11 @@ public class ResultObject {
 		this.count = count;
 	}
 
-	public String getFilename() {
-		return filename;
+	public String getMessage() {
+		return message;
 	}
 
-	public void setFilename(String filename) {
-		this.filename = filename;
+	public void setMessage(String filename) {
+		this.message = filename;
 	}
 }
