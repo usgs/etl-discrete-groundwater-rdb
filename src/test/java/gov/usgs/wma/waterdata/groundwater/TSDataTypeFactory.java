@@ -12,7 +12,7 @@ public class TSDataTypeFactory extends PostgresqlDataTypeFactory {
 	@Override
 	public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
 		logger.debug("createDataType(sqlType={}, sqlTypeName={})",
-				String.valueOf(sqlType), sqlTypeName);
+                sqlType, sqlTypeName);
 
 		return super.createDataType(sqlType, sqlTypeName);
 	}

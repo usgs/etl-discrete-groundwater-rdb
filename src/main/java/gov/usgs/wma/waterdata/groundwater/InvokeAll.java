@@ -61,7 +61,6 @@ public class InvokeAll {
 	}
 
 	protected AWSLambda lambdaContext(String region) {
-		AWSLambda awsLambda = AWSLambdaClientBuilder.standard().withRegion(region).build();
-		return awsLambda;
+		return AWSLambdaClientBuilder.standard().withRegion(region).build();
 	}
 }

@@ -3,6 +3,7 @@ package gov.usgs.wma.waterdata.groundwater;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
@@ -106,8 +107,8 @@ class DiscreteGroundWaterRowMapperTest {
 		assertTrue(writtenValue.contains("\tT")); // last value
 		assertTrue(writtenValue.contains("\t200705"));
 		assertTrue(writtenValue.contains("\t20070501\t"));
-		assertTrue(!writtenValue.contains("\t1200\t"));
-		assertTrue(!writtenValue.contains("\t1830\t"));
+		assertFalse(writtenValue.contains("\t1200\t"));
+		assertFalse(writtenValue.contains("\t1830\t"));
 		assertTrue(writtenValue.contains("\t07-MAY-2007 18:30:47\t"));
 		assertTrue(writtenValue.contains("\t01-MAY-2007 12:00:00\t")); // measured and UTC dates
 		assertTrue(writtenValue.contains("\tUTC\t"));

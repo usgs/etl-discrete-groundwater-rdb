@@ -47,7 +47,7 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 	public  ResultObject apply(RequestObject request) {
 		String locationFolder = request.getLocationFolder();
 		if ("ALL".equals(locationFolder)) {
-			return processAllRequest(locationFolderUtil.getFolders());
+			return processAllRequest(locationFolderUtil.getLocationFolders());
 		}
 		return processRequest(locationFolder);
 	}
@@ -77,7 +77,7 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 		}
 		String filename = s3BucketUtil.createFilename(suffix);
 
-		try (S3Bucket s3bucket = s3BucketUtil.openS3(filename);) {
+		try (S3Bucket s3bucket = s3BucketUtil.openS3(filename)) {
 
 			Writer writer = s3bucket.getWriter();
 			RdbWriter rdbWriter = createRdbWriter(writer).writeHeader();

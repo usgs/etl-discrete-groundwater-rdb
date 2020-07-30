@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class S3BucketUtil {
 
 	@Autowired
-	private Properties properties;
+	private final Properties properties;
 
 	S3BucketUtil(Properties properties) {
 		this.properties = properties;

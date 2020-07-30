@@ -179,7 +179,7 @@ public class DiscreteGroundWaterDaoIT {
 				.stream( outlines.split("\\n") )
 				.collect( groupingBy(line->line.split("\\t")[1],
 						mapping(line->{
-							String cols[]=line.split("\\t");
+							String[] cols =line.split("\\t");
 							return cols[2]+(isEmpty(cols[3])?"1200":cols[3]);
 						}
 						,toList())) );

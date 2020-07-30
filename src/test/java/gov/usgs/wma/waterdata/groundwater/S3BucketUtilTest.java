@@ -35,7 +35,7 @@ class S3BucketUtilTest {
 
 
 	@Test
-	void testFilenameTEST() throws Exception {
+	void testFilenameTEST() {
 		// SETUP
 		String expectedStartWith = "tstest";
 
@@ -48,7 +48,7 @@ class S3BucketUtilTest {
 		assertTrue(fileTimestamp.matcher(filename).matches());
 	}
 	@Test
-	void testFilenameQA() throws Exception {
+	void testFilenameQA() {
 		// SETUP
 		properties.tier = "QA";
 		String expectedStartWith = "tsqa";
@@ -62,7 +62,7 @@ class S3BucketUtilTest {
 		assertTrue(fileTimestamp.matcher(filename).matches());
 	}
 	@Test
-	void testFilenamePROD() throws Exception {
+	void testFilenamePROD() {
 		// SETUP
 		properties.tier = "PROD-INTERNAL";
 		String expectedStartWith = "tspr";
@@ -77,7 +77,7 @@ class S3BucketUtilTest {
 	}
 
 	@Test
-	void testOpenS3File() throws Exception {
+	void testOpenS3File() {
 		// SETUP
 		String filename = "test-filename";
 
@@ -96,7 +96,7 @@ class S3BucketUtilTest {
 			assertTrue(tmpPath.contains("tmp") || tmpPath.contains("temp"));
 
 			// default state is to dispose of the tmp file
-			assertEquals(true, s3.disposeFile);
+			assertTrue(s3.isFileDisposable);
 			// initial state is without a writer
 			assertNull(s3.writer);
 		} finally {
@@ -108,7 +108,7 @@ class S3BucketUtilTest {
 	}
 
 	// this test does not throw an IOE on *nix, only Windows.
-	void testOpenS3File_IOE() throws Exception {
+	void testOpenS3File_IOE() {
 		// SETUP
 		String filename = "!@#$%^&*()-+={}[]|";
 
@@ -117,7 +117,7 @@ class S3BucketUtilTest {
 	}
 
 	@Test
-	void testSimpleDate() throws Exception {
+	void testSimpleDate() {
 		LocalDateTime localDT = LocalDateTime.of(2000, 11, 22, 02, 03, 04);
 		Date datetime = Timestamp.valueOf(localDT);
 		String actual = new SimpleDateFormat("YYYYMMdd_HHmmss").format(datetime);
