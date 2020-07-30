@@ -12,6 +12,10 @@ public class RequestObject {
 		return locationFolder;
 	}
 
+	public void setLocationFolder(String locationFolder) {
+		this.locationFolder = locationFolder;
+	}
+
 	@Override
 	public String toString() {
 		return "RequestObject{" +
