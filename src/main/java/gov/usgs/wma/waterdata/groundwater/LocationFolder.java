@@ -102,7 +102,8 @@ public class LocationFolder {
 		try {
 			InputStream locations = getClass().getResourceAsStream("/rdb/locationFolders.txt");
 			String folders = new String(FileCopyUtils.copyToByteArray(locations));
-			return folders.lines().collect(Collectors.toList());
+			List<String> locationFolders = folders.lines().collect(Collectors.toList());
+			return locationFolders;
 		} catch (IOException e) {
 			throw new RuntimeException("Failed to load locaiton folders resource.", e);
 		}
