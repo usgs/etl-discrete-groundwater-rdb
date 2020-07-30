@@ -103,7 +103,7 @@ class BuildRdbFileTest {
 		// ASSERTIONS
 		assertEquals(4, writer.getHeaderRows(), "The header should be written in the RDB file builder.");
 		assertEquals(6, res.getCount(), "The result object should contain the number of rows written.");
-		assertEquals(FILENM, res.getMessage(), "The result object should contain the filename placed in S3.");
+		assertTrue(res.getMessage().contains(FILENM), "The result object should contain the filename placed in S3.");
 		Mockito.verify(mockDao, Mockito.atLeastOnce()).sendDiscreteGroundWater(stateAsList, writer);
 		Mockito.verify(mockS3b, Mockito.atLeastOnce()).getWriter();
 		Mockito.verify(mockS3b, Mockito.atMostOnce()).getWriter();

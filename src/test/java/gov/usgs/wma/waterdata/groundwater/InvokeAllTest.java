@@ -57,15 +57,6 @@ class InvokeAllTest {
 		// ensure calls per folder
 		assertEquals(folders.size(), result.getCount());
 		assertEquals(folders.size(), callCount);
-
-		// ensure arn value injection
-		assertTrue(arn.contains(properties.getAccount()));
-		assertTrue(arn.contains(properties.getTier()));
-		assertFalse(arn.contains("_ACCOUNT_"));
-		assertFalse(arn.contains("_TIER_"));
-		assertFalse(arn.contains("_"));
-
 		//		Mockito.verify(mockAws, Mockito.atLeast(2)).invoke(Mockito.any());
 	}
-
 }

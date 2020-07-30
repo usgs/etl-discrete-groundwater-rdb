@@ -15,21 +15,15 @@ import com.amazonaws.services.lambda.model.ServiceException;
 public class InvokeAll {
 	public static final Logger logger = LoggerFactory.getLogger(InvokeAll.class);
 
-	final String ARN="arn:aws:lambda:_REGION_:_ACCOUNT_:function:etl-discrete-groundwater-rdb-_TIER_-loadRdb";
-
 	public ResultObject invoke(Properties properties, Collection<String> folders) {
 
 		try {
 			AWSLambda awsLambda = lambdaContext(properties.getRegion());
 
-			String arn = ARN.replace("_REGION_", properties.getRegion())
-					.replace("_ACCOUNT_", properties.getAccount())
-					.replace("_TIER_", properties.getTier());
-
 			int count = 0;
 			for (String folder : folders) {
 				InvokeRequest invokeRequest = new InvokeRequest()
-						.withFunctionName(arn)
+						.withFunctionName(properties.getArn())
 						.withInvocationType(InvocationType.Event)
 						.withPayload("{\n"
 								+" \"locationFolder\": \""+folder+"\""

@@ -9,7 +9,7 @@ public class Properties {
 	String tier;
 	String bucket;
 	String region;
-	String account;
+	String arn;
 
 	public String getTier() {
 		return tier;
@@ -35,11 +35,11 @@ public class Properties {
 		this.region = region;
 	}
 
-	public String getAccount() {
-		return account;
+	public String getArn() {
+		return arn;
 	}
 
 	public void setAccount(String account) {
-		this.account = account;
+		this.arn = account;
 	}
 }

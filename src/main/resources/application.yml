@@ -17,4 +17,4 @@ properties:
   tier: ${TIER}
   region: ${AWS_DEPLOYMENT_REGION}
   bucket: ${S3_BUCKET_NAME}
-  account: ${AWS_ACCOUNT}
+  arn: ${LAMBDA_ARN}
