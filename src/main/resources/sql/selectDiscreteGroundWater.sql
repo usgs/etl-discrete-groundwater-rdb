@@ -1,4 +1,4 @@
-select
+select distinct
     d.site_identification_number,
     d.agency_code,
     d.level_feet_below_land_surface,
