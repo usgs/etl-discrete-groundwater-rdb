@@ -1,4 +1,4 @@
-select distinct
+select
     d.site_identification_number,
     d.agency_code,
     d.level_feet_below_land_surface,
@@ -23,5 +23,5 @@ select distinct
     on m.district_cd = h.district_cd
  where h.host_name not like 'nwisd%'
    and h.state_name in (:states)
- order by m.state, d.monitoring_location_identifier, d.date_measured_raw
+ order by h.state_name, d.monitoring_location_identifier, d.date_measured_raw
  
