@@ -79,7 +79,7 @@ class DiscreteGroundWaterRowMapperTest {
 		dgw.timeMeasuredUtc = "01-MAY-2007 12:00:00"; // UTC
 		dgw.approvalStatusCode = "T"; // T or R
 
-		dgw.parameterCode = "NOT IMPL YET";
+		dgw.parameterCode = "12345";
 
 		return dgw;
 	}
@@ -104,7 +104,7 @@ class DiscreteGroundWaterRowMapperTest {
 		assertTrue(writtenValue.contains("\t4042342342\t"));
 		assertTrue(writtenValue.contains("\t2\t"));
 		assertTrue(writtenValue.contains("\tS\t"));
-		assertTrue(writtenValue.contains("\tT")); // last value
+		assertTrue(writtenValue.contains("\tT\t"));
 		assertTrue(writtenValue.contains("\t200705"));
 		assertTrue(writtenValue.contains("\t20070501\t"));
 		assertFalse(writtenValue.contains("\t1200\t"));
@@ -113,6 +113,7 @@ class DiscreteGroundWaterRowMapperTest {
 		assertTrue(writtenValue.contains("\t01-MAY-2007 12:00:00\t")); // measured and UTC dates
 		assertTrue(writtenValue.contains("\tUTC\t"));
 		assertTrue(writtenValue.contains("\tD\t"));
+		assertTrue(writtenValue.contains("\t12345")); // last value
 
 		assertEquals(1, rdbWriter.getDataRows());
 		assertEquals("written", written);
