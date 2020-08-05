@@ -54,6 +54,18 @@ public class LocationFolder {
 			states.add("New Hampshire");
 			states.add("Vermont");
 
+		} else if ("Puerto Rico".equals(locationFolder)
+				|| "PR".equals(locationFolder)) {
+			states.add("Puerto Rico");
+			states.add("Virgin Islands");
+
+		} else if ("Pacific Islands".equals(locationFolder)
+				|| "PI".equals(locationFolder)) {
+			states.add("Hawaii");
+			states.add("American Samoa");
+			states.add("Guam");
+			states.add("Northern Mariana Islands");
+
 		} else {
 			// the default is to use the location folder (a state name) as the singular entry.
 			states.add(locationFolder);
@@ -86,6 +98,8 @@ public class LocationFolder {
 			return locationFolder;
 		} else if ("Pacific Islands".equals(locationFolder)) {
 			return "PI";
+		} else if ("Puerto Rico".equals(locationFolder)) {
+			return "PR";
 		}
 		return dao.getPostCode(locationFolder);
 	}
