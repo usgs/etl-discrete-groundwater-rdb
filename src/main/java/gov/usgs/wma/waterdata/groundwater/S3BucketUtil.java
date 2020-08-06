@@ -3,8 +3,8 @@ package gov.usgs.wma.waterdata.groundwater;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,8 +37,7 @@ public class S3BucketUtil {
 		} else if (properties.getTier().toLowerCase().startsWith("prod")) {
 			tier = "pr";
 		}
-		String metadata = new SimpleDateFormat("YYYYMMdd_HHmmss")
-				.format(Timestamp.valueOf(LocalDateTime.now()));
+		String metadata = LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYYMMdd_HHmmss"));
 
 		// .gz added in temp file create
 		// ts is not joined with a dot while all the others are joined by a dot

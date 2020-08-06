@@ -3,7 +3,7 @@ package gov.usgs.wma.waterdata.groundwater;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +53,10 @@ public class RdbWriter {
 		return this;
 	}
 
+	static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("YYYYMMdd");
+	static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HHmm");
+	static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-YYYY HH:mm:ss");
+
 	/**
 	 * Marshals GW samples as a RDB row.
 	 * @param dgw the sample to write.
@@ -62,9 +66,9 @@ public class RdbWriter {
 		writeValue(  5, dgw.agencyCode);
 		sepChar = "\t";
 		writeValue( 15, dgw.siteIdentificationNumber);
-		writeValue(  8, new SimpleDateFormat("YYYYMMdd").format(dgw.dateMeasuredRaw));
+		writeValue(  8, dgw.dateMeasuredRaw.toLocalDateTime().format(DATE_FORMAT));
 
-		String time = new SimpleDateFormat("HHmm").format(dgw.dateMeasuredRaw);
+		String time = dgw.dateMeasuredRaw.toLocalDateTime().format(TIME_FORMAT);
 		if ("1200".endsWith(time)) {
 			time = "";
 		}
@@ -88,7 +92,7 @@ public class RdbWriter {
 		writeValue(  1, dgw.measurementMethodCode);
 		// omitting date created, loader no longer references either
 		writeValue( 25, dgw.dateMeasured);
-		writeValue( 25, new SimpleDateFormat("dd-MMM-YYYY HH:mm:ss").format(dgw.dateMeasuredRaw).toUpperCase());
+		writeValue( 25, dgw.dateMeasuredRaw.toLocalDateTime().format(DATE_TIME_FORMAT).toUpperCase());
 		writeValue(  1, dgw.dateTimeAccuracyCode);
 		writeValue(  6, dgw.timezoneCode);
 		writeValue( 25, dgw.timeMeasuredUtc);

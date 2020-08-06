@@ -1,9 +1,6 @@
 package gov.usgs.wma.waterdata.groundwater;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
@@ -11,9 +8,12 @@ import java.io.Writer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 
+import org.joda.time.LocalTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -23,6 +23,7 @@ class DiscreteGroundWaterRowMapperTest {
 	ByteArrayOutputStream out;
 	Writer destination;
 	ResultSet mrs;
+	DiscreteGroundWater dgw;
 
 	@BeforeEach
 	public void setup() {
@@ -30,7 +31,7 @@ class DiscreteGroundWaterRowMapperTest {
 		destination = new OutputStreamWriter(out);
 
 		mrs = Mockito.mock(ResultSet.class);
-		DiscreteGroundWater dgw = makeDgw();
+		dgw = makeDgw();
 		try {
 			Mockito.when(mrs.getString("agency_cd")).thenReturn(dgw.agencyCode);
 			Mockito.when(mrs.getString("agency_code")).thenReturn(dgw.agencyCode);
@@ -118,4 +119,35 @@ class DiscreteGroundWaterRowMapperTest {
 		assertEquals("written", written);
 	}
 
+	@Test
+	void testSimpleDateFormat_1982_12_31_ERROR() throws Exception {
+		// SETUP
+		LocalDateTime dateTime = LocalDateTime.of(1982, Month.DECEMBER, 31, 12, 0);
+		dgw.dateMeasuredRaw = Timestamp.valueOf(dateTime);
+
+		// ACTION UNDER TEST
+		String actual = new SimpleDateFormat("YYYYMMdd").format(dgw.dateMeasuredRaw);
+		System.out.println(actual);
+		System.out.println(dateTime);
+
+		// ASSERTIONS - these pass if there is a bug in SimpleDateFormat
+		assertEquals("19831231", actual);
+		assertNotEquals("19821231", actual);
+	}
+	@Test
+	void testDateTimeFormat_1982_12_31() throws Exception {
+		// SETUP
+		LocalDateTime dateTime = LocalDateTime.of(1982, Month.DECEMBER, 31, 12, 0);
+		dgw.dateMeasuredRaw = Timestamp.valueOf(dateTime);
+		DateTimeFormatter format = DateTimeFormatter.ofPattern("YYYYMMdd");
+
+		// ACTION UNDER TEST
+		String actual = dateTime.format(format);
+		System.out.println(actual);
+		System.out.println(dateTime);
+
+		// ASSERTIONS - these pass if there is a bug in SimpleDateFormat
+		assertEquals("19831231", actual);
+		assertNotEquals("19821231", actual);
+	}
 }
