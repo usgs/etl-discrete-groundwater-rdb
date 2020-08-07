@@ -19,6 +19,9 @@ select
   from nwis.discrete_ground_water d
   join nwis.monitoring_location m
     on m.monitoring_location_id = d.monitoring_location_id
- where m.state in (:states) 
- order by m.state, d.monitoring_location_identifier, d.date_measured_raw
+  join nwis.nwis_district_cds_by_host h
+    on m.district_cd = h.district_cd
+ where h.host_name not like 'nwisd%'
+   and h.state_name in (:states)
+ order by h.state_name, d.monitoring_location_identifier, d.date_measured_raw
  
