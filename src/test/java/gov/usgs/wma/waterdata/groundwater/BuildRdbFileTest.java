@@ -71,6 +71,7 @@ class BuildRdbFileTest {
 		Mockito.doCallRealMethod().when(mockS3b).close();
 		Mockito.when(mockS3b.sendS3()).thenReturn(null);
 		Mockito.when(mockS3b.getKeyName()).thenReturn(FILENM);
+
 		// In the actual code it has the .gz extension.
 		// This test does not require the extension for filename testing.
 
