@@ -120,15 +120,13 @@ class DiscreteGroundWaterRowMapperTest {
 	}
 
 	@Test
-	void testSimpleDateFormat_1982_12_31_ERROR() throws Exception {
+	void testSimpleDateFormat_1982_12_31_ERROR() {
 		// SETUP
 		LocalDateTime dateTime = LocalDateTime.of(1982, Month.DECEMBER, 31, 12, 0);
 		dgw.dateMeasuredRaw = Timestamp.valueOf(dateTime);
 
 		// ACTION UNDER TEST
 		String actual = new SimpleDateFormat("YYYYMMdd").format(dgw.dateMeasuredRaw);
-		System.out.println(actual);
-		System.out.println(dateTime);
 
 		// ASSERTIONS - these pass if there is a bug in SimpleDateFormat
 		assertEquals("1982-12-31T12:00", dateTime.toString());
@@ -136,7 +134,7 @@ class DiscreteGroundWaterRowMapperTest {
 		assertNotEquals("19821231", actual, "Java lib error formats as 1983 but should be 1982");
 	}
 	@Test
-	void testDateTimeFormat_1982_12_31_ERROR() throws Exception {
+	void testDateTimeFormat_1982_12_31_ERROR() {
 		// SETUP
 		LocalDateTime dateTime = LocalDateTime.of(1982, Month.DECEMBER, 31, 12, 0);
 		dgw.dateMeasuredRaw = Timestamp.valueOf(dateTime);
@@ -144,8 +142,6 @@ class DiscreteGroundWaterRowMapperTest {
 
 		// ACTION UNDER TEST
 		String actual = dateTime.format(format);
-		System.out.println(actual);
-		System.out.println(dateTime);
 
 		// ASSERTIONS - these pass if there is a bug in SimpleDateFormat
 		assertEquals("1982-12-31T12:00", dateTime.toString());
@@ -153,7 +149,7 @@ class DiscreteGroundWaterRowMapperTest {
 		assertEquals("19831231", actual, "Java lib error formats as 1983 but should be 1982");
 	}
 	@Test
-	void testJodaFormat_1982_12_31() throws Exception {
+	void testJodaFormat_1982_12_31()  {
 		// SETUP
 		org.joda.time.format.DateTimeFormatter construction = org.joda.time.format.DateTimeFormat.forPattern("YYYY-MM-dd HH:mm");
 		org.joda.time.DateTime jodaDT = DateTime.parse("1982-12-31 12:00", construction);
