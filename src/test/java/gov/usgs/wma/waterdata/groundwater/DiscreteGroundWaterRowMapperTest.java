@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 
-import org.joda.time.LocalTime;
+import org.joda.time.DateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -131,11 +131,12 @@ class DiscreteGroundWaterRowMapperTest {
 		System.out.println(dateTime);
 
 		// ASSERTIONS - these pass if there is a bug in SimpleDateFormat
-		assertEquals("19831231", actual);
-		assertNotEquals("19821231", actual);
+		assertEquals("1982-12-31T12:00", dateTime.toString());
+		assertEquals("19831231", actual, "Java lib error formats as 1983 but should be 1982");
+		assertNotEquals("19821231", actual, "Java lib error formats as 1983 but should be 1982");
 	}
 	@Test
-	void testDateTimeFormat_1982_12_31() throws Exception {
+	void testDateTimeFormat_1982_12_31_ERROR() throws Exception {
 		// SETUP
 		LocalDateTime dateTime = LocalDateTime.of(1982, Month.DECEMBER, 31, 12, 0);
 		dgw.dateMeasuredRaw = Timestamp.valueOf(dateTime);
@@ -147,7 +148,24 @@ class DiscreteGroundWaterRowMapperTest {
 		System.out.println(dateTime);
 
 		// ASSERTIONS - these pass if there is a bug in SimpleDateFormat
-		assertEquals("19831231", actual);
-		assertNotEquals("19821231", actual);
+		assertEquals("1982-12-31T12:00", dateTime.toString());
+		assertNotEquals("19821231", actual, "Java lib error formats as 1983 but should be 1982");
+		assertEquals("19831231", actual, "Java lib error formats as 1983 but should be 1982");
+	}
+	@Test
+	void testJodaFormat_1982_12_31() throws Exception {
+		// SETUP
+		org.joda.time.format.DateTimeFormatter construction = org.joda.time.format.DateTimeFormat.forPattern("YYYY-MM-dd HH:mm");
+		org.joda.time.DateTime jodaDT = DateTime.parse("1982-12-31 12:00", construction);
+		System.out.println(jodaDT);
+		org.joda.time.format.DateTimeFormatter testFormat = org.joda.time.format.DateTimeFormat.forPattern("YYYYMMdd");
+
+		// ACTION UNDER TEST
+		String actual = jodaDT.toString(testFormat);
+
+		// ASSERTIONS - these pass if there is a bug in SimpleDateFormat
+		//		assertEquals("1982-12-31T12:00", dateTime.toString());
+		assertEquals("19821231", actual);
+		assertNotEquals("19831231", actual);
 	}
 }

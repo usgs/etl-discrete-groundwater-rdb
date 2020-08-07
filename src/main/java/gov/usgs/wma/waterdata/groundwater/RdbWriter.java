@@ -3,7 +3,10 @@ package gov.usgs.wma.waterdata.groundwater;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
-import java.time.format.DateTimeFormatter;
+
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.DateTime;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,9 +56,9 @@ public class RdbWriter {
 		return this;
 	}
 
-	static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("YYYYMMdd");
-	static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HHmm");
-	static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-YYYY HH:mm:ss");
+	static final DateTimeFormatter DATE_FORMAT = DateTimeFormat.forPattern("YYYYMMdd");
+	static final DateTimeFormatter TIME_FORMAT = DateTimeFormat.forPattern("HHmm");
+	static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormat.forPattern("dd-MMM-YYYY HH:mm:ss");
 
 	/**
 	 * Marshals GW samples as a RDB row.
@@ -66,9 +69,9 @@ public class RdbWriter {
 		writeValue(  5, dgw.agencyCode);
 		sepChar = "\t";
 		writeValue( 15, dgw.siteIdentificationNumber);
-		writeValue(  8, dgw.dateMeasuredRaw.toLocalDateTime().format(DATE_FORMAT));
+		writeValue(  8, new DateTime(dgw.dateMeasuredRaw).toString(DATE_FORMAT));
 
-		String time = dgw.dateMeasuredRaw.toLocalDateTime().format(TIME_FORMAT);
+		String time = new DateTime(dgw.dateMeasuredRaw).toString(TIME_FORMAT);
 		if ("1200".endsWith(time)) {
 			time = "";
 		}
@@ -92,7 +95,7 @@ public class RdbWriter {
 		writeValue(  1, dgw.measurementMethodCode);
 		// omitting date created, loader no longer references either
 		writeValue( 25, dgw.dateMeasured);
-		writeValue( 25, dgw.dateMeasuredRaw.toLocalDateTime().format(DATE_TIME_FORMAT).toUpperCase());
+		writeValue( 25, new DateTime(dgw.dateMeasuredRaw).toString(DATE_TIME_FORMAT).toUpperCase());
 		writeValue(  1, dgw.dateTimeAccuracyCode);
 		writeValue(  6, dgw.timezoneCode);
 		writeValue( 25, dgw.timeMeasuredUtc);
