@@ -18,7 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-class DiscreteGroundWaterRowMapperTest {
+class DiscreteGroundWaterRowHandlerTest {
 
 	ByteArrayOutputStream out;
 	Writer destination;
@@ -86,30 +86,36 @@ class DiscreteGroundWaterRowMapperTest {
 	}
 
 	@Test
-	void testResultSetMapping() throws SQLException {
+	void testRowWriteGeneral() throws Exception {
 		// SETUP
-		DiscreteGroundWaterRowMapper rowMapper = new DiscreteGroundWaterRowMapper();
+		RdbWriter rdbWriter = new RdbWriter(destination);
+		DiscreteGroundWaterRowHandler rowHandler = new DiscreteGroundWaterRowHandler(rdbWriter);
 
 		// ACTION UNDER TEST
-		DiscreteGroundWater actual = rowMapper.mapRow(mockRs, 0);
+		rowHandler.processRow(mockRs);
+
+		// POST SETUP
+		destination.close();
+		String writtenValue = out.toString();
 
 		// ASSERTIONS
-		assertEquals(dgw.agencyCode, actual.agencyCode);
-		assertEquals(dgw.siteIdentificationNumber, actual.siteIdentificationNumber);
-		assertEquals(dgw.levelFeetBelowLandSurface, actual.levelFeetBelowLandSurface);
-		assertEquals(dgw.verticalDatumCode, actual.verticalDatumCode); // only if vertical measurement
-		assertEquals(dgw.levelFeetAboveVerticalDatum, actual.levelFeetAboveVerticalDatum);  // usually only one set in the file
-		assertEquals(dgw.measurementSourceCode, actual.measurementSourceCode);
-		assertEquals(dgw.measuringAgencyCode, actual.measuringAgencyCode);
-		assertEquals(dgw.levelAccuracyCode, actual.levelAccuracyCode); // two digits after decimal point
-		assertEquals(dgw.siteStatusCode, actual.siteStatusCode); // R, S or blank
-		assertEquals(dgw.measurementMethodCode, actual.measurementMethodCode); // S, R, or V
-		assertEquals(dgw.dateMeasured, actual.dateMeasured);
-		assertEquals(dgw.dateMeasuredRaw, actual.dateMeasuredRaw);
-		assertEquals(dgw.dateTimeAccuracyCode, actual.dateTimeAccuracyCode); // [D]day or [M]minute
-		assertEquals(dgw.timezoneCode, actual.timezoneCode);
-		assertEquals(dgw.timeMeasuredUtc, actual.timeMeasuredUtc); // UTC
-		assertEquals(dgw.approvalStatusCode, actual.approvalStatusCode); // T or R
-		assertEquals(dgw.parameterCode, actual.parameterCode);
+		assertNotNull(writtenValue);
+		assertTrue(writtenValue.startsWith("USGS\t")); // first USGS value
+		assertTrue(writtenValue.contains("\tUSGS\t")); // second USGS value
+		assertTrue(writtenValue.contains("\t4042342342\t"));
+		assertTrue(writtenValue.contains("\t2\t"));
+		assertTrue(writtenValue.contains("\tS\t"));
+		assertTrue(writtenValue.contains("\tT\t"));
+		assertTrue(writtenValue.contains("\t200705"));
+		assertTrue(writtenValue.contains("\t20070501\t"));
+		assertFalse(writtenValue.contains("\t1200\t"));
+		assertFalse(writtenValue.contains("\t1830\t"));
+		assertTrue(writtenValue.contains("\t07-MAY-2007 18:30:47\t"));
+		assertTrue(writtenValue.contains("\t01-MAY-2007 12:00:00\t")); // measured and UTC dates
+		assertTrue(writtenValue.contains("\tUTC\t"));
+		assertTrue(writtenValue.contains("\tD\t"));
+		assertTrue(writtenValue.contains("\t12345")); // last value
+
+		assertEquals(1, rdbWriter.getDataRows());
 	}
 }

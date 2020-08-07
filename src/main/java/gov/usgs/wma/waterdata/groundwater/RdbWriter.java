@@ -100,7 +100,7 @@ public class RdbWriter {
 		writeValue(  6, dgw.timezoneCode);
 		writeValue( 25, dgw.timeMeasuredUtc);
 		writeValue(  1, dgw.approvalStatusCode);
-		writeValue(5, dgw.parameterCode);
+		writeValue(  5, dgw.parameterCode);
 		try {
 			rdb.append("\n");
 		} catch (IOException e) {

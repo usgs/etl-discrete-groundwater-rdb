@@ -9,19 +9,14 @@ import org.springframework.jdbc.core.RowMapper;
  * Simple SpringFramework RowMapper to GW ORM object
  * @author duselman
  */
-public class DiscreteGroundWaterRowMapper implements RowMapper<String> {
+public class DiscreteGroundWaterRowMapper implements RowMapper<DiscreteGroundWater> {
 
-	private RdbWriter writer;
-
-	public DiscreteGroundWaterRowMapper(RdbWriter writer) {
-		this.writer = writer;
-	}
 
 	/**
 	 * Translates JDBC RowSet row to ORM instance.
 	 */
 	@Override
-	public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+	public DiscreteGroundWater mapRow(ResultSet rs, int rowNum) throws SQLException {
 		DiscreteGroundWater discreteGroundWater = new DiscreteGroundWater();
 		discreteGroundWater.agencyCode = rs.getString("agency_code");
 		discreteGroundWater.approvalStatusCode = rs.getString("approval_status_code");
@@ -40,8 +35,6 @@ public class DiscreteGroundWaterRowMapper implements RowMapper<String> {
 		discreteGroundWater.timezoneCode = rs.getString("timezone_code");
 		discreteGroundWater.verticalDatumCode = rs.getString("vertical_datum_code");
 		discreteGroundWater.parameterCode = rs.getString("parameter_code");
-
-		writer.writeRow(discreteGroundWater);
-		return "written";
+		return discreteGroundWater;
 	}
 }
