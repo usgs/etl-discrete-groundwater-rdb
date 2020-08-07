@@ -64,15 +64,11 @@ class RdbWriterTest {
 		String givenValue = "valuePlusMore";
 
 		// ACTION UNDER TEST
-		rdbWriter.writeValue(5, givenValue);
-
-		// POST SETUP
-		rdbWriter.close();
-		String writtenValue = out.toString();
+		String actual = rdbWriter.validateValue(5, givenValue);
 
 		// ASSERTIONS
-		assertNotNull(writtenValue);
-		assertEquals("value", writtenValue);
+		assertNotNull(actual);
+		assertEquals("value", actual);
 	}
 
 	@Test
@@ -80,15 +76,11 @@ class RdbWriterTest {
 		String givenValue = "value";
 
 		// ACTION UNDER TEST
-		rdbWriter.writeValue(15, givenValue);
-
-		// POST SETUP
-		rdbWriter.close();
-		String writtenValue = out.toString();
+		String actual = rdbWriter.validateValue(15, givenValue);
 
 		// ASSERTIONS
-		assertNotNull(writtenValue);
-		assertEquals("value", writtenValue);
+		assertNotNull(actual);
+		assertEquals("value", actual);
 	}
 
 	@Test
@@ -133,7 +125,7 @@ class RdbWriterTest {
 		assertTrue(writtenValue.contains("\tT\t"));
 		assertTrue(writtenValue.contains("\t200705"));
 		assertTrue(writtenValue.contains("\t20070501\t"));
-		assertFalse(writtenValue.contains("\t1200\t"));
+		assertTrue(writtenValue.contains("\t1200\t"));
 		assertFalse(writtenValue.contains("\t1830\t"));
 		assertTrue(writtenValue.contains("\t07-MAY-2007 18:30:47\t"));
 		assertTrue(writtenValue.contains("\t01-MAY-2007 12:00:00\t")); // measured and UTC dates
@@ -290,7 +282,6 @@ class RdbWriterTest {
 		// SETUP
 		org.joda.time.format.DateTimeFormatter construction = org.joda.time.format.DateTimeFormat.forPattern("YYYY-MM-dd HH:mm");
 		org.joda.time.DateTime jodaDT = DateTime.parse("1982-12-31 12:00", construction);
-		System.out.println(jodaDT);
 		org.joda.time.format.DateTimeFormatter testFormat = org.joda.time.format.DateTimeFormat.forPattern("YYYYMMdd");
 
 		// ACTION UNDER TEST

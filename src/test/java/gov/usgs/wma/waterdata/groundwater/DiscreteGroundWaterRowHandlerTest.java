@@ -108,7 +108,7 @@ class DiscreteGroundWaterRowHandlerTest {
 		assertTrue(writtenValue.contains("\tT\t"));
 		assertTrue(writtenValue.contains("\t200705"));
 		assertTrue(writtenValue.contains("\t20070501\t"));
-		assertFalse(writtenValue.contains("\t1200\t"));
+		assertTrue(writtenValue.contains("\t1200\t"));
 		assertFalse(writtenValue.contains("\t1830\t"));
 		assertTrue(writtenValue.contains("\t07-MAY-2007 18:30:47\t"));
 		assertTrue(writtenValue.contains("\t01-MAY-2007 12:00:00\t")); // measured and UTC dates
