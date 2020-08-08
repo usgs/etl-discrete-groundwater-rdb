@@ -82,11 +82,10 @@ class S3BucketUtilTest {
 		String filename = "test-filename";
 
 		// ACTION UNDER TEST
-		S3Bucket s3OuterRef = null;
+		S3Bucket s3 = s3util.openS3(filename);
 
-		try (S3Bucket s3 = s3util.openS3(filename)) {
+		try (s3) {
 
-			s3OuterRef = s3;    //Save a reference to check if it was closed
 			// ASSERTIONS
 			assertNotNull(s3);
 			assertEquals(properties.bucket, s3.bucket);
@@ -99,7 +98,7 @@ class S3BucketUtilTest {
 			assertNull(s3.writer);
 		}
 
-		assertFalse(s3OuterRef.file.exists(), "This should have auto-closed in the try block");
+		assertFalse(s3.file.exists(), "This should have auto-closed in the try block");
 	}
 
 	// this test does not throw an IOE on *nix, only Windows.

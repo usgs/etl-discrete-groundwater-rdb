@@ -123,7 +123,7 @@ class S3BucketTest {
 			}
 		};
 
-		try {
+		try (mockS3bucket) {
 			// ACTION UNDER TEST
 			Writer writer = mockS3bucket.getWriter();
 			String writeThis = "write something";
@@ -135,8 +135,8 @@ class S3BucketTest {
 			assertFalse(mockS3bucket.file.exists());
 			assertEquals("MOCK-RAN", mockResult.getETag());
 
-		} finally {
-			deleteFile(mockS3bucket.file);
 		}
+
+		assertFalse(mockS3bucket.file.exists());
 	}
 }
