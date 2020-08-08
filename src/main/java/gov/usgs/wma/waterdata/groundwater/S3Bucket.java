@@ -37,11 +37,9 @@ public class S3Bucket implements AutoCloseable {
 	@Override
 	public void close() throws Exception {
 		try {
-
 			if (writer != null) {
 				writer.close();
-				sendS3();
-			} //else there is no content
+			}
 		} finally {
 			if (file != null) {
 				file.delete();
@@ -52,12 +50,10 @@ public class S3Bucket implements AutoCloseable {
 	protected AmazonS3 buildS3() {
 		return AmazonS3ClientBuilder.standard().withRegion(region).build();
 	}
-	protected PutObjectResult sendS3() {
+
+	public PutObjectResult sendS3() {
 		AmazonS3 s3 = buildS3();
 		return s3.putObject(bucket, keyName, file);
-
-		// this is not a stream, it is all in memory
-		// s3.putObject(bucket, keyName, "content");
 	}
 
 	public Writer getWriter() {

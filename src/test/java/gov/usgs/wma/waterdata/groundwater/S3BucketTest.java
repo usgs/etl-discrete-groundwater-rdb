@@ -128,6 +128,7 @@ class S3BucketTest {
 			Writer writer = mockS3bucket.getWriter();
 			String writeThis = "write something";
 			writer.write(writeThis);
+			mockS3bucket.sendS3();
 			mockS3bucket.close();
 
 			// ASSERTIONS
