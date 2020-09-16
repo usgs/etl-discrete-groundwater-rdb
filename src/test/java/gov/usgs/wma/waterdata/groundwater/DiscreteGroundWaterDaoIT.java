@@ -226,34 +226,6 @@ public class DiscreteGroundWaterDaoIT {
 		//		.stream()
 		//		.forEach(e->assertNotEquals(BAD_DATE, e.getKey()));
 	}
-	@DatabaseSetup("classpath:/testData/")
-	@Test
-	public void testSendDiscreteGroundWater_byLandOrBySea() throws Exception {
-		// SETUP
-		states = List.of("California", "Texas");
-
-		// ACTION UNDER TEST
-		dao.sendDiscreteGroundWater(states, writer);
-
-		// POST SETUP
-		destination.close();
-		String outlines = out.toString();
-		Map<String, List<String>> rdbLines = Arrays
-				.stream( outlines.split("\\n") )
-				.collect( groupingBy(line->line.split("\\t")[1]) );
-
-		// ASSERT measure direction
-
-		// no below land and S indicator
-		String lineA = rdbLines.get("335504116544201").get(0);
-		assertTrue( Pattern.compile("^.+\t\t\tS\tNGVD29\t2180\t.+$").matcher(lineA).matches() );
-		String lineB = rdbLines.get("335504116544201").get(1);
-		assertTrue( Pattern.compile("^.+\t\t\tS\tNGVD29\t2184\t.+$").matcher(lineB).matches() );
-
-		// no above datum and L indicator
-		String lineC = rdbLines.get("335504116544201").get(2);
-		assertTrue( Pattern.compile("^.+\t246.0\tL\t\t\t.+$").matcher(lineC).matches() );
-	}
 
 	@Test
 	public void testSendDiscreteGroundWater_handleIOE() throws Exception {
