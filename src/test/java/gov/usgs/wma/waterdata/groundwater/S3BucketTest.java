@@ -52,33 +52,21 @@ class S3BucketTest {
 	}
 
 	@Test
-	void testOpenS3File() {
+	void testOpenS3File() throws Exception {
 		// ASSERTIONS
 		assertNotNull(s3);
 		assertEquals(properties.bucket, s3.bucket);
 		assertEquals(properties.region, s3.region);
 		assertEquals(filename+".gz", s3.keyName);
 		assertNotNull(s3.file);
+		assertTrue(s3.file.exists());
 
-		String tmpPath = s3.file.getAbsolutePath().toLowerCase();
-		assertTrue(tmpPath.contains("tmp") || tmpPath.contains("temp"));
-
-		// default state is to dispose of the tmp file
-		assertTrue(s3.isFileDisposable);
 		// initial state is without a writer
 		assertNull(s3.writer);
-	}
 
-	@Test
-	void testDisposeFile_set() {
-		// SETUP
+		s3.close();
 
-		// ACTION UNDER TEST
-		s3.setDisposeFile(false);
-
-		// ASSERTIONS
-		assertNotNull(s3);
-		assertFalse(s3.isFileDisposable);
+		assertFalse(s3.file.exists());  //auto deletes
 	}
 
 	@Test
@@ -135,19 +123,20 @@ class S3BucketTest {
 			}
 		};
 
-		try {
+		try (mockS3bucket) {
 			// ACTION UNDER TEST
 			Writer writer = mockS3bucket.getWriter();
 			String writeThis = "write something";
 			writer.write(writeThis);
+			mockS3bucket.sendS3();
 			mockS3bucket.close();
 
 			// ASSERTIONS
 			assertFalse(mockS3bucket.file.exists());
 			assertEquals("MOCK-RAN", mockResult.getETag());
 
-		} finally {
-			deleteFile(mockS3bucket.file);
 		}
+
+		assertFalse(mockS3bucket.file.exists());
 	}
 }

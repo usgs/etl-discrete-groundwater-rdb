@@ -77,34 +77,28 @@ class S3BucketUtilTest {
 	}
 
 	@Test
-	void testOpenS3File() {
+	void testOpenS3File() throws Exception {
 		// SETUP
 		String filename = "test-filename";
 
 		// ACTION UNDER TEST
 		S3Bucket s3 = s3util.openS3(filename);
 
-		try {
+		try (s3) {
+
 			// ASSERTIONS
 			assertNotNull(s3);
 			assertEquals(properties.bucket, s3.bucket);
 			assertEquals(properties.region, s3.region);
 			assertEquals(filename+".gz", s3.keyName);
 			assertNotNull(s3.file);
+			assertTrue(s3.file.exists());
 
-			String tmpPath = s3.file.getAbsolutePath().toLowerCase();
-			assertTrue(tmpPath.contains("tmp") || tmpPath.contains("temp"));
-
-			// default state is to dispose of the tmp file
-			assertTrue(s3.isFileDisposable);
 			// initial state is without a writer
 			assertNull(s3.writer);
-		} finally {
-			// CLEANUP
-			if (s3.file != null) {
-				s3.file.delete();
-			}
 		}
+
+		assertFalse(s3.file.exists(), "This should have auto-closed in the try block");
 	}
 
 	// this test does not throw an IOE on *nix, only Windows.

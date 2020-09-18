@@ -22,7 +22,6 @@ public class S3Bucket implements AutoCloseable {
 	protected String keyName;
 	protected File file;
 	protected Writer writer;
-	protected boolean isFileDisposable = true;
 
 	S3Bucket(String region, String bucket, String keyName, File file) {
 		this.region = region;
@@ -38,10 +37,11 @@ public class S3Bucket implements AutoCloseable {
 	@Override
 	public void close() throws Exception {
 		try {
-			writer.close();
-			sendS3();
+			if (writer != null) {
+				writer.close();
+			}
 		} finally {
-			if (isDisposeFile()) {
+			if (file != null) {
 				file.delete();
 			}
 		}
@@ -50,19 +50,10 @@ public class S3Bucket implements AutoCloseable {
 	protected AmazonS3 buildS3() {
 		return AmazonS3ClientBuilder.standard().withRegion(region).build();
 	}
-	protected PutObjectResult sendS3() {
+
+	public PutObjectResult sendS3() {
 		AmazonS3 s3 = buildS3();
 		return s3.putObject(bucket, keyName, file);
-
-		// this is not a stream, it is all in memory
-		// s3.putObject(bucket, keyName, "content");
-	}
-
-	public void setDisposeFile(boolean isFileDisposable) {
-		this.isFileDisposable = isFileDisposable;
-	}
-	public boolean isDisposeFile() {
-		return isFileDisposable;
 	}
 
 	public Writer getWriter() {
