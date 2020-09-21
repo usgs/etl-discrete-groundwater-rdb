@@ -46,4 +46,6 @@ public class DiscreteGroundWater {
 	protected String     approvalStatusCode;
 	// new field for RDB
 	protected String     parameterCode;
+	// display_result
+	protected String     displayResult;
 }

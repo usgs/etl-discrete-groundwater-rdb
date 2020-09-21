@@ -38,6 +38,7 @@ public class DiscreteGroundWaterRowMapper implements RowMapper<String> {
 		discreteGroundWater.timezoneCode = rs.getString("timezone_code");
 		discreteGroundWater.verticalDatumCode = rs.getString("vertical_datum_code");
 		discreteGroundWater.parameterCode = rs.getString("parameter_code");
+		discreteGroundWater.displayResult = rs.getString("display_result");
 
 		writer.writeRow(discreteGroundWater);
 		return "written";
