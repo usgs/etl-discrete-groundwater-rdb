@@ -78,7 +78,7 @@ public class RdbWriter {
 		writeValue(  4, time);
 
 		writeValue(  7, "");
-		writeValue(  1, "S");
+		writeValue(  1, "");
 		writeValue( 10, dgw.verticalDatumCode);
 		writeValue(  8, "");
 		writeValue(  1, dgw.measurementSourceCode);
