@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.zip.GZIPOutputStream;
+import java.lang.RuntimeException;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
@@ -52,6 +53,11 @@ public class S3Bucket implements AutoCloseable {
 	}
 
 	public PutObjectResult sendS3() {
+		try {
+			writer.close();
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to close the temp file before sending to s3.");
+		}
 		AmazonS3 s3 = buildS3();
 		return s3.putObject(bucket, keyName, file);
 	}
