@@ -227,9 +227,7 @@ public class DiscreteGroundWaterDaoIT {
 		//		.forEach(e->assertNotEquals(BAD_DATE, e.getKey()));
 	}
 	@DatabaseSetup("classpath:/testData/")
-	//TODO Fix this test tomorrow (9/22/20)!
-	//Broken just because the new data file discrete_ground_water_aqts.csv needs to have the display_result column added
-	//@Test
+	@Test
 	public void testSendDiscreteGroundWater_byLandOrBySea() throws Exception {
 		// SETUP
 		states = List.of("California", "Texas");
@@ -250,6 +248,7 @@ public class DiscreteGroundWaterDaoIT {
 		String lineA = rdbLines.get("335504116544201").get(0);
 		assertTrue( Pattern.compile("^.+\t1200\t\tS\tNGVD29\t2180\t.+$").matcher(lineA).matches() );
 		String lineB = rdbLines.get("335504116544201").get(1);
+		
 		assertTrue( Pattern.compile("^.+\t1200\t\tS\tNGVD29\t2184\t.+$").matcher(lineB).matches() );
 
 		// no above datum and L indicator

@@ -167,7 +167,6 @@ class RdbWriterTest {
 		String writtenValue = out.toString();
 
 		// ASSERTIONS
-		System.out.println("WRITTEN_VALUE:" + writtenValue);
 		assertTrue(writtenValue.contains("\tS\tW\t430.23\t"));
 		
 	}
