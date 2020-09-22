@@ -40,8 +40,6 @@ class DiscreteGroundWaterRowMapperTest {
 			Mockito.when(mockRs.getTimestamp("date_measured_raw")).thenReturn(dgw.dateMeasuredRaw);
 			Mockito.when(mockRs.getString("date_time_accuracy_code")).thenReturn(dgw.dateTimeAccuracyCode);
 			Mockito.when(mockRs.getString("level_accuracy_code")).thenReturn(dgw.levelAccuracyCode);
-			Mockito.when(mockRs.getString("level_feet_above_vertical_datum")).thenReturn(dgw.levelFeetAboveVerticalDatum);
-			Mockito.when(mockRs.getString("level_feet_below_land_surface")).thenReturn(dgw.levelFeetBelowLandSurface);
 			Mockito.when(mockRs.getString("measurement_method_code")).thenReturn(dgw.measurementMethodCode);
 			Mockito.when(mockRs.getString("measurement_source_code")).thenReturn(dgw.measurementSourceCode);
 			Mockito.when(mockRs.getString("measuring_agency_code")).thenReturn(dgw.measuringAgencyCode);
@@ -51,6 +49,8 @@ class DiscreteGroundWaterRowMapperTest {
 			Mockito.when(mockRs.getString("timezone_code")).thenReturn(dgw.timezoneCode);
 			Mockito.when(mockRs.getString("vertical_datum_code")).thenReturn(dgw.verticalDatumCode);
 			Mockito.when(mockRs.getString("parameter_code")).thenReturn(dgw.parameterCode);
+			Mockito.when(mockRs.getString("display_result")).thenReturn(dgw.displayResult);
+			
 
 		} catch (SQLException e) {
 			throw new RuntimeException("Error mocking resultset", e);
@@ -63,10 +63,9 @@ class DiscreteGroundWaterRowMapperTest {
 		dgw.siteIdentificationNumber = "4042342342";
 		// date
 		// time
-		dgw.levelFeetBelowLandSurface = "23.06";
+		dgw.displayResult = "23.06";
 		// entry code [S]see or [L]land
 		dgw.verticalDatumCode = ""; // only if vertical measurement
-		dgw.levelFeetAboveVerticalDatum = "";  // usually only one set in the file
 		dgw.measurementSourceCode = "";
 		dgw.measuringAgencyCode = "USGS";
 		dgw.levelAccuracyCode = "2"; // two digits after decimal point
@@ -80,7 +79,7 @@ class DiscreteGroundWaterRowMapperTest {
 		dgw.timeMeasuredUtc = "01-MAY-2007 12:00:00"; // UTC
 		dgw.approvalStatusCode = "T"; // T or R
 
-		dgw.parameterCode = "12345";
+		dgw.parameterCode = "30210";
 
 		return dgw;
 	}
@@ -96,9 +95,7 @@ class DiscreteGroundWaterRowMapperTest {
 		// ASSERTIONS
 		assertEquals(dgw.agencyCode, actual.agencyCode);
 		assertEquals(dgw.siteIdentificationNumber, actual.siteIdentificationNumber);
-		assertEquals(dgw.levelFeetBelowLandSurface, actual.levelFeetBelowLandSurface);
 		assertEquals(dgw.verticalDatumCode, actual.verticalDatumCode); // only if vertical measurement
-		assertEquals(dgw.levelFeetAboveVerticalDatum, actual.levelFeetAboveVerticalDatum);  // usually only one set in the file
 		assertEquals(dgw.measurementSourceCode, actual.measurementSourceCode);
 		assertEquals(dgw.measuringAgencyCode, actual.measuringAgencyCode);
 		assertEquals(dgw.levelAccuracyCode, actual.levelAccuracyCode); // two digits after decimal point
@@ -111,5 +108,7 @@ class DiscreteGroundWaterRowMapperTest {
 		assertEquals(dgw.timeMeasuredUtc, actual.timeMeasuredUtc); // UTC
 		assertEquals(dgw.approvalStatusCode, actual.approvalStatusCode); // T or R
 		assertEquals(dgw.parameterCode, actual.parameterCode);
+		assertEquals(dgw.displayResult, actual.displayResult);
+		
 	}
 }

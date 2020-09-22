@@ -40,8 +40,6 @@ class DiscreteGroundWaterRowHandlerTest {
 			Mockito.when(mockRs.getTimestamp("date_measured_raw")).thenReturn(dgw.dateMeasuredRaw);
 			Mockito.when(mockRs.getString("date_time_accuracy_code")).thenReturn(dgw.dateTimeAccuracyCode);
 			Mockito.when(mockRs.getString("level_accuracy_code")).thenReturn(dgw.levelAccuracyCode);
-			Mockito.when(mockRs.getString("level_feet_above_vertical_datum")).thenReturn(dgw.levelFeetAboveVerticalDatum);
-			Mockito.when(mockRs.getString("level_feet_below_land_surface")).thenReturn(dgw.levelFeetBelowLandSurface);
 			Mockito.when(mockRs.getString("measurement_method_code")).thenReturn(dgw.measurementMethodCode);
 			Mockito.when(mockRs.getString("measurement_source_code")).thenReturn(dgw.measurementSourceCode);
 			Mockito.when(mockRs.getString("measuring_agency_code")).thenReturn(dgw.measuringAgencyCode);
@@ -63,10 +61,9 @@ class DiscreteGroundWaterRowHandlerTest {
 		dgw.siteIdentificationNumber = "4042342342";
 		// date
 		// time
-		dgw.levelFeetBelowLandSurface = "23.06";
+		dgw.displayResult = "23.06";
 		// entry code [S]see or [L]land
 		dgw.verticalDatumCode = ""; // only if vertical measurement
-		dgw.levelFeetAboveVerticalDatum = "";  // usually only one set in the file
 		dgw.measurementSourceCode = "";
 		dgw.measuringAgencyCode = "USGS";
 		dgw.levelAccuracyCode = "2"; // two digits after decimal point
@@ -80,7 +77,7 @@ class DiscreteGroundWaterRowHandlerTest {
 		dgw.timeMeasuredUtc = "01-MAY-2007 12:00:00"; // UTC
 		dgw.approvalStatusCode = "T"; // T or R
 
-		dgw.parameterCode = "12345";
+		dgw.parameterCode = "30210";
 
 		return dgw;
 	}
@@ -114,7 +111,7 @@ class DiscreteGroundWaterRowHandlerTest {
 		assertTrue(writtenValue.contains("\t01-MAY-2007 12:00:00\t")); // measured and UTC dates
 		assertTrue(writtenValue.contains("\tUTC\t"));
 		assertTrue(writtenValue.contains("\tD\t"));
-		assertTrue(writtenValue.contains("\t12345")); // last value
+		assertTrue(writtenValue.contains("\t30210")); // last value
 
 		assertEquals(1, rdbWriter.getDataRows());
 	}
