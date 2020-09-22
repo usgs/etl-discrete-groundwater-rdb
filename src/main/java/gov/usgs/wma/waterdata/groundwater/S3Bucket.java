@@ -34,6 +34,11 @@ public class S3Bucket implements AutoCloseable {
 		return keyName;
 	}
 
+	
+	public void flush() throws IOException {
+		writer.flush();
+	}
+
 	@Override
 	public void close() throws Exception {
 		try {
