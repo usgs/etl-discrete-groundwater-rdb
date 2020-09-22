@@ -16,13 +16,11 @@ public class DiscreteGroundWater {
 	//lev_dt			 (date of date_measured_raw)
 	//lev_tm			 (hour and minute of date_measured_raw)
 	//lev_va
-	protected String     levelFeetBelowLandSurface;
 	//lev_ent_cd		 L or S for below Land or above Sea
 	//lev_datum_cd
 	//sl_datum_cd
 	protected String     verticalDatumCode;
 	//sl_lev_va
-	protected String     levelFeetAboveVerticalDatum;
 	//lev_src_cd
 	protected String     measurementSourceCode;
 	//lev_agency_cd
@@ -48,4 +46,5 @@ public class DiscreteGroundWater {
 	protected String     approvalStatusCode;
 	// new field for RDB
 	protected String     parameterCode;
+	protected String     displayResult;
 }

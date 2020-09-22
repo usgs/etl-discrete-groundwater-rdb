@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -20,6 +21,12 @@ import org.springframework.util.StringUtils;
  */
 public class RdbWriter {
 	private static final Logger LOG = LoggerFactory.getLogger(RdbWriter.class);
+	
+	private static final Set<String> BELOW_LAND_SURFACE= Set.of("72227", "72226", "72229", "72228", "72230",
+"72231", "72232", "72019", "30210", "61055");
+
+	private static final Set<String> ABOVE_DATUM = Set.of("72150", "62611", "62613", "62610", "62612",
+"62600", "62601");
 
 	protected Writer rdb;
 	private long headerLineCount;
@@ -74,13 +81,13 @@ public class RdbWriter {
 		String time = new DateTime(dgw.dateMeasuredRaw).toString(TIME_FORMAT);
 		columns.add( validateValue(  4, time) );
 
-		if (StringUtils.isEmpty(dgw.levelFeetBelowLandSurface)) {
+		if (ABOVE_DATUM.contains(dgw.parameterCode)) {
 			columns.add( validateValue(  7, "") );
 			columns.add( validateValue(  1, "S") ); // entry code for above Sea
 			columns.add( validateValue( 10, dgw.verticalDatumCode) );
-			columns.add( validateValue(  8, dgw.levelFeetAboveVerticalDatum) );
+			columns.add( validateValue(  8, dgw.displayResult) );
 		} else {
-			columns.add( validateValue(  7, dgw.levelFeetBelowLandSurface) );
+			columns.add( validateValue(  7, dgw.displayResult) );
 			columns.add( validateValue(  1, "L") ); // entry code for below Land
 			columns.add( validateValue( 10, "") );
 			columns.add( validateValue(  8, "") );

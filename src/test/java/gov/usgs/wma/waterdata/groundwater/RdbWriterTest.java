@@ -37,10 +37,9 @@ class RdbWriterTest {
 		dgw.siteIdentificationNumber = "4042342342";
 		// date
 		// time
-		dgw.levelFeetBelowLandSurface = "23.06";
+		dgw.displayResult = "23.06";
 		// entry code [S]see or [L]land
 		dgw.verticalDatumCode = ""; // only if vertical measurement
-		dgw.levelFeetAboveVerticalDatum = "";  // usually only one set in the file
 		dgw.measurementSourceCode = "";
 		dgw.measuringAgencyCode = "USGS";
 		dgw.levelAccuracyCode = "2"; // two digits after decimal point
@@ -54,7 +53,7 @@ class RdbWriterTest {
 		dgw.timeMeasuredUtc = "01-MAY-2007 12:00:00"; // UTC
 		dgw.approvalStatusCode = "T"; // T or R
 
-		dgw.parameterCode = "12345";
+		dgw.parameterCode = "30210";
 
 		return dgw;
 	}
@@ -131,7 +130,7 @@ class RdbWriterTest {
 		assertTrue(writtenValue.contains("\t01-MAY-2007 12:00:00\t")); // measured and UTC dates
 		assertTrue(writtenValue.contains("\tUTC\t"));
 		assertTrue(writtenValue.contains("\tD\t"));
-		assertTrue(writtenValue.contains("\t12345")); // last value
+		assertTrue(writtenValue.contains("\t30210")); // last value
 
 		assertEquals(1, count);
 	}
@@ -155,10 +154,10 @@ class RdbWriterTest {
 	void testRowWriteAboveSea() {
 		// SETUP
 		DiscreteGroundWater dgw = makeDgw();
-		dgw.levelFeetBelowLandSurface = "";
 		// entry code [S]see or [L]land
+		dgw.parameterCode = "72150";
 		dgw.verticalDatumCode = "W"; // fake test value
-		dgw.levelFeetAboveVerticalDatum = "430.23";
+		dgw.displayResult = "430.23";
 
 		// ACTION UNDER TEST
 		rdbWriter.writeRow(dgw);
@@ -169,6 +168,7 @@ class RdbWriterTest {
 
 		// ASSERTIONS
 		assertTrue(writtenValue.contains("\tS\tW\t430.23\t"));
+		
 	}
 
 	@Test
