@@ -8,9 +8,12 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 
+import org.joda.time.DateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -61,15 +64,11 @@ class RdbWriterTest {
 		String givenValue = "valuePlusMore";
 
 		// ACTION UNDER TEST
-		rdbWriter.writeValue(5, givenValue);
-
-		// POST SETUP
-		rdbWriter.close();
-		String writtenValue = out.toString();
+		String actual = rdbWriter.validateValue(5, givenValue);
 
 		// ASSERTIONS
-		assertNotNull(writtenValue);
-		assertEquals("value", writtenValue);
+		assertNotNull(actual);
+		assertEquals("value", actual);
 	}
 
 	@Test
@@ -77,15 +76,11 @@ class RdbWriterTest {
 		String givenValue = "value";
 
 		// ACTION UNDER TEST
-		rdbWriter.writeValue(15, givenValue);
-
-		// POST SETUP
-		rdbWriter.close();
-		String writtenValue = out.toString();
+		String actual = rdbWriter.validateValue(15, givenValue);
 
 		// ASSERTIONS
-		assertNotNull(writtenValue);
-		assertEquals("value", writtenValue);
+		assertNotNull(actual);
+		assertEquals("value", actual);
 	}
 
 	@Test
@@ -130,7 +125,7 @@ class RdbWriterTest {
 		assertTrue(writtenValue.contains("\tT\t"));
 		assertTrue(writtenValue.contains("\t200705"));
 		assertTrue(writtenValue.contains("\t20070501\t"));
-		assertFalse(writtenValue.contains("\t1200\t"));
+		assertTrue(writtenValue.contains("\t1200\t"));
 		assertFalse(writtenValue.contains("\t1830\t"));
 		assertTrue(writtenValue.contains("\t07-MAY-2007 18:30:47\t"));
 		assertTrue(writtenValue.contains("\t01-MAY-2007 12:00:00\t")); // measured and UTC dates
@@ -253,5 +248,48 @@ class RdbWriterTest {
 			}
 			return this;
 		}
+	}
+
+	@Test
+	void testSimpleDateFormat_1982_12_31_ERROR() {
+		// SETUP
+		LocalDateTime dateTime = LocalDateTime.of(1982, Month.DECEMBER, 31, 12, 0);
+
+		// ACTION UNDER TEST
+		String actual = new SimpleDateFormat("YYYYMMdd").format(Timestamp.valueOf(dateTime));
+
+		// ASSERTIONS - these pass if there is a bug in SimpleDateFormat
+		assertEquals("1982-12-31T12:00", dateTime.toString());
+		assertEquals("19831231", actual, "Java lib error formats as 1983 but should be 1982");
+		assertNotEquals("19821231", actual, "Java lib error formats as 1983 but should be 1982");
+	}
+	@Test
+	void testDateTimeFormat_1982_12_31_ERROR() {
+		// SETUP
+		LocalDateTime dateTime = LocalDateTime.of(1982, Month.DECEMBER, 31, 12, 0);
+		DateTimeFormatter format = DateTimeFormatter.ofPattern("YYYYMMdd");
+
+		// ACTION UNDER TEST
+		String actual = dateTime.format(format);
+
+		// ASSERTIONS - these pass if there is a bug in SimpleDateFormat
+		assertEquals("1982-12-31T12:00", dateTime.toString());
+		assertNotEquals("19821231", actual, "Java lib error formats as 1983 but should be 1982");
+		assertEquals("19831231", actual, "Java lib error formats as 1983 but should be 1982");
+	}
+	@Test
+	void testJodaFormat_1982_12_31()  {
+		// SETUP
+		org.joda.time.format.DateTimeFormatter construction = org.joda.time.format.DateTimeFormat.forPattern("YYYY-MM-dd HH:mm");
+		org.joda.time.DateTime jodaDT = DateTime.parse("1982-12-31 12:00", construction);
+		org.joda.time.format.DateTimeFormatter testFormat = org.joda.time.format.DateTimeFormat.forPattern("YYYYMMdd");
+
+		// ACTION UNDER TEST
+		String actual = jodaDT.toString(testFormat);
+
+		// ASSERTIONS - these pass if there is a bug in SimpleDateFormat
+		//		assertEquals("1982-12-31T12:00", dateTime.toString());
+		assertEquals("19821231", actual);
+		assertNotEquals("19831231", actual);
 	}
 }

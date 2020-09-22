@@ -39,14 +39,14 @@ public class DiscreteGroundWaterDao {
 	 * @param writer instance that will write each row to an RDB file
 	 */
 	public void sendDiscreteGroundWater(List<String> states, RdbWriter writer) {
-		DiscreteGroundWaterRowMapper rowMapper = new DiscreteGroundWaterRowMapper(writer);
+		DiscreteGroundWaterRowHandler rowHandler = new DiscreteGroundWaterRowHandler(writer);
 
 		try {
 			String sql = new String(FileCopyUtils.copyToByteArray(selectQuery.getInputStream()));
 			NamedParameterJdbcTemplate namedParamJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
 			Map<String, List<String>> params = Collections.singletonMap("states", states);
 
-			namedParamJdbcTemplate.query(sql, params, rowMapper);
+			namedParamJdbcTemplate.query(sql, params, rowHandler);
 		} catch (IOException e) {
 			LOG.error("Unable to get Discrete Groud Water SQL statement", e.getMessage());
 			throw new RuntimeException(e);

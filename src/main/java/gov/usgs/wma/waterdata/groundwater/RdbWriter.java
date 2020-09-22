@@ -3,11 +3,12 @@ package gov.usgs.wma.waterdata.groundwater;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.DateTime;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.FileCopyUtils;
@@ -23,7 +24,7 @@ public class RdbWriter {
 	protected Writer rdb;
 	private long headerLineCount;
 	private long dataLineCount;
-	private String sepChar="";
+	private final String DELIMITER="\t";
 
 	public RdbWriter(Writer destination) {
 		this.rdb = destination;
@@ -65,49 +66,51 @@ public class RdbWriter {
 	 * @param dgw the sample to write.
 	 */
 	public RdbWriter writeRow(DiscreteGroundWater dgw) {
-		sepChar = "";
-		writeValue(  5, dgw.agencyCode);
-		sepChar = "\t";
-		writeValue( 15, dgw.siteIdentificationNumber);
-		writeValue(  8, new DateTime(dgw.dateMeasuredRaw).toString(DATE_FORMAT));
-
+		List<String> columns = new ArrayList<>();
+		columns.add( validateValue(  5, dgw.agencyCode) );
+		columns.add( validateValue( 15, dgw.siteIdentificationNumber) );
+		String date = new DateTime(dgw.dateMeasuredRaw).toString(DATE_FORMAT);
+		columns.add( validateValue(  8, date) );
 		String time = new DateTime(dgw.dateMeasuredRaw).toString(TIME_FORMAT);
-		if ("1200".endsWith(time)) {
-			time = "";
-		}
-		writeValue(  4, time);
+		columns.add( validateValue(  4, time) );
 
 		if (StringUtils.isEmpty(dgw.levelFeetBelowLandSurface)) {
-			writeValue(  7, "");
-			writeValue(  1, "S"); // entry code for above Sea
-			writeValue( 10, dgw.verticalDatumCode);
-			writeValue(  8, dgw.levelFeetAboveVerticalDatum);
+			columns.add( validateValue(  7, "") );
+			columns.add( validateValue(  1, "S") ); // entry code for above Sea
+			columns.add( validateValue( 10, dgw.verticalDatumCode) );
+			columns.add( validateValue(  8, dgw.levelFeetAboveVerticalDatum) );
 		} else {
-			writeValue(  7, dgw.levelFeetBelowLandSurface);
-			writeValue(  1, "L"); // entry code for below Land
-			writeValue( 10, "");
-			writeValue(  8, "");
+			columns.add( validateValue(  7, dgw.levelFeetBelowLandSurface) );
+			columns.add( validateValue(  1, "L") ); // entry code for below Land
+			columns.add( validateValue( 10, "") );
+			columns.add( validateValue(  8, "") );
 		}
-		writeValue(  1, dgw.measurementSourceCode);
-		writeValue(  5, dgw.measuringAgencyCode);
-		writeValue(  1, dgw.levelAccuracyCode);
-		writeValue(  1, dgw.siteStatusCode);
-		writeValue(  1, dgw.measurementMethodCode);
+		columns.add( validateValue(  1, dgw.measurementSourceCode) );
+		columns.add( validateValue(  5, dgw.measuringAgencyCode) );
+		columns.add( validateValue(  1, dgw.levelAccuracyCode) );
+		columns.add( validateValue(  1, dgw.siteStatusCode) );
+		columns.add( validateValue(  1, dgw.measurementMethodCode) );
 		// omitting date created, loader no longer references either
-		writeValue( 25, dgw.dateMeasured);
-		writeValue( 25, new DateTime(dgw.dateMeasuredRaw).toString(DATE_TIME_FORMAT).toUpperCase());
-		writeValue(  1, dgw.dateTimeAccuracyCode);
-		writeValue(  6, dgw.timezoneCode);
-		writeValue( 25, dgw.timeMeasuredUtc);
-		writeValue(  1, dgw.approvalStatusCode);
-		writeValue(5, dgw.parameterCode);
+		columns.add( validateValue( 25, dgw.dateMeasured) );
+		String dateMeasuredRaw = new DateTime(dgw.dateMeasuredRaw).toString(DATE_TIME_FORMAT).toUpperCase();
+		columns.add( validateValue( 25, dateMeasuredRaw) );
+		columns.add( validateValue(  1, dgw.dateTimeAccuracyCode) );
+		columns.add( validateValue(  6, dgw.timezoneCode) );
+		columns.add( validateValue( 25, dgw.timeMeasuredUtc) );
+		columns.add( validateValue(  1, dgw.approvalStatusCode) );
+		columns.add( validateValue(  5, dgw.parameterCode) );
+		writeRow(columns);
+		dataLineCount++;
+		return this;
+	}
+
+	protected RdbWriter writeRow(List<String> columns) {
 		try {
-			rdb.append("\n");
+			String row = String.join(DELIMITER, columns.toArray(new String[] {}));
+			rdb.append(row).append("\n");
 		} catch (IOException e) {
 			throw new RuntimeException("Error writing RDB row to stream.", e);
 		}
-
-		dataLineCount++;
 		return this;
 	}
 
@@ -118,20 +121,15 @@ public class RdbWriter {
 	 * @param length max number of chars to write
 	 * @param value characters to write, non-string values must be converted.
 	 */
-	protected RdbWriter writeValue(int length, String value) {
-		try {
-			// Trim the value to the proper field length.
-			String trimmedValue = value;
-			if (value == null) {
-				value = "";
-			}
-			if (value.length() > length) {
-				trimmedValue = value.substring(0, length);
-			}
-			rdb.append(sepChar).append(trimmedValue);
-		} catch (IOException e) {
-			throw new RuntimeException("Error writing RDB row to stream.", e);
+	protected String validateValue(int length, String value) {
+		// Trim the value to the proper field length.
+		String trimmedValue = value;
+		if (value == null) {
+			value = "";
 		}
-		return this;
+		if (value.length() > length) {
+			trimmedValue = value.substring(0, length);
+		}
+		return trimmedValue;
 	}
 }

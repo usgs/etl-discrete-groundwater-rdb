@@ -246,9 +246,9 @@ public class DiscreteGroundWaterDaoIT {
 
 		// no below land and S indicator
 		String lineA = rdbLines.get("335504116544201").get(0);
-		assertTrue( Pattern.compile("^.+\t\t\tS\tNGVD29\t2180\t.+$").matcher(lineA).matches() );
+		assertTrue( Pattern.compile("^.+\t1200\t\tS\tNGVD29\t2180\t.+$").matcher(lineA).matches() );
 		String lineB = rdbLines.get("335504116544201").get(1);
-		assertTrue( Pattern.compile("^.+\t\t\tS\tNGVD29\t2184\t.+$").matcher(lineB).matches() );
+		assertTrue( Pattern.compile("^.+\t1200\t\tS\tNGVD29\t2184\t.+$").matcher(lineB).matches() );
 
 		// no above datum and L indicator
 		String lineC = rdbLines.get("335504116544201").get(2);
