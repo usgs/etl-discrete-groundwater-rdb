@@ -40,6 +40,8 @@ class DiscreteGroundWaterRowMapperTest {
 			Mockito.when(mrs.getTimestamp("date_measured_raw")).thenReturn(dgw.dateMeasuredRaw);
 			Mockito.when(mrs.getString("date_time_accuracy_code")).thenReturn(dgw.dateTimeAccuracyCode);
 			Mockito.when(mrs.getString("level_accuracy_code")).thenReturn(dgw.levelAccuracyCode);
+			Mockito.when(mrs.getString("level_feet_above_vertical_datum")).thenReturn(dgw.levelFeetAboveVerticalDatum);
+			Mockito.when(mrs.getString("level_feet_below_land_surface")).thenReturn(dgw.levelFeetBelowLandSurface);
 			Mockito.when(mrs.getString("measurement_method_code")).thenReturn(dgw.measurementMethodCode);
 			Mockito.when(mrs.getString("measurement_source_code")).thenReturn(dgw.measurementSourceCode);
 			Mockito.when(mrs.getString("measuring_agency_code")).thenReturn(dgw.measuringAgencyCode);
@@ -61,8 +63,10 @@ class DiscreteGroundWaterRowMapperTest {
 		dgw.siteIdentificationNumber = "4042342342";
 		// date
 		// time
+		dgw.levelFeetBelowLandSurface = "23.06";
 		// entry code [S]see or [L]land
 		dgw.verticalDatumCode = ""; // only if vertical measurement
+		dgw.levelFeetAboveVerticalDatum = "";  // usually only one set in the file
 		dgw.measurementSourceCode = "";
 		dgw.measuringAgencyCode = "USGS";
 		dgw.levelAccuracyCode = "2"; // two digits after decimal point

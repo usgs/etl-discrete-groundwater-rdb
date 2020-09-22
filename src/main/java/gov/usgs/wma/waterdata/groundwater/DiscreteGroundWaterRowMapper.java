@@ -29,6 +29,8 @@ public class DiscreteGroundWaterRowMapper implements RowMapper<String> {
 		discreteGroundWater.dateMeasuredRaw = rs.getTimestamp("date_measured_raw");
 		discreteGroundWater.dateTimeAccuracyCode = rs.getString("date_time_accuracy_code");
 		discreteGroundWater.levelAccuracyCode = rs.getString("level_accuracy_code");
+		discreteGroundWater.levelFeetAboveVerticalDatum = rs.getString("level_feet_above_vertical_datum");
+		discreteGroundWater.levelFeetBelowLandSurface = rs.getString("level_feet_below_land_surface");
 		discreteGroundWater.measurementMethodCode = rs.getString("measurement_method_code");
 		discreteGroundWater.measurementSourceCode = rs.getString("measurement_source_code");
 		discreteGroundWater.measuringAgencyCode = rs.getString("measuring_agency_code");

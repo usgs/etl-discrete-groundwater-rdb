@@ -77,10 +77,17 @@ public class RdbWriter {
 		}
 		writeValue(  4, time);
 
-		writeValue(  7, "");
-		writeValue(  1, "");
-		writeValue( 10, dgw.verticalDatumCode);
-		writeValue(  8, "");
+		if (StringUtils.isEmpty(dgw.levelFeetBelowLandSurface)) {
+			writeValue(  7, "");
+			writeValue(  1, "S"); // entry code for above Sea
+			writeValue( 10, dgw.verticalDatumCode);
+			writeValue(  8, dgw.levelFeetAboveVerticalDatum);
+		} else {
+			writeValue(  7, dgw.levelFeetBelowLandSurface);
+			writeValue(  1, "L"); // entry code for below Land
+			writeValue( 10, "");
+			writeValue(  8, "");
+		}
 		writeValue(  1, dgw.measurementSourceCode);
 		writeValue(  5, dgw.measuringAgencyCode);
 		writeValue(  1, dgw.levelAccuracyCode);

@@ -34,8 +34,10 @@ class RdbWriterTest {
 		dgw.siteIdentificationNumber = "4042342342";
 		// date
 		// time
+		dgw.levelFeetBelowLandSurface = "23.06";
 		// entry code [S]see or [L]land
 		dgw.verticalDatumCode = ""; // only if vertical measurement
+		dgw.levelFeetAboveVerticalDatum = "";  // usually only one set in the file
 		dgw.measurementSourceCode = "";
 		dgw.measuringAgencyCode = "USGS";
 		dgw.levelAccuracyCode = "2"; // two digits after decimal point
@@ -137,6 +139,41 @@ class RdbWriterTest {
 		assertTrue(writtenValue.contains("\t12345")); // last value
 
 		assertEquals(1, count);
+	}
+	@Test
+	void testRowWriteBelowLand() {
+		// SETUP
+		DiscreteGroundWater dgw = makeDgw();
+
+		// ACTION UNDER TEST
+		rdbWriter.writeRow(dgw);
+
+		// POST SETUP
+		rdbWriter.close();
+		String writtenValue = out.toString();
+
+		// ASSERTIONS
+		assertTrue(writtenValue.contains("\t23.06\tL\t"));
+	}
+
+	@Test
+	void testRowWriteAboveSea() {
+		// SETUP
+		DiscreteGroundWater dgw = makeDgw();
+		dgw.levelFeetBelowLandSurface = "";
+		// entry code [S]see or [L]land
+		dgw.verticalDatumCode = "W"; // fake test value
+		dgw.levelFeetAboveVerticalDatum = "430.23";
+
+		// ACTION UNDER TEST
+		rdbWriter.writeRow(dgw);
+
+		// POST SETUP
+		rdbWriter.close();
+		String writtenValue = out.toString();
+
+		// ASSERTIONS
+		assertTrue(writtenValue.contains("\tS\tW\t430.23\t"));
 	}
 
 	@Test
