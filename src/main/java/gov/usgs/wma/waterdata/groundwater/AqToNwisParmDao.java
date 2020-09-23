@@ -29,14 +29,15 @@ public class AqToNwisParmDao {
 	public List<Parameter> getParameters() {
 		List<Parameter> rtn = Arrays.asList();
 		try {
-			String sql = new String(FileCopyUtils.copyToByteArray(selectQuery.getInputStream()));
+			String sql = "select d.parm_cd, d.above_datum, d.below_land_surface from aq_to_nwis_parm d";
+			//String sql = new String(FileCopyUtils.copyToByteArray(selectQuery.getInputStream()));
 			rtn = jdbcTemplate.query(
 					sql,
 					new ParameterRowMapper()
 			);
 		} catch (EmptyResultDataAccessException e) {
 			LOG.info("Couldn't find parameter data - {} ", e.getLocalizedMessage());
-		} catch (IOException e) {
+		} catch (Exception e) {
 			LOG.error("Unable to get SQL statement", e);
 			throw new RuntimeException(e);
 		}
