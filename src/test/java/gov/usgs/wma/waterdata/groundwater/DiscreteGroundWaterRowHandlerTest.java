@@ -12,6 +12,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,7 +88,13 @@ class DiscreteGroundWaterRowHandlerTest {
 	void testRowWriteGeneral() throws Exception {
 		// SETUP
 		RdbWriter rdbWriter = new RdbWriter(destination);
-		DiscreteGroundWaterRowHandler rowHandler = new DiscreteGroundWaterRowHandler(rdbWriter);
+		List<Parameter> parameters = new ArrayList<>();
+		Parameter p1 = new Parameter();
+		p1.setParameterCode("30210");
+		p1.setAboveDatum(false);
+		p1.setBelowLandSurface(true);
+		parameters.add(p1);
+		DiscreteGroundWaterRowHandler rowHandler = new DiscreteGroundWaterRowHandler(rdbWriter, parameters);
 
 		// ACTION UNDER TEST
 		rowHandler.processRow(mockRs);

@@ -3,6 +3,7 @@ package gov.usgs.wma.waterdata.groundwater;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -37,29 +38,20 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 @SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.NONE,
 classes={
 		DBTestConfig.class,
-		StatePostCodeDao.class})
+		AqToNwisParmDao.class})
 @ActiveProfiles("it")
-public class StatePostalCodeDaoIT {
+public class AqToNwisParmDaoIT {
 
 	@Autowired
-	protected StatePostCodeDao dao;
+	protected AqToNwisParmDao dao;
 
-	@DatabaseSetup(connection="observation",
-			value="classpath:/testStateData/")
+	@DatabaseSetup(connection="transform",
+			value="classpath:/testDataTransform/")
 	@Test
 	public void testStatePostalCode() {
-		String actual = dao.getPostCode("California");
+		List<Parameter> parameters = dao.getParameters();
+        assertEquals(18, parameters.size());
 
-		assertEquals("CA", actual);
-	}
-
-	@DatabaseSetup(connection="observation",
-			value="classpath:/testStateData/")
-	@Test
-	public void testStatePostalCode_notFound() {
-		String actual = dao.getPostCode("Unknown State of Things");
-
-		assertEquals("", actual);
 	}
 
 	@Test
@@ -71,6 +63,7 @@ public class StatePostalCodeDaoIT {
 
 		// ACTION UNDER TEST
 		// ASSERTION
-		assertThrows(RuntimeException.class, ()->dao.getPostCode("Bad State of Things"));
+		// TODO fix this
+		assertThrows(RuntimeException.class, ()->dao.getParameters());
 	}
 }

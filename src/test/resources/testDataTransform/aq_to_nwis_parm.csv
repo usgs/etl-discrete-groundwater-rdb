@@ -1,0 +1,19 @@
+parm_cd,datum,unit,above_datum,below_land_surface
+72227,ASVD02,ft,false,true
+72226,ASVD62,ft,false,true
+72229,GUVD04,ft,false,true
+72228,GUVD63,ft,false,true
+72230,HILOCAL,ft,false,true
+72150,MSL,ft,true,false
+62611,NAVD88,ft,true,false
+62613,NAVD88,m,true,false
+62610,NGVD29,ft,true,false
+62612,NGVD29,m,true,false
+72231,NMVD03,ft,false,true
+72232,PRVD02,ft,false,true
+62600,NGVD29,ft,true,false
+62601,NGVD29,ft,true,false
+72019,depth LSD,ft,false,true
+72019,Local Assumed Datum,ft,false,true
+30210,depth LSD,m,false,true
+61055,depth MP,ft,false,true

@@ -41,7 +41,7 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	DirtiesContextTestExecutionListener.class,
 	TransactionalTestExecutionListener.class,
 	TransactionDbUnitTestExecutionListener.class })
-@DbUnitConfiguration(dataSetLoader=FileSensingDataSetLoader.class)
+@DbUnitConfiguration(databaseConnection={"observation","transform"},dataSetLoader=FileSensingDataSetLoader.class)
 @AutoConfigureTestDatabase(replace=Replace.NONE)
 @Transactional(propagation=Propagation.NOT_SUPPORTED)
 @Import({DBTestConfig.class})
@@ -49,16 +49,20 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 @SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.NONE,
 classes={
 		DBTestConfig.class,
+		AqToNwisParmDao.class,
 		DiscreteGroundWaterDao.class})
 @ActiveProfiles("it")
 public class DiscreteGroundWaterDaoIT {
 
 	@Autowired
 	protected DiscreteGroundWaterDao dao;
+	@Autowired
+	protected AqToNwisParmDao aqDao;
 	protected List<String> states;
 	protected RdbWriter writer;
 	protected OutputStream out;
 	protected Writer destination;
+	protected List<Parameter> parameters;
 
 	@BeforeEach
 	public void beforeEach() {
@@ -66,9 +70,11 @@ public class DiscreteGroundWaterDaoIT {
 		out = new ByteArrayOutputStream();
 		destination = new OutputStreamWriter(out);
 		writer = new RdbWriter(destination);
+		parameters = aqDao.getParameters();
 	}
 
-	@DatabaseSetup("classpath:/testData/")
+	@DatabaseSetup(connection="observation",
+			value="classpath:/testData/")
 	@Test
 	public void testSendDiscreteGroundWater_close() throws Exception {
 		// SETUP
@@ -77,7 +83,7 @@ public class DiscreteGroundWaterDaoIT {
 		writer = new RdbWriter(destination);
 
 		// ACTION UNDER TEST
-		dao.sendDiscreteGroundWater(states, writer);
+		dao.sendDiscreteGroundWater(states, writer, parameters);
 
 		// POST SETUP
 		destination.close();
@@ -86,11 +92,12 @@ public class DiscreteGroundWaterDaoIT {
 		Mockito.verify(out, Mockito.atLeastOnce()).close();
 	}
 
-	@DatabaseSetup("classpath:/testData/")
+	@DatabaseSetup(connection="observation",
+			value="classpath:/testData/")
 	@Test
 	public void testSendDiscreteGroundWater_rowCount_single_California() throws Exception {
 		// ACTION UNDER TEST
-		dao.sendDiscreteGroundWater(states, writer);
+		dao.sendDiscreteGroundWater(states, writer, parameters);
 
 		// POST SETUP
 		destination.close();
@@ -98,14 +105,15 @@ public class DiscreteGroundWaterDaoIT {
 		// ASSERT row count
 		assertEquals(12, writer.getDataRows());
 	}
-	@DatabaseSetup("classpath:/testData/")
+	@DatabaseSetup(connection="observation",
+			value="classpath:/testData/")
 	@Test
 	public void testSendDiscreteGroundWater_rowCount_single_Texas() throws Exception {
 		// SETUP
 		states = List.of("Texas");
 
 		// ACTION UNDER TEST
-		dao.sendDiscreteGroundWater(states, writer);
+		dao.sendDiscreteGroundWater(states, writer, parameters);
 
 		// POST SETUP
 		destination.close();
@@ -113,14 +121,15 @@ public class DiscreteGroundWaterDaoIT {
 		// ASSERT row count
 		assertEquals(2, writer.getDataRows());
 	}
-	@DatabaseSetup("classpath:/testData/")
+	@DatabaseSetup(connection="observation",
+			value="classpath:/testData/")
 	@Test
 	public void testSendDiscreteGroundWater_rowCount_multiple() throws Exception {
 		// SETUP
 		states = List.of("California", "Texas");
 
 		// ACTION UNDER TEST
-		dao.sendDiscreteGroundWater(states, writer);
+		dao.sendDiscreteGroundWater(states, writer, parameters);
 
 		// POST SETUP
 		destination.close();
@@ -128,14 +137,15 @@ public class DiscreteGroundWaterDaoIT {
 		// ASSERT row count
 		assertEquals(14, writer.getDataRows());
 	}
-	@DatabaseSetup("classpath:/testData/")
+	@DatabaseSetup(connection="observation",
+			value="classpath:/testData/")
 	@Test
 	public void testSendDiscreteGroundWater_stateOrdered() throws Exception {
 		// SETUP
 		states = List.of("California", "Texas");
 
 		// ACTION UNDER TEST
-		dao.sendDiscreteGroundWater(states, writer);
+		dao.sendDiscreteGroundWater(states, writer, parameters);
 
 		// POST SETUP
 		destination.close();
@@ -156,7 +166,8 @@ public class DiscreteGroundWaterDaoIT {
 		String siteNoNext = rdbLines.removeLast().split("\\t")[1];
 		assertEquals("285634095174701", siteNoNext);
 	}
-	@DatabaseSetup("classpath:/testData/")
+	@DatabaseSetup(connection="observation",
+			value="classpath:/testData/")
 	@Test
 	public void testSendDiscreteGroundWater_dateOrder() throws Exception {
 		// SETUP
@@ -164,7 +175,7 @@ public class DiscreteGroundWaterDaoIT {
 		states = List.of("California", "Texas");
 
 		// ACTION UNDER TEST
-		dao.sendDiscreteGroundWater(states, writer);
+		dao.sendDiscreteGroundWater(states, writer, parameters);
 
 		// POST SETUP
 		destination.close();
@@ -226,14 +237,15 @@ public class DiscreteGroundWaterDaoIT {
 		//		.stream()
 		//		.forEach(e->assertNotEquals(BAD_DATE, e.getKey()));
 	}
-	@DatabaseSetup("classpath:/testData/")
+	@DatabaseSetup(connection="observation",
+			value="classpath:/testData/")
 	@Test
 	public void testSendDiscreteGroundWater_byLandOrBySea() throws Exception {
 		// SETUP
 		states = List.of("California", "Texas");
 
 		// ACTION UNDER TEST
-		dao.sendDiscreteGroundWater(states, writer);
+		dao.sendDiscreteGroundWater(states, writer, parameters);
 
 		// POST SETUP
 		destination.close();
@@ -265,6 +277,6 @@ public class DiscreteGroundWaterDaoIT {
 
 		// ACTION UNDER TEST
 		// ASSERTION
-		assertThrows(RuntimeException.class, ()->dao.sendDiscreteGroundWater(states, writer));
+		assertThrows(RuntimeException.class, ()->dao.sendDiscreteGroundWater(states, writer, parameters));
 	}
 }
