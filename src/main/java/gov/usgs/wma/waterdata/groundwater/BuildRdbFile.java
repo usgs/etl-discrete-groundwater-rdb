@@ -25,6 +25,9 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 	protected S3BucketUtil s3BucketUtil;
 
 	@Autowired
+	protected AqToNwisParmDao aqDao;
+
+	@Autowired
 	protected DiscreteGroundWaterDao dao;
 
 	@Autowired
@@ -83,7 +86,7 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 
 			Writer writer = s3bucket.getWriter();
 			RdbWriter rdbWriter = createRdbWriter(writer).writeHeader();
-			dao.sendDiscreteGroundWater(states, rdbWriter);
+			dao.sendDiscreteGroundWater(states, rdbWriter, aqDao.getParameters());
 
 			s3bucket.sendS3();
 

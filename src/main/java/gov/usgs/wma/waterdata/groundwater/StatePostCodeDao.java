@@ -25,7 +25,7 @@ public class StatePostCodeDao {
 	private static final Logger LOG = LoggerFactory.getLogger(StatePostCodeDao.class);
 
 	@Autowired
-	@Qualifier("jdbcTemplate")
+	@Qualifier("jdbcTemplateObservation")
 	protected JdbcTemplate jdbcTemplate;
 
 	@Value("classpath:sql/selectStatePostCode.sql")

@@ -47,4 +47,6 @@ public class DiscreteGroundWater {
 	// new field for RDB
 	protected String     parameterCode;
 	protected String     displayResult;
+	protected boolean    aboveDatum;
+	protected boolean    belowLandSurface;
 }

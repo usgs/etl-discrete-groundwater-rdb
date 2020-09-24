@@ -38,6 +38,7 @@ class RdbWriterTest {
 		// date
 		// time
 		dgw.displayResult = "23.06";
+		dgw.belowLandSurface = true;
 		// entry code [S]see or [L]land
 		dgw.verticalDatumCode = ""; // only if vertical measurement
 		dgw.measurementSourceCode = "";
@@ -156,6 +157,8 @@ class RdbWriterTest {
 		DiscreteGroundWater dgw = makeDgw();
 		// entry code [S]see or [L]land
 		dgw.parameterCode = "72150";
+		dgw.belowLandSurface = false;
+		dgw.aboveDatum = true;
 		dgw.verticalDatumCode = "W"; // fake test value
 		dgw.displayResult = "430.23";
 

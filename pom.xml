@@ -204,6 +204,12 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <environmentVariables>
+                        <TRANSFORM_DATABASE_ADDRESS>${TRANSFORM_TESTING_DATABASE_ADDRESS}</TRANSFORM_DATABASE_ADDRESS>
+                        <TRANSFORM_DATABASE_PORT>${TRANSFORM_TESTING_DATABASE_PORT}</TRANSFORM_DATABASE_PORT>
+                        <TRANSFORM_DATABASE_NAME>database_name</TRANSFORM_DATABASE_NAME>
+                        <TRANSFORM_SCHEMA_NAME>schema_name</TRANSFORM_SCHEMA_NAME>
+                        <TRANSFORM_SCHEMA_OWNER_USERNAME>schema_owner</TRANSFORM_SCHEMA_OWNER_USERNAME>
+                        <TRANSFORM_SCHEMA_OWNER_PASSWORD>changeMe</TRANSFORM_SCHEMA_OWNER_PASSWORD>
                         <OBSERVATION_DATABASE_ADDRESS>${OBSERVATION_TESTING_DATABASE_ADDRESS}</OBSERVATION_DATABASE_ADDRESS>
                         <OBSERVATION_DATABASE_PORT>${OBSERVATION_TESTING_DATABASE_PORT}</OBSERVATION_DATABASE_PORT>
                         <OBSERVATION_DATABASE_NAME>wqp_db</OBSERVATION_DATABASE_NAME>
@@ -246,6 +252,24 @@
                     <containerNamePattern>%a</containerNamePattern>
                     <!--Setting up the docker containers -->
                     <images>
+                        <!-- Transform db image -->
+                        <image>
+                            <name>usgswma/aqts_capture_db:ci</name>
+                            <alias>${TRANSFORM_TESTING_DATABASE_ADDRESS}</alias>
+                            <run>
+                                <network>
+                                    <mode>custom</mode>
+                                    <name>${TESTING_DATABASE_NETWORK}</name>
+                                </network>
+                                <ports>
+                                    <port>${LOCAL_TRANSFORM_TESTING_DATABASE_PORT}:5432</port>
+                                </ports>
+                                <wait>
+                                    <time>150000</time>
+                                    <log>(?s)PostgreSQL init process complete; ready for start up.*database system is ready to accept connections</log>
+                                </wait>
+                            </run>
+                        </image>
                         <!-- Observation db image -->
                         <image>
                             <name>usgswma/wqp_db:etl</name>

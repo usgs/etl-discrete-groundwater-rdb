@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -81,9 +82,11 @@ class BuildRdbFileTest {
 
 		DiscreteGroundWaterDao mockDao = Mockito.mock(DiscreteGroundWaterDao.class);
 
+		AqToNwisParmDao mockAqDao = Mockito.mock(AqToNwisParmDao.class);
 		LocationFolder mockLoc = Mockito.mock(LocationFolder.class);
 		Mockito.when(mockLoc.toStates(STATE)).thenReturn(stateAsList);
 		Mockito.when(mockLoc.filenameDecorator(STATE)).thenReturn(POSTCD);
+		Mockito.when(mockAqDao.getParameters()).thenReturn(getParameterList());
 
 		BuildRdbFile builder = new BuildRdbFile() {
 			@Override
@@ -95,6 +98,7 @@ class BuildRdbFileTest {
 			}
 		};
 		builder.dao = mockDao;
+		builder.aqDao = mockAqDao;
 		builder.s3BucketUtil = mockS3u;
 		builder.locationFolderUtil = mockLoc;
 
@@ -105,7 +109,7 @@ class BuildRdbFileTest {
 		assertEquals(4, writer.getHeaderRows(), "The header should be written in the RDB file builder.");
 		assertEquals(6, res.getCount(), "The result object should contain the number of rows written.");
 		assertTrue(res.getMessage().contains(FILENM), "The result object should contain the filename placed in S3.");
-		Mockito.verify(mockDao, Mockito.atLeastOnce()).sendDiscreteGroundWater(stateAsList, writer);
+		Mockito.verify(mockDao, Mockito.atLeastOnce()).sendDiscreteGroundWater(stateAsList, writer, mockAqDao.getParameters());
 		Mockito.verify(mockS3b, Mockito.atLeastOnce()).getWriter();
 		Mockito.verify(mockS3b, Mockito.atMostOnce()).getWriter();
 		Mockito.verify(mockS3b, Mockito.atLeastOnce()).close();
@@ -152,7 +156,7 @@ class BuildRdbFileTest {
 
 		// ASSERTIONS
 		assertEquals(0, writer.getHeaderRows(), "The header should NOT be written in the RDB file builder for bad location folder.");
-		Mockito.verify(mockDao, Mockito.never()).sendDiscreteGroundWater(stateAsList, writer);
+		Mockito.verify(mockDao, Mockito.never()).sendDiscreteGroundWater(stateAsList, writer, getParameterList());
 		Mockito.verify(mockS3b, Mockito.never()).getWriter();
 		Mockito.verify(mockS3b, Mockito.never()).close();
 		Mockito.verify(mockS3u, Mockito.never()).createFilename(POSTCD);
@@ -206,7 +210,7 @@ class BuildRdbFileTest {
 		Mockito.verify(mockS3b, Mockito.atLeastOnce()).close();
 		Mockito.verify(mockS3u, Mockito.atLeastOnce()).createFilename(POSTCD);
 		Mockito.verify(mockS3u, Mockito.atLeastOnce()).openS3(FILENM);
-		Mockito.verify(mockDao, Mockito.never()).sendDiscreteGroundWater(stateAsList, writer);
+		Mockito.verify(mockDao, Mockito.never()).sendDiscreteGroundWater(stateAsList, writer, getParameterList());
 		assertTrue(outStreamClosed);
 		assertTrue(dstWriterClosed);
 	}
@@ -246,8 +250,19 @@ class BuildRdbFileTest {
 		Mockito.verify(mockLoc, Mockito.never()).filenameDecorator(STATE);
 		Mockito.verify(mockS3u, Mockito.never()).createFilename(POSTCD);
 		Mockito.verify(mockS3u, Mockito.never()).openS3(FILENM);
-		Mockito.verify(mockDao, Mockito.never()).sendDiscreteGroundWater(stateAsList, writer);
+		Mockito.verify(mockDao, Mockito.never()).sendDiscreteGroundWater(stateAsList, writer, getParameterList());
 		assertFalse(outStreamClosed);
 		assertFalse(dstWriterClosed);
+	}
+
+	private List<Parameter> getParameterList() {
+		List<Parameter> parameters = new ArrayList<>();
+		Parameter p1 = new Parameter();
+		p1.setParameterCode("30210");
+		p1.setBelowLandSurface(true);
+		p1.setAboveDatum(false);
+		parameters.add(p1);
+		return parameters;
+
 	}
 }

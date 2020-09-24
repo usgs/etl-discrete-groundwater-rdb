@@ -1,12 +1,17 @@
 ---
 spring:
-  datasource:
+  datasource-transform:
+    url: jdbc:postgresql://${TRANSFORM_DATABASE_ADDRESS}:${TRANSFORM_DATABASE_PORT}/${TRANSFORM_DATABASE_NAME}?currentSchema=${TRANSFORM_SCHEMA_NAME}
+    username: ${TRANSFORM_SCHEMA_OWNER_USERNAME}
+    password: ${TRANSFORM_SCHEMA_OWNER_PASSWORD}
+    hikari:
+      maximum-pool-size: 2
+  datasource-observation:
     url: jdbc:postgresql://${OBSERVATION_DATABASE_ADDRESS}:${OBSERVATION_DATABASE_PORT}/${OBSERVATION_DATABASE_NAME}?currentSchema=${OBSERVATION_SCHEMA_NAME}
     username: ${OBSERVATION_SCHEMA_OWNER_USERNAME}
     password: ${OBSERVATION_SCHEMA_OWNER_PASSWORD}
     hikari:
       maximum-pool-size: 2
-      auto-commit: true
 
 logging:
   level:

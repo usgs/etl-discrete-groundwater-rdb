@@ -26,11 +26,12 @@ public class DiscreteGroundWaterDao {
 	private static final Logger LOG = LoggerFactory.getLogger(DiscreteGroundWaterDao.class);
 
 	@Autowired
-	@Qualifier("jdbcTemplate")
-	protected JdbcTemplate jdbcTemplate;
+	@Qualifier("jdbcTemplateObservation")
+	protected JdbcTemplate jdbcTemplateObservation;
 
 	@Value("classpath:sql/selectDiscreteGroundWater.sql")
 	protected Resource selectQuery;
+
 
 	/**
 	 * Fetches GW data from the database and converts it to a list of the ORM instance.
@@ -38,17 +39,17 @@ public class DiscreteGroundWaterDao {
 	 * 				 Most location folders are states names, some are a collection of a few states
 	 * @param writer instance that will write each row to an RDB file
 	 */
-	public void sendDiscreteGroundWater(List<String> states, RdbWriter writer) {
-		DiscreteGroundWaterRowHandler rowHandler = new DiscreteGroundWaterRowHandler(writer);
+	public void sendDiscreteGroundWater(List<String> states, RdbWriter writer, List<Parameter> parameters) {
+		DiscreteGroundWaterRowHandler rowHandler = new DiscreteGroundWaterRowHandler(writer, parameters);
 
 		try {
 			String sql = new String(FileCopyUtils.copyToByteArray(selectQuery.getInputStream()));
-			NamedParameterJdbcTemplate namedParamJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+			NamedParameterJdbcTemplate namedParamJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplateObservation);
 			Map<String, List<String>> params = Collections.singletonMap("states", states);
 
 			namedParamJdbcTemplate.query(sql, params, rowHandler);
 		} catch (IOException e) {
-			LOG.error("Unable to get Discrete Groud Water SQL statement", e.getMessage());
+			LOG.error("Unable to get Discrete Ground Water SQL statement", e.getMessage());
 			throw new RuntimeException(e);
 		}
 	}

@@ -81,16 +81,19 @@ public class RdbWriter {
 		String time = new DateTime(dgw.dateMeasuredRaw).toString(TIME_FORMAT);
 		columns.add( validateValue(  4, time) );
 
-		if (ABOVE_DATUM.contains(dgw.parameterCode)) {
+		if (dgw.aboveDatum) {
 			columns.add( validateValue(  7, "") );
 			columns.add( validateValue(  1, "S") ); // entry code for above Sea
 			columns.add( validateValue( 10, dgw.verticalDatumCode) );
 			columns.add( validateValue(  8, dgw.displayResult) );
-		} else {
+		} else if (dgw.belowLandSurface) {
 			columns.add( validateValue(  7, dgw.displayResult) );
 			columns.add( validateValue(  1, "L") ); // entry code for below Land
 			columns.add( validateValue( 10, "") );
 			columns.add( validateValue(  8, "") );
+		} else {
+			throw new RuntimeException("invalid parameter:" + dgw.parameterCode
+					+ ", must be above datum or below land surface");
 		}
 		columns.add( validateValue(  1, dgw.measurementSourceCode) );
 		columns.add( validateValue(  5, dgw.measuringAgencyCode) );
