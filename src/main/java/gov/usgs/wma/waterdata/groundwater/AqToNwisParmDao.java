@@ -28,17 +28,24 @@ public class AqToNwisParmDao {
 
 	public List<Parameter> getParameters() {
 		List<Parameter> rtn = Arrays.asList();
+		String hmm ="SelectQuery details:";
 		try {
-			String sql = "select d.parm_cd, d.above_datum, d.below_land_surface from aq_to_nwis_parm d";
-			//String sql = new String(FileCopyUtils.copyToByteArray(selectQuery.getInputStream()));
+			hmm += "\nselect query exists" + selectQuery.exists();
+			hmm += "\nselect query content length" + selectQuery.contentLength();
+			hmm += "\nselect query filename:" + selectQuery.getFilename();
+			hmm += "\nselect query is open:" + selectQuery.isOpen();
+			hmm += "\nselect query is readable:" + selectQuery.isReadable();
+
+			//String sql = "select d.parm_cd, d.above_datum, d.below_land_surface from aq_to_nwis_parm d";
+			String sql = new String(FileCopyUtils.copyToByteArray(selectQuery.getInputStream()));
 			rtn = jdbcTemplate.query(
 					sql,
 					new ParameterRowMapper()
 			);
 		} catch (EmptyResultDataAccessException e) {
 			LOG.info("Couldn't find parameter data - {} ", e.getLocalizedMessage());
-		} catch (Exception e) {
-			LOG.error("Unable to get SQL statement", e);
+		} catch (IOException e) {
+			LOG.error("Unable to get SQL statement " + hmm, e);
 			throw new RuntimeException(e);
 		}
 		return rtn;

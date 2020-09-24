@@ -52,17 +52,4 @@ public class AqToNwisParmDaoIT {
 		List<Parameter> parameters = dao.getParameters();
         assertEquals(18, parameters.size());
     }
-
-	/*@Test
-	public void testParameters_handleIOE() throws Exception {
-		// SETUP
-		Resource mockSQL = Mockito.mock(Resource.class);
-		Mockito.when(mockSQL.getInputStream()).thenThrow(new IOException());
-		dao.selectQuery = mockSQL;
-
-		// ACTION UNDER TEST
-		// ASSERTION
-		// TODO fix this
-		assertThrows(RuntimeException.class, ()->dao.getParameters());
-	}*/
 }
