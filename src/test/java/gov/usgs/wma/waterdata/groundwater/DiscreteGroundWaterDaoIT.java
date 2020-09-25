@@ -265,7 +265,7 @@ public class DiscreteGroundWaterDaoIT {
 
 		// no above datum and L indicator
 		String lineC = rdbLines.get("335504116544201").get(2);
-		assertTrue( Pattern.compile("^.+\t246.0\tL\t\t\t.+$").matcher(lineC).matches() );
+		assertTrue( Pattern.compile("^.+\t246.0\tL\tMYDATUM\t\t.+$").matcher(lineC).matches() );
 	}
 
 	@Test

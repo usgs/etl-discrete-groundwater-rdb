@@ -89,7 +89,7 @@ public class RdbWriter {
 		} else if (dgw.belowLandSurface) {
 			columns.add( validateValue(  7, dgw.displayResult) );
 			columns.add( validateValue(  1, "L") ); // entry code for below Land
-			columns.add( validateValue( 10, "") );
+			columns.add( validateValue( 10, dgw.verticalDatumCode) );
 			columns.add( validateValue(  8, "") );
 		} else {
 			throw new RuntimeException("invalid parameter:" + dgw.parameterCode
