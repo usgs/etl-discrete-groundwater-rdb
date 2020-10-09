@@ -1,0 +1,22 @@
+meth_cd,meth_nm
+BAROM,"Atmospheric pressure, barometer"
+ENCD ,"Gage height, shaft encoder"
+STRAN,"Gage height, subm press trans"
+WLNRG,"GW level, nonrecording gage"
+WLPRG,"GW level, pressure gage"
+WLACO,"GW level, acoustic pulse"
+WLCPG,"GW level, calib pressure gage"
+WLGPS,"GW level, differential GPS"
+WLSTP,"GW level, steel tape"
+WLAIR,"GW level, airline"
+WLCAI,"GW level, calib airline"
+WLUPT,"GW level,unvented press transdcr"
+WLLOG,"GW level, logs"
+HPENC,High precision encoder
+WLMAN,"GW level, manometer"
+SC001,Specific conductance sensor
+WLETP,"GW level, electric tape"
+WLPTR,"GW level, pressure transducer"
+THM01,"Temperature, water, thermistor"
+THM04,"Temperature, air, thermistor"
+WLOBS,"GW level, estim, report, observ"
