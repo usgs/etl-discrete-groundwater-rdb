@@ -16,6 +16,8 @@ provider:
     "wma:environment": ${self:provider.stage}
     "wma:taggingVersion": "1.0"
     "wma:costCenter": TBD
+    "wma:organization": IOW
+    "displayName": "ETL Discrete GW"
     commitIdentifier: ${git:sha1}
 
 custom:
