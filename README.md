@@ -43,6 +43,7 @@ To run tests against local observation Docker database use:
 Observation database: 
 ```.sh
 docker run -p 127.0.0.1:5444:5432/tcp usgswma/wqp_db:etl
+docker run -p 127.0.0.1:5437:5432/tcp usgswma/aqts_capture_db:ci
 ```
 
 Additionally, add an `application.yml` configuration file at the project root (the following is an example):

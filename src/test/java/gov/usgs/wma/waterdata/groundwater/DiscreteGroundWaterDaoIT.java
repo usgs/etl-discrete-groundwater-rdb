@@ -103,7 +103,7 @@ public class DiscreteGroundWaterDaoIT {
 		destination.close();
 
 		// ASSERT row count
-		assertEquals(12, writer.getDataRows());
+		assertEquals(12, writer.getDataRowCount());
 	}
 	@DatabaseSetup(connection="observation",
 			value="classpath:/testData/")
@@ -119,7 +119,7 @@ public class DiscreteGroundWaterDaoIT {
 		destination.close();
 
 		// ASSERT row count
-		assertEquals(2, writer.getDataRows());
+		assertEquals(2, writer.getDataRowCount());
 	}
 	@DatabaseSetup(connection="observation",
 			value="classpath:/testData/")
@@ -135,7 +135,7 @@ public class DiscreteGroundWaterDaoIT {
 		destination.close();
 
 		// ASSERT row count
-		assertEquals(14, writer.getDataRows());
+		assertEquals(14, writer.getDataRowCount());
 	}
 	@DatabaseSetup(connection="observation",
 			value="classpath:/testData/")

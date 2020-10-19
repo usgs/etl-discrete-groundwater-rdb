@@ -8,14 +8,11 @@ import java.io.Writer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joda.time.DateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -121,6 +118,6 @@ class DiscreteGroundWaterRowHandlerTest {
 		assertTrue(writtenValue.contains("\tD\t"));
 		assertTrue(writtenValue.contains("\t30210")); // last value
 
-		assertEquals(1, rdbWriter.getDataRows());
+		assertEquals(1, rdbWriter.getDataRowCount());
 	}
 }

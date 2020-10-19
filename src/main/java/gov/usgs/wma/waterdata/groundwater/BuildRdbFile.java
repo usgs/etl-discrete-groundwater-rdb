@@ -90,7 +90,7 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 
 			s3bucket.sendS3();
 
-			result.setCount( (int)rdbWriter.getDataRows() );
+			result.setCount( (int)rdbWriter.getDataRowCount() );
 			result.setMessage("Count is rows written to file: " + s3bucket.getKeyName());
 		} catch (Exception e) {
 			throw new RuntimeException("Error writing RDB file to S3, " + filename, e);

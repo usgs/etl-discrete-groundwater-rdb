@@ -57,7 +57,7 @@ class BuildRdbFileTest {
 
 		writer = new RdbWriter(destination) {
 			@Override
-			public long getDataRows() {
+			public long getDataRowCount() {
 				return 6;
 			}
 		};
@@ -106,7 +106,7 @@ class BuildRdbFileTest {
 		ResultObject res = builder.apply(req);
 
 		// ASSERTIONS
-		assertEquals(4, writer.getHeaderRows(), "The header should be written in the RDB file builder.");
+		assertEquals(4, writer.getHeaderRowCount(), "The header should be written in the RDB file builder.");
 		assertEquals(6, res.getCount(), "The result object should contain the number of rows written.");
 		assertTrue(res.getMessage().contains(FILENM), "The result object should contain the filename placed in S3.");
 		Mockito.verify(mockDao, Mockito.atLeastOnce()).sendDiscreteGroundWater(stateAsList, writer, mockAqDao.getParameters());
@@ -155,7 +155,7 @@ class BuildRdbFileTest {
 		assertThrows(RuntimeException.class, ()->builder.apply(req) );
 
 		// ASSERTIONS
-		assertEquals(0, writer.getHeaderRows(), "The header should NOT be written in the RDB file builder for bad location folder.");
+		assertEquals(0, writer.getHeaderRowCount(), "The header should NOT be written in the RDB file builder for bad location folder.");
 		Mockito.verify(mockDao, Mockito.never()).sendDiscreteGroundWater(stateAsList, writer, getParameterList());
 		Mockito.verify(mockS3b, Mockito.never()).getWriter();
 		Mockito.verify(mockS3b, Mockito.never()).close();
@@ -202,7 +202,7 @@ class BuildRdbFileTest {
 		assertThrows(RuntimeException.class, ()->builder.apply(req), "IOE converted to Runtime");
 
 		// ASSERTIONS
-		assertEquals(0, writer.getHeaderRows(), "The header should NOT be written in the RDB file builder for bad location folder.");
+		assertEquals(0, writer.getHeaderRowCount(), "The header should NOT be written in the RDB file builder for bad location folder.");
 		Mockito.verify(mockLoc, Mockito.atLeastOnce()).toStates(STATE);
 		Mockito.verify(mockLoc, Mockito.atLeastOnce()).filenameDecorator(STATE);
 		Mockito.verify(mockS3b, Mockito.atLeastOnce()).getWriter();
@@ -243,7 +243,7 @@ class BuildRdbFileTest {
 		// ASSERTIONS
 		assertEquals(-1, res.getCount());
 		assertEquals("TESTING", res.getMessage());
-		assertEquals(0, writer.getHeaderRows());
+		assertEquals(0, writer.getHeaderRowCount());
 		Mockito.verify(mockLoc, Mockito.atLeastOnce()).getLocationFolders();
 		Mockito.verify(mockLoc, Mockito.atMostOnce()).getLocationFolders();
 		Mockito.verify(mockLoc, Mockito.never()).toStates(STATE);

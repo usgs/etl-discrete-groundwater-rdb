@@ -12,6 +12,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +21,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 class RdbWriterTest {
+
+	public static final int HEADER_ROW_COUNT = 4;
+	public static final int COLUMN_COUNT = 20;
 
 	ByteArrayOutputStream out;
 	Writer destination;
@@ -89,8 +94,9 @@ class RdbWriterTest {
 		rdbWriter.writeHeader();
 
 		// POST SETUP
-		long count = rdbWriter.close().getHeaderRows();
+		long count = rdbWriter.getHeaderRowCount();
 		String writtenValue = out.toString();
+		String[] headLines = rdbWriter.getHeaderRowsContent();
 
 		// ASSERTIONS
 		assertNotNull(writtenValue);
@@ -100,40 +106,101 @@ class RdbWriterTest {
 		assertTrue(writtenValue.contains("25ds"));
 		assertTrue(writtenValue.contains("8ss"));
 
-		assertEquals(4, count);
+		// HEADER IS 'HEADER_ROW_COUNT' LINES LONG
+		assertEquals(HEADER_ROW_COUNT, count);
+		assertEquals(HEADER_ROW_COUNT, headLines.length);
+
+		// LAST TWO ROWS SHOULD CONTAIN ONE TSV PER COLUMN
+		String[] colNames = rdbWriter.getColumnNames();
+		String[] colTypes = rdbWriter.getColumnTypes();
+		assertEquals(colNames.length, colTypes.length, "Column names and types should have the same count");
+		assertEquals(COLUMN_COUNT, colNames.length);
+		assertEquals(COLUMN_COUNT, colTypes.length);
+	}
+
+	@Test
+	void testRowWriteEmptyRow() {
+		// SETUP
+		DiscreteGroundWater dgw = new DiscreteGroundWater();
+
+		//Some values just cannot be empty or null, so assign those values here
+		dgw.aboveDatum = true;
+		dgw.dateMeasured = "07-MAY-2007 18:30:47";
+		LocalDateTime dateTime = LocalDateTime.of(2007, Month.MAY, 01, 12, 0);
+		dgw.dateMeasuredRaw = Timestamp.valueOf(dateTime);
+
+		rdbWriter.writeHeader();
+
+		// ACTION UNDER TEST
+		rdbWriter.writeRow(dgw);
+
+		// POST SETUP
+		String[] values = rdbWriter.getDataRowsContent()[0].split("\t", -1);
+
+		assertEquals(1, rdbWriter.getDataRowCount());
+		assertEquals(COLUMN_COUNT, values.length);
+
+		for (int i = 0; i < COLUMN_COUNT; i++) {
+			String val = values[i];
+			String colName = rdbWriter.getColumnNames()[i];
+			String colType = rdbWriter.getColumnTypes()[i];
+
+			switch (colName) {
+				case "lev_dt":
+					assertTrue(val.matches("\\d{8}"), "lev_dt should match 'YYYYMMdd'");
+					break;
+				case "lev_tm":
+					assertTrue(val.matches("\\d{4}"), "lev_dt should match 'HHmm'");
+					break;
+				case "lev_ent_cd":
+					assertEquals("S", val);
+					break;
+				case "lev_md":
+					assertEquals("07-MAY-2007 18:30:47", val);
+					break;
+				case "lev_dtm":
+					assertEquals("01-MAY-2007 12:00:00", val);
+					break;
+				default:
+					assertEquals("", val, "'" + val + "' should be an empty string (column index " + i + ", " + colName + ")");
+			}
+
+		}
 	}
 
 	@Test
 	void testRowWriteGeneral() {
 		// SETUP
 		DiscreteGroundWater dgw = makeDgw();
+		rdbWriter.writeHeader();
 
 		// ACTION UNDER TEST
 		rdbWriter.writeRow(dgw);
 
 		// POST SETUP
-		long count = rdbWriter.close().getDataRows();
-		String writtenValue = out.toString();
+		long count = rdbWriter.getDataRowCount();
+		String[] writtenValues = rdbWriter.getDataRowsContent();
+		String writtenValue = writtenValues[0];
 
 		// ASSERTIONS
-		assertNotNull(writtenValue);
-		assertTrue(writtenValue.startsWith("USGS\t")); // first USGS value
-		assertTrue(writtenValue.contains("\tUSGS\t")); // second USGS value
-		assertTrue(writtenValue.contains("\t4042342342\t"));
-		assertTrue(writtenValue.contains("\t2\t"));
-		assertTrue(writtenValue.contains("\tS\t"));
-		assertTrue(writtenValue.contains("\tT\t"));
-		assertTrue(writtenValue.contains("\t200705"));
-		assertTrue(writtenValue.contains("\t20070501\t"));
-		assertTrue(writtenValue.contains("\t1200\t"));
-		assertFalse(writtenValue.contains("\t1830\t"));
-		assertTrue(writtenValue.contains("\t07-MAY-2007 18:30:47\t"));
-		assertTrue(writtenValue.contains("\t01-MAY-2007 12:00:00\t")); // measured and UTC dates
-		assertTrue(writtenValue.contains("\tUTC\t"));
-		assertTrue(writtenValue.contains("\tD\t"));
-		assertTrue(writtenValue.contains("\t30210")); // last value
+		assertEquals(1, writtenValues.length);
+		assertTrue(writtenValues[0].startsWith("USGS\t"));  //Sanity check that the string actually starts as expected
 
-		assertEquals(1, count);
+		assertEquals("USGS", rdbWriter.getLastValueFor("agency_cd"));
+		assertEquals("4042342342", rdbWriter.getLastValueFor("site_no"));
+		assertEquals("2", rdbWriter.getLastValueFor("lev_acy_cd"));
+		assertEquals("L", rdbWriter.getLastValueFor("lev_ent_cd"));
+		assertEquals("USGS", rdbWriter.getLastValueFor("lev_agency_cd"));
+		assertEquals("S", rdbWriter.getLastValueFor("lev_meth_cd"));
+		assertEquals("T", rdbWriter.getLastValueFor("lev_age_cd"));
+		assertEquals("20070501", rdbWriter.getLastValueFor("lev_dt"));
+		assertEquals("1200", rdbWriter.getLastValueFor("lev_tm"));
+		assertEquals("01-MAY-2007 12:00:00", rdbWriter.getLastValueFor("lev_dtm"));
+		assertEquals("07-MAY-2007 18:30:47", rdbWriter.getLastValueFor("lev_md"));
+		assertEquals("UTC", rdbWriter.getLastValueFor("lev_tz_cd"));
+		assertEquals("D", rdbWriter.getLastValueFor("lev_dt_acy_cd"));
+		assertEquals("30210", rdbWriter.getLastValueFor("parameter_code"));
+
 	}
 	@Test
 	void testRowWriteBelowLand() {
@@ -144,7 +211,6 @@ class RdbWriterTest {
 		rdbWriter.writeRow(dgw);
 
 		// POST SETUP
-		rdbWriter.close();
 		String writtenValue = out.toString();
 
 		// ASSERTIONS
@@ -166,7 +232,6 @@ class RdbWriterTest {
 		rdbWriter.writeRow(dgw);
 
 		// POST SETUP
-		rdbWriter.close();
 		String writtenValue = out.toString();
 
 		// ASSERTIONS
@@ -229,27 +294,77 @@ class RdbWriterTest {
 	// These methods used to be located in the superclass.
 	// They were added only for testing and thus moved here.
 	class MockRdbWriter extends RdbWriter {
+
+		String headerRaw;
+		ArrayList<String> dataRows = new ArrayList();
+
 		public MockRdbWriter(Writer destination) {
 			super(destination);
 		}
 
-		protected MockRdbWriter flush() {
+		private void flush() {
 			try {
 				rdb.flush();
 			} catch (IOException e) {
-				// do not care about flush exceptions
+				e.printStackTrace(); //ignore
 			}
+		}
+		@Override
+		public RdbWriter writeHeader() {
+			super.writeHeader();
+			flush();
+			headerRaw = out.toString();
 			return this;
 		}
 
-		protected MockRdbWriter close() {
-			try {
-				flush();
-				rdb.close();
-			} catch (IOException e) {
-				// do not care about close exceptions
-			}
+		@Override
+		protected RdbWriter writeRow(final List<String> columns) {
+			super.writeRow(columns);
+
+			flush();
+
+			//Append the last line to our running list of dataRows
+			String[] lines = out.toString().split("(\\r\\n|\\r|\\n)", -1);
+			dataRows.add(lines[lines.length - 2]);  //A trailing newline is always added, so '-1' would be an empty row
+
 			return this;
+		}
+
+		protected String[] getHeaderRowsContent() {
+			String[] headLines = headerRaw.split("(\\r\\n|\\r|\\n)", 0); //0 drops any empty last row
+
+			return headLines;
+		}
+
+		protected String[] getDataRowsContent() {
+			return dataRows.toArray(new String[0]);
+		}
+
+		protected String[] getColumnNames() {
+			String[] head = getHeaderRowsContent();
+			String[] colNames = head[head.length - 2].split("\t", -1);
+			return colNames;
+		}
+
+		protected String[] getColumnTypes() {
+			String[] head = getHeaderRowsContent();
+			String[] colTypes = head[head.length - 1].split("\\t", -1);
+			return colTypes;
+		}
+
+		/* Find a value based on column name in the last row */
+		protected String getLastValueFor(String colName) {
+			String[] rows = getDataRowsContent();
+			String[] vals = rows[rows.length - 1].split("\t", -1);
+			String[] names = getColumnNames();
+
+			for (int i = 0; i < names.length; i++) {
+				if (colName.equals(names[i])) {
+					return vals[i];
+				}
+			}
+
+			return null;
 		}
 	}
 
