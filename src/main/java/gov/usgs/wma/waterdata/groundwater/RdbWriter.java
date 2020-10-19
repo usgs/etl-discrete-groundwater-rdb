@@ -38,10 +38,10 @@ public class RdbWriter {
 		initRows();
 	}
 
-	public long getHeaderRows() {
+	public long getHeaderRowCount() {
 		return headerLineCount;
 	}
-	public long getDataRows() {
+	public long getDataRowCount() {
 		return dataLineCount;
 	}
 	protected void initRows() {
@@ -130,16 +130,17 @@ public class RdbWriter {
 	 * entry length. This writes only the given length value
 	 * @param length max number of chars to write
 	 * @param value characters to write, non-string values must be converted.
+	 * @return The trimmed value with nulls converted to empty strings.
 	 */
 	protected String validateValue(int length, String value) {
 		// Trim the value to the proper field length.
-		String trimmedValue = value;
+
 		if (value == null) {
 			value = "";
 		}
 		if (value.length() > length) {
-			trimmedValue = value.substring(0, length);
+			value = value.substring(0, length);
 		}
-		return trimmedValue;
+		return value;
 	}
 }
