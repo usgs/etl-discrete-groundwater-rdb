@@ -5,7 +5,7 @@ select
     d.measurement_source_code,
     d.measuring_agency_code,
     d.level_accuracy_code,
-    d.site_status_code,
+    d.result_measure_qualifiers::varchar,
     d.measurement_method_code,
     d.date_measured,
     d.date_measured_raw,

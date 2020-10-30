@@ -49,7 +49,7 @@ class RdbWriterTest {
 		dgw.measurementSourceCode = "";
 		dgw.measuringAgencyCode = "USGS";
 		dgw.levelAccuracyCode = "2"; // two digits after decimal point
-		dgw.siteStatusCode = ""; // R, S or blank
+		dgw.readingQualifiers = "5"; // single digit or empty
 		dgw.measurementMethodCode = "S"; // S, R, or V
 		dgw.dateMeasured = "07-MAY-2007 18:30:47";
 		LocalDateTime dateTime = LocalDateTime.of(2007, Month.MAY, 01, 12, 0);

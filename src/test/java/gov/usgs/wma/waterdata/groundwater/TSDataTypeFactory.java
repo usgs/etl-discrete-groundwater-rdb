@@ -6,6 +6,8 @@ import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Types;
+
 public class TSDataTypeFactory extends PostgresqlDataTypeFactory {
 	private static final Logger logger = LoggerFactory.getLogger(TSDataTypeFactory.class);
 
@@ -14,6 +16,11 @@ public class TSDataTypeFactory extends PostgresqlDataTypeFactory {
 		logger.debug("createDataType(sqlType={}, sqlTypeName={})",
 				String.valueOf(sqlType), sqlTypeName);
 
-		return super.createDataType(sqlType, sqlTypeName);
+		if (sqlType == Types.OTHER && ("json".equals(sqlTypeName) || "jsonb".equals(sqlTypeName))) {
+			return new JsonType(); // support PostgreSQL json/jsonb
+		} else {
+			return super.createDataType(sqlType, sqlTypeName);
+		}
+
 	}
 }

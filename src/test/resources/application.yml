@@ -16,6 +16,7 @@ spring:
 logging:
   level:
     root: ${ROOT_LOG_LEVEL}
+    org.postgresql: DEBUG
     com.zaxxer: OFF
 
 properties:

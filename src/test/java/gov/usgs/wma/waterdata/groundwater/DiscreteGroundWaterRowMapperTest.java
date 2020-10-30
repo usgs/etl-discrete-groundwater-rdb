@@ -30,6 +30,9 @@ class DiscreteGroundWaterRowMapperTest {
 		out = new ByteArrayOutputStream();
 		destination = new OutputStreamWriter(out);
 
+		String resultQual = "[\"" + LevelStatusCode.FOREIGN.getAqDescription() + "\",\""
+				                    + LevelStatusCode.BELOW.getAqDescription() + "\"]"; // <- This is the value that should be found
+
 		mockRs = Mockito.mock(ResultSet.class);
 		dgw = makeDgw();
 		try {
@@ -44,7 +47,7 @@ class DiscreteGroundWaterRowMapperTest {
 			Mockito.when(mockRs.getString("measurement_source_code")).thenReturn(dgw.measurementSourceCode);
 			Mockito.when(mockRs.getString("measuring_agency_code")).thenReturn(dgw.measuringAgencyCode);
 			Mockito.when(mockRs.getString("site_identification_number")).thenReturn(dgw.siteIdentificationNumber);
-			Mockito.when(mockRs.getString("site_status_code")).thenReturn(dgw.siteStatusCode);
+			Mockito.when(mockRs.getString("result_measure_qualifiers")).thenReturn(resultQual);
 			Mockito.when(mockRs.getString("time_measured_utc")).thenReturn(dgw.timeMeasuredUtc);
 			Mockito.when(mockRs.getString("timezone_code")).thenReturn(dgw.timezoneCode);
 			Mockito.when(mockRs.getString("vertical_datum_code")).thenReturn(dgw.verticalDatumCode);
@@ -69,7 +72,7 @@ class DiscreteGroundWaterRowMapperTest {
 		dgw.measurementSourceCode = "";
 		dgw.measuringAgencyCode = "USGS";
 		dgw.levelAccuracyCode = "2"; // two digits after decimal point
-		dgw.siteStatusCode = ""; // R, S or blank
+		dgw.readingQualifiers = LevelStatusCode.BELOW.getNwisCode();
 		dgw.measurementMethodCode = "S"; // S, R, or V
 		dgw.dateMeasured = "07-MAY-2007 18:30:47";
 		LocalDateTime dateTime = LocalDateTime.of(2007, Month.MAY, 01, 12, 0);
@@ -99,7 +102,7 @@ class DiscreteGroundWaterRowMapperTest {
 		assertEquals(dgw.measurementSourceCode, actual.measurementSourceCode);
 		assertEquals(dgw.measuringAgencyCode, actual.measuringAgencyCode);
 		assertEquals(dgw.levelAccuracyCode, actual.levelAccuracyCode); // two digits after decimal point
-		assertEquals(dgw.siteStatusCode, actual.siteStatusCode); // R, S or blank
+		assertEquals(dgw.readingQualifiers, actual.readingQualifiers); // Numeric or empty
 		assertEquals(dgw.measurementMethodCode, actual.measurementMethodCode); // S, R, or V
 		assertEquals(dgw.dateMeasured, actual.dateMeasured);
 		assertEquals(dgw.dateMeasuredRaw, actual.dateMeasuredRaw);
