@@ -1,15 +1,10 @@
 package gov.usgs.wma.waterdata.groundwater;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.*;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -61,13 +56,13 @@ public class DiscreteGroundWaterRules {
 
 					if (aqQuals.size() > 0) {
 
-						LevelStatusCode lsc = Stream.of(LevelStatusCode.values())
+						Optional<LevelStatusCode> lsc = Stream.of(LevelStatusCode.values())
 													  .filter(a -> a.isMapped())
 								                      .filter(a -> aqQuals.contains(a.getAqDescription()))
-								                      .findFirst().orElse(null);
+								                      .findFirst();
 
-						if (lsc != null) {
-							newQualStr = lsc.getNwisCode();
+						if (lsc.isPresent()) {
+							newQualStr = lsc.get().getNwisCode();
 						}
 
 					}
