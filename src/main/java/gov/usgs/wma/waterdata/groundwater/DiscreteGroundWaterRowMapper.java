@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.RowMapper;
  */
 public class DiscreteGroundWaterRowMapper implements RowMapper<DiscreteGroundWater> {
 
+	DiscreteGroundWaterRules rules = new DiscreteGroundWaterRules();
 
 	/**
 	 * Translates JDBC RowSet row to ORM instance.
@@ -28,12 +29,15 @@ public class DiscreteGroundWaterRowMapper implements RowMapper<DiscreteGroundWat
 		discreteGroundWater.measurementSourceCode = rs.getString("measurement_source_code");
 		discreteGroundWater.measuringAgencyCode = rs.getString("measuring_agency_code");
 		discreteGroundWater.siteIdentificationNumber = rs.getString("site_identification_number");
-		discreteGroundWater.siteStatusCode = rs.getString("site_status_code");
+		discreteGroundWater.readingQualifiers = rs.getString("result_measure_qualifiers");
 		discreteGroundWater.timeMeasuredUtc = rs.getString("time_measured_utc");
 		discreteGroundWater.timezoneCode = rs.getString("timezone_code");
 		discreteGroundWater.verticalDatumCode = rs.getString("vertical_datum_code");
 		discreteGroundWater.parameterCode = rs.getString("parameter_code");
 		discreteGroundWater.displayResult = rs.getString("display_result");
+
+		rules.apply(discreteGroundWater);
+
 		return discreteGroundWater;
 	}
 }

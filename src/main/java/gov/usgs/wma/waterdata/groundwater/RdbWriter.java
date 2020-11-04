@@ -98,7 +98,7 @@ public class RdbWriter {
 		columns.add( validateValue(  1, dgw.measurementSourceCode) );
 		columns.add( validateValue(  5, dgw.measuringAgencyCode) );
 		columns.add( validateValue(  1, dgw.levelAccuracyCode) );
-		columns.add( validateValue(  1, dgw.siteStatusCode) );
+		columns.add( validateValue(  1, dgw.readingQualifiers) );
 		columns.add( validateValue(  1, dgw.measurementMethodCode) );
 		// omitting date created, loader no longer references either
 		columns.add( validateValue( 25, dgw.dateMeasured) );

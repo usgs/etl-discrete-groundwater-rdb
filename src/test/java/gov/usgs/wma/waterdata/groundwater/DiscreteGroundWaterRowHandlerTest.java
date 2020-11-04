@@ -43,7 +43,7 @@ class DiscreteGroundWaterRowHandlerTest {
 			Mockito.when(mockRs.getString("measurement_source_code")).thenReturn(dgw.measurementSourceCode);
 			Mockito.when(mockRs.getString("measuring_agency_code")).thenReturn(dgw.measuringAgencyCode);
 			Mockito.when(mockRs.getString("site_identification_number")).thenReturn(dgw.siteIdentificationNumber);
-			Mockito.when(mockRs.getString("site_status_code")).thenReturn(dgw.siteStatusCode);
+			Mockito.when(mockRs.getString("result_measure_qualifiers")).thenReturn(dgw.readingQualifiers);
 			Mockito.when(mockRs.getString("time_measured_utc")).thenReturn(dgw.timeMeasuredUtc);
 			Mockito.when(mockRs.getString("timezone_code")).thenReturn(dgw.timezoneCode);
 			Mockito.when(mockRs.getString("vertical_datum_code")).thenReturn(dgw.verticalDatumCode);
@@ -66,7 +66,7 @@ class DiscreteGroundWaterRowHandlerTest {
 		dgw.measurementSourceCode = "";
 		dgw.measuringAgencyCode = "USGS";
 		dgw.levelAccuracyCode = "2"; // two digits after decimal point
-		dgw.siteStatusCode = ""; // R, S or blank
+		dgw.readingQualifiers = ""; //Numeric code
 		dgw.measurementMethodCode = "S"; // S, R, or V
 		dgw.dateMeasured = "07-MAY-2007 18:30:47";
 		LocalDateTime dateTime = LocalDateTime.of(2007, Month.MAY, 01, 12, 0);

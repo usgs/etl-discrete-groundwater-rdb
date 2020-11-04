@@ -28,7 +28,7 @@ public class DiscreteGroundWater {
 	//lev_acy_cd
 	protected String     levelAccuracyCode;
 	//lev_status_cd
-	protected String     siteStatusCode;
+	protected String     readingQualifiers;
 	//lev_meth_cd
 	protected String     measurementMethodCode;
 	//lev_cr			<empty or omit, this field is no longer loaded>
