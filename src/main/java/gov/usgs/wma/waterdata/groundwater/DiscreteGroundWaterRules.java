@@ -5,7 +5,6 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Stream;
 
 /**
  * Applies business rules to a domain object.
@@ -56,7 +55,7 @@ public class DiscreteGroundWaterRules {
 
 					if (aqQuals.size() > 0) {
 
-						Optional<LevelStatusCode> lsc = Stream.of(LevelStatusCode.values())
+						Optional<LevelStatusCode> lsc = LevelStatusCode.stream()
 													  .filter(a -> a.isMapped())
 								                      .filter(a -> aqQuals.contains(a.getAqDescription()))
 								                      .findFirst();

@@ -1,5 +1,8 @@
 package gov.usgs.wma.waterdata.groundwater;
 
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 /**
  * Represents the mapping from Aquarius TS Result Qualifiers to NWISWeb 'lev_status_cd' in the RDB.
  * See https://internal.cida.usgs.gov/jira/browse/IOW-667 for details on the mapping.
@@ -33,6 +36,14 @@ public enum LevelStatusCode {
 		this.nwisCode = nwisCode;
 		this.real = real;
 		this.mapped = mapped;
+	}
+
+	/**
+	 * An ordered stream of all enum values.
+	 * @return
+	 */
+	public static Stream<LevelStatusCode> stream() {
+		return Arrays.stream(LevelStatusCode.values());
 	}
 
 	/**
