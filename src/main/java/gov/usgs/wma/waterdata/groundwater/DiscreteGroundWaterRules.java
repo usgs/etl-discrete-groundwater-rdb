@@ -76,17 +76,17 @@ public class DiscreteGroundWaterRules {
 		}
 
 
-		//Rule:  Only the "1200" approvalLevel is considered approved.  All others (or no value) is considered provisional.
-		//If the approval is not recognized as valid, it is ignored.
-		//If the approval empty or just not one that is mapped, it is assumed to be non-approved.
+		//Rule:  Only the Aquarius TS "1200" approvalLevel is considered approved.  All others values or no value is
+		// considered provisional.  "A" is the NWISWeb code for Approved, "P" for Provisional (ie not approved).
+		//If the approvalLevel is not recognized as valid, it is ignored and the value considered provisional.
 		//Ref:  https://internal.cida.usgs.gov/jira/browse/IOW-666
 		{
 			String orgApprovalStr = StringUtils.trimWhitespace(domObj.approvalLevel);
-			String newApprovalStr = "P";   //acceptable default value if no other found
+			String newApprovalStr = "P";   //provisional default value if no other found
 
 			if (! StringUtils.isEmpty(orgApprovalStr)) {
 				if (orgApprovalStr.equals("1200")) {
-					newApprovalStr = "A";
+					newApprovalStr = "A";   //Its approved!
 				}
 			}
 
