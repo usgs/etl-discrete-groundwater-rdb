@@ -1,21 +1,17 @@
 package gov.usgs.wma.waterdata.groundwater;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.io.*;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import static org.junit.jupiter.api.Assertions.*;
 
 class DiscreteGroundWaterRowHandlerTest {
 
@@ -34,7 +30,7 @@ class DiscreteGroundWaterRowHandlerTest {
 		try {
 			Mockito.when(mockRs.getString("agency_cd")).thenReturn(dgw.agencyCode);
 			Mockito.when(mockRs.getString("agency_code")).thenReturn(dgw.agencyCode);
-			Mockito.when(mockRs.getString("approval_status_code")).thenReturn(dgw.approvalStatusCode);
+			Mockito.when(mockRs.getString("approval_level")).thenReturn(dgw.approvalLevel);
 			Mockito.when(mockRs.getString("date_measured")).thenReturn(dgw.dateMeasured);
 			Mockito.when(mockRs.getTimestamp("date_measured_raw")).thenReturn(dgw.dateMeasuredRaw);
 			Mockito.when(mockRs.getString("date_time_accuracy_code")).thenReturn(dgw.dateTimeAccuracyCode);
@@ -74,7 +70,7 @@ class DiscreteGroundWaterRowHandlerTest {
 		dgw.dateTimeAccuracyCode = "D"; // [D]day or [M]minute
 		dgw.timezoneCode = "UTC";
 		dgw.timeMeasuredUtc = "01-MAY-2007 12:00:00"; // UTC
-		dgw.approvalStatusCode = "T"; // T or R
+		dgw.approvalLevel = "1200"; // 1200 = Approved
 
 		dgw.parameterCode = "30210";
 
@@ -107,7 +103,7 @@ class DiscreteGroundWaterRowHandlerTest {
 		assertTrue(writtenValue.contains("\t4042342342\t"));
 		assertTrue(writtenValue.contains("\t2\t"));
 		assertTrue(writtenValue.contains("\tS\t"));
-		assertTrue(writtenValue.contains("\tT\t"));
+		assertTrue(writtenValue.contains("\tA\t")); //The approval based on 1200
 		assertTrue(writtenValue.contains("\t200705"));
 		assertTrue(writtenValue.contains("\t20070501\t"));
 		assertTrue(writtenValue.contains("\t1200\t"));

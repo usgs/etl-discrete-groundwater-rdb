@@ -43,7 +43,7 @@ public class DiscreteGroundWater {
 	//lev_utc_dt
 	protected String     timeMeasuredUtc;
 	//lev_age_cd
-	protected String     approvalStatusCode;
+	protected String approvalLevel;
 	// new field for RDB
 	protected String     parameterCode;
 	protected String     displayResult;

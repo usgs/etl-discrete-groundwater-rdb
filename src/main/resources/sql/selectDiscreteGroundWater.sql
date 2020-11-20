@@ -12,7 +12,7 @@ select
     d.date_time_accuracy_code,
     d.timezone_code,
     d.time_measured_utc,
-    d.approval_status_code,
+    d.approval_level,
     d.parameter_code,
     d.display_result
   from nwis.discrete_ground_water_aqts d

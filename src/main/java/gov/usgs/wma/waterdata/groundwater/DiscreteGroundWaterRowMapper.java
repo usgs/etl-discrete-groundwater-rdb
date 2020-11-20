@@ -1,9 +1,9 @@
 package gov.usgs.wma.waterdata.groundwater;
 
+import org.springframework.jdbc.core.RowMapper;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import org.springframework.jdbc.core.RowMapper;
 
 /**
  * Simple SpringFramework RowMapper to GW ORM object
@@ -20,7 +20,7 @@ public class DiscreteGroundWaterRowMapper implements RowMapper<DiscreteGroundWat
 	public DiscreteGroundWater mapRow(ResultSet rs, int rowNum) throws SQLException {
 		DiscreteGroundWater discreteGroundWater = new DiscreteGroundWater();
 		discreteGroundWater.agencyCode = rs.getString("agency_code");
-		discreteGroundWater.approvalStatusCode = rs.getString("approval_status_code");
+		discreteGroundWater.approvalLevel = rs.getString("approval_level");
 		discreteGroundWater.dateMeasured = rs.getString("date_measured");
 		discreteGroundWater.dateMeasuredRaw = rs.getTimestamp("date_measured_raw");
 		discreteGroundWater.dateTimeAccuracyCode = rs.getString("date_time_accuracy_code");

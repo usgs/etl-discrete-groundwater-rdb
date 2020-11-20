@@ -2,17 +2,8 @@ package gov.usgs.wma.waterdata.groundwater;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
-import java.io.*;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DiscreteGroundWaterRulesTest {
 
@@ -23,17 +14,21 @@ class DiscreteGroundWaterRulesTest {
 	public void beforeEach() {
 		dgw = new DiscreteGroundWater();
 		dgw.readingQualifiers = "[\"" + LevelStatusCode.ABOVE.getAqDescription() + "\"]";
+		dgw.approvalLevel = "1200";
 	}
 
 
+	//
+	//Rule:  The AQ measurement reading qualifiers (multi-values) are mapped to a single NWISWeb lev_status_cd.
+
 	@Test
-	void singleRecognizedValueIsMapped() throws Exception {
+	void qualifiersSingleRecognizedValueIsMapped() throws Exception {
 		rules.apply(dgw);
 		assertEquals(LevelStatusCode.ABOVE.getNwisCode(), dgw.readingQualifiers);
 	}
 
 	@Test
-	void multipleRecognizedValuesMapsFirstOneInEnumOrder() throws Exception {
+	void qualifiersMultipleRecognizedValuesMapsFirstOneInEnumOrder() throws Exception {
 
 		dgw.readingQualifiers = "["
 				                        + "\"" + LevelStatusCode.SALINE.getAqDescription() + "\","
@@ -47,7 +42,7 @@ class DiscreteGroundWaterRulesTest {
 	}
 
 	@Test
-	void multipleRecognizedValuesMapsFirstOneInEnumOrderAndIgnoresJunk() throws Exception {
+	void qualifiersMultipleRecognizedValuesMapsFirstOneInEnumOrderAndIgnoresJunk() throws Exception {
 
 		dgw.readingQualifiers = "["
 				                        + "\"JUNK junk ;lkj;lkjakhsd\","
@@ -62,7 +57,7 @@ class DiscreteGroundWaterRulesTest {
 	}
 
 	@Test
-	void noMatchedValuesResultsInEmpty() throws Exception {
+	void qualifiersNoMatchedValuesResultsInEmpty() throws Exception {
 
 		dgw.readingQualifiers = "["
 				                        + "\"JUNK junk ;lkj;lkjakhsd\","
@@ -74,7 +69,7 @@ class DiscreteGroundWaterRulesTest {
 	}
 
 	@Test
-	void EmptyStringResultsInEmpty() throws Exception {
+	void qualifiersEmptyStringResultsInEmpty() throws Exception {
 
 		dgw.readingQualifiers = "";
 
@@ -83,7 +78,7 @@ class DiscreteGroundWaterRulesTest {
 	}
 
 	@Test
-	void NullStringResultsInEmpty() throws Exception {
+	void qualifiersNullStringResultsInEmpty() throws Exception {
 
 		dgw.readingQualifiers = null;
 
@@ -92,7 +87,7 @@ class DiscreteGroundWaterRulesTest {
 	}
 
 	@Test
-	void emptyJsonArrayResultsInEmpty() throws Exception {
+	void qualifiersEmptyJsonArrayResultsInEmpty() throws Exception {
 
 		dgw.readingQualifiers = "[]";
 
@@ -101,12 +96,63 @@ class DiscreteGroundWaterRulesTest {
 	}
 
 	@Test
-	void emptyJsonObjectResultsInEmpty() throws Exception {
+	void qualifiersEmptyJsonObjectResultsInEmpty() throws Exception {
 
 		dgw.readingQualifiers = "{}";
 
 		rules.apply(dgw);
 		assertEquals("", dgw.readingQualifiers);
+	}
+
+	//
+	//Rule:  Only the "1200" approvalLevel is considered approved.
+
+	@Test
+	void approval1200IsApproved() throws Exception {
+		rules.apply(dgw);
+		assertEquals("A", dgw.approvalLevel);
+	}
+
+	@Test
+	void approval900IsNotApproved() throws Exception {
+		dgw.approvalLevel = "900";
+		rules.apply(dgw);
+		assertEquals("P", dgw.approvalLevel);
+	}
+
+	@Test
+	void approvalRandomJunkIsNotApproved() throws Exception {
+		dgw.approvalLevel = "asdf9wehasdlkjhadsf\\;\"DROP TABLE DUAL;";
+		rules.apply(dgw);
+		assertEquals("P", dgw.approvalLevel);
+	}
+
+	@Test
+	void approvalNullIsNotApproved() throws Exception {
+		dgw.approvalLevel = null;
+		rules.apply(dgw);
+		assertEquals("P", dgw.approvalLevel);
+	}
+
+	@Test
+	void approvalEmptyIsNotApproved() throws Exception {
+		dgw.approvalLevel = "";
+		rules.apply(dgw);
+		assertEquals("P", dgw.approvalLevel);
+	}
+
+	@Test
+	void approvalSingleSpaceIsNotApproved() throws Exception {
+		dgw.approvalLevel = " ";
+		rules.apply(dgw);
+		assertEquals("P", dgw.approvalLevel);
+	}
+
+	@Test
+	void approvalWhitespaceSpecialCharsAreNotApproved() throws Exception {
+		dgw.approvalLevel = "\t\n\r";
+		rules.apply(dgw);
+		assertEquals("P", dgw.approvalLevel);
 	}
 
 }
