@@ -1,19 +1,14 @@
 package gov.usgs.wma.waterdata.groundwater;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.util.StringUtils;
+
+import java.io.*;
+import java.util.*;
 
 /**
  * Wrapper of utility methods to write an RDB file format.
@@ -107,7 +102,7 @@ public class RdbWriter {
 		columns.add( validateValue(  1, dgw.dateTimeAccuracyCode) );
 		columns.add( validateValue(  6, dgw.timezoneCode) );
 		columns.add( validateValue( 25, dgw.timeMeasuredUtc) );
-		columns.add( validateValue(  1, dgw.approvalStatusCode) );
+		columns.add( validateValue(  1, dgw.approvalLevel) );
 		columns.add( validateValue(  5, dgw.parameterCode) );
 		writeRow(columns);
 		dataLineCount++;

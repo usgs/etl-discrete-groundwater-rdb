@@ -1,22 +1,15 @@
 package gov.usgs.wma.waterdata.groundwater;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.format.DateTimeFormatter;
-
-import org.joda.time.DateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import java.io.*;
+import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.Month;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DiscreteGroundWaterRowMapperTest {
 
@@ -38,7 +31,7 @@ class DiscreteGroundWaterRowMapperTest {
 		try {
 			Mockito.when(mockRs.getString("agency_cd")).thenReturn(dgw.agencyCode);
 			Mockito.when(mockRs.getString("agency_code")).thenReturn(dgw.agencyCode);
-			Mockito.when(mockRs.getString("approval_status_code")).thenReturn(dgw.approvalStatusCode);
+			Mockito.when(mockRs.getString("approval_level")).thenReturn(dgw.approvalLevel);
 			Mockito.when(mockRs.getString("date_measured")).thenReturn(dgw.dateMeasured);
 			Mockito.when(mockRs.getTimestamp("date_measured_raw")).thenReturn(dgw.dateMeasuredRaw);
 			Mockito.when(mockRs.getString("date_time_accuracy_code")).thenReturn(dgw.dateTimeAccuracyCode);
@@ -80,7 +73,7 @@ class DiscreteGroundWaterRowMapperTest {
 		dgw.dateTimeAccuracyCode = "D"; // [D]day or [M]minute
 		dgw.timezoneCode = "UTC";
 		dgw.timeMeasuredUtc = "01-MAY-2007 12:00:00"; // UTC
-		dgw.approvalStatusCode = "T"; // T or R
+		dgw.approvalLevel = "900"; // Only 1200 is approved - all others are non-approved.
 
 		dgw.parameterCode = "30210";
 
@@ -109,7 +102,7 @@ class DiscreteGroundWaterRowMapperTest {
 		assertEquals(dgw.dateTimeAccuracyCode, actual.dateTimeAccuracyCode); // [D]day or [M]minute
 		assertEquals(dgw.timezoneCode, actual.timezoneCode);
 		assertEquals(dgw.timeMeasuredUtc, actual.timeMeasuredUtc); // UTC
-		assertEquals(dgw.approvalStatusCode, actual.approvalStatusCode); // T or R
+		assertEquals("P", actual.approvalLevel); //The mapping is a business rule
 		assertEquals(dgw.parameterCode, actual.parameterCode);
 		assertEquals(dgw.displayResult, actual.displayResult);
 		

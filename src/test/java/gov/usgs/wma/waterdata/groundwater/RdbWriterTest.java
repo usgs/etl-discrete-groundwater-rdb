@@ -1,12 +1,11 @@
 package gov.usgs.wma.waterdata.groundwater;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.joda.time.DateTime;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -15,10 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joda.time.DateTime;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import static org.junit.jupiter.api.Assertions.*;
 
 class RdbWriterTest {
 
@@ -57,7 +53,7 @@ class RdbWriterTest {
 		dgw.dateTimeAccuracyCode = "D"; // [D]day or [M]minute
 		dgw.timezoneCode = "UTC";
 		dgw.timeMeasuredUtc = "01-MAY-2007 12:00:00"; // UTC
-		dgw.approvalStatusCode = "T"; // T or R
+		dgw.approvalLevel = "P";
 
 		dgw.parameterCode = "30210";
 
@@ -192,7 +188,7 @@ class RdbWriterTest {
 		assertEquals("L", rdbWriter.getLastValueFor("lev_ent_cd"));
 		assertEquals("USGS", rdbWriter.getLastValueFor("lev_agency_cd"));
 		assertEquals("S", rdbWriter.getLastValueFor("lev_meth_cd"));
-		assertEquals("T", rdbWriter.getLastValueFor("lev_age_cd"));
+		assertEquals("P", rdbWriter.getLastValueFor("lev_age_cd"));
 		assertEquals("20070501", rdbWriter.getLastValueFor("lev_dt"));
 		assertEquals("1200", rdbWriter.getLastValueFor("lev_tm"));
 		assertEquals("01-MAY-2007 12:00:00", rdbWriter.getLastValueFor("lev_dtm"));
