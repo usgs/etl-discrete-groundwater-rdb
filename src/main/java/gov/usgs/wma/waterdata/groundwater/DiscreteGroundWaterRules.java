@@ -80,6 +80,8 @@ public class DiscreteGroundWaterRules {
 		// considered provisional.  "A" is the NWISWeb code for Approved, "P" for Provisional (ie not approved).
 		//If the approvalLevel is not recognized as valid, it is ignored and the value considered provisional.
 		//Ref:  https://internal.cida.usgs.gov/jira/browse/IOW-666
+		//NWISWeb Approval codes:  https://help.waterdata.usgs.gov/code/lev_age_cd?fmt=html
+		//AQTS Approval Levels:  (need to be logged into the AQTS system, but they are listed in the ticket)
 		{
 			String orgApprovalStr = StringUtils.trimWhitespace(domObj.approvalLevel);
 			String newApprovalStr = "P";   //provisional default value if no other found
