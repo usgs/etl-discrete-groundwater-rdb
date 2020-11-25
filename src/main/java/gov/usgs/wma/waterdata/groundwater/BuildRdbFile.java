@@ -88,12 +88,19 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 			RdbWriter rdbWriter = createRdbWriter(writer).writeHeader();
 			dao.sendDiscreteGroundWater(states, rdbWriter, aqDao.getParameters());
 
+			if (rdbWriter.getDataRowCount() == 0) {
+				throw new RuntimeException("empty RDB file created.");
+			}
+
 			s3bucket.sendS3();
 
 			result.setCount( (int)rdbWriter.getDataRowCount() );
 			result.setMessage("Count is rows written to file: " + s3bucket.getKeyName());
 		} catch (Exception e) {
-			throw new RuntimeException("Error writing RDB file to S3, " + filename, e);
+			String details = String.format(" [LocationFolder '%s', States: %s, S3file=%s]", locationFolder,
+					states.toString(), filename);
+			String mess = "Error writing RDB file to S3: " + e.getMessage() + details;
+			throw new RuntimeException(mess, e);
 		}
 
 		// currently returning the rows count written to the file
