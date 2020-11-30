@@ -127,6 +127,7 @@ resources:
       Properties:
         QueueName: aqts-capture-etl-rdb-log-${self:provider.stage}
         MessageRetentionPeriod: 1209600
+        VisibilityTimeout : 120
 
 plugins:
   - serverless-plugin-git-variables
