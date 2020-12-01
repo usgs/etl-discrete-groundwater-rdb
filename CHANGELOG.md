@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased](https://github.com/usgs/etl-discrete-groundwater-rdb)
 -   Null fields now write an empty string instead of 'null'
 -   Now mapping Aquarius Qualifier descriptions to the RDB column 'lev_status_cd'
+-   Now mapping Aquarius short approval_level to NWISWeb
 -   Now mapping Aquarius approval_level to NWISWeb rdb column 'lev_age_cd'
 
 ### Added
