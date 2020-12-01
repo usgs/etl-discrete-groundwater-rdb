@@ -1,10 +1,16 @@
 package gov.usgs.wma.waterdata.groundwater;
 
-import com.fasterxml.jackson.core.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
-import java.util.*;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 
 /**
  * Applies business rules to a domain object.
@@ -36,7 +42,7 @@ public class DiscreteGroundWaterRules {
 			if (! StringUtils.isEmpty(orgQualStr)) {
 				try {
 
-					List<String> aqQuals = new ArrayList();
+					List<String> aqQuals = new ArrayList<>();
 
 					JsonParser parser = jsonFactory.createParser(orgQualStr);
 
@@ -57,7 +63,7 @@ public class DiscreteGroundWaterRules {
 
 						Optional<LevelStatusCode> lsc = LevelStatusCode.stream()
 													  .filter(a -> a.isMapped())
-								                      .filter(a -> aqQuals.contains(a.getAqDescription()))
+								                      .filter(a -> qualifierPresent(a, aqQuals))
 								                      .findFirst();
 
 						if (lsc.isPresent()) {
@@ -74,7 +80,6 @@ public class DiscreteGroundWaterRules {
 
 			domObj.readingQualifiers = newQualStr;
 		}
-
 
 		//Rule:  Only the Aquarius TS "1200" approvalLevel is considered approved.  All others values or no value is
 		// considered provisional.  "A" is the NWISWeb code for Approved, "P" for Provisional (ie not approved).
@@ -96,5 +101,10 @@ public class DiscreteGroundWaterRules {
 		}
 
 
+	}
+
+	public static boolean qualifierPresent(LevelStatusCode levelStatusCode, Collection<String> aqQualifiers) {
+		return aqQualifiers.contains(levelStatusCode.getAqDescription())
+				|| aqQualifiers.contains(levelStatusCode.getAqCode());
 	}
 }
