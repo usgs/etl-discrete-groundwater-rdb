@@ -22,7 +22,6 @@ provider:
 
 custom:
   environments:
-    DEV: dev
     TEST: test
     QA: qa
     PROD-INTERNAL: prod-internal
