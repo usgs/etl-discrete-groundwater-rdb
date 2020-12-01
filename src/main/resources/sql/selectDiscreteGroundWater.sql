@@ -20,4 +20,5 @@ select
     on d.district_cd = h.district_cd
  where h.host_name not like 'nwisd%'
    and h.state_name in (:states)
+   and d.parameter_code not in (61055)
  order by h.state_name, d.monitoring_location_identifier, d.date_measured_raw
