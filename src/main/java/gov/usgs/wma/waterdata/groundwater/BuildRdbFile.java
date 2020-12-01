@@ -78,15 +78,17 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 		ResultObject result = new ResultObject();
 
 		List<String> states = locationFolderUtil.toStates(locationFolder);
+		String mess = "";
 
 		String suffix = locationFolderUtil.filenameDecorator(locationFolder);
 		if (!StringUtils.hasText(suffix)) {
-			throw new RuntimeException("Given location folder has no state entry: " + locationFolder);
+			mess = "Given location folder has no state entry: " + locationFolder;
+			sqsUtil.addSQSMessage("ERROR: " + mess);
+			throw new RuntimeException(mess);
 		}
 		String filename = s3BucketUtil.createFilename(suffix);
 		String details = String.format(" [LocationFolder '%s', States: %s, S3file=%s]", locationFolder,
 			states.toString(), filename);
-		String mess = "";
 
 		try (S3Bucket s3bucket = s3BucketUtil.openS3(filename)) {
 
@@ -104,7 +106,7 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 
 			result.setCount( (int)rdbWriter.getDataRowCount() );
 			result.setMessage("Count is rows written to file: " + s3bucket.getKeyName());
-			mess = String.format("INFO: RDB file created, %d rows %s", 
+			mess = String.format("INFO: RDB file created, %d rows %s",
 					rdbWriter.getDataRowCount(), details);
 			sqsUtil.addSQSMessage(mess);
 		} catch (Exception e) {
