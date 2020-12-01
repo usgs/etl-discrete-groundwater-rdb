@@ -214,8 +214,7 @@ class BuildRdbFileTest {
 		assertEquals(0, writer.getHeaderRowCount(), "The header should NOT be written in the RDB file builder for bad location folder.");
 		Mockito.verify(mockLoc, Mockito.atLeastOnce()).toStates(STATE);
 		Mockito.verify(mockLoc, Mockito.atLeastOnce()).filenameDecorator(STATE);
-		Mockito.verify(mockS3b, Mockito.atLeastOnce()).getWriter();
-		Mockito.verify(mockS3b, Mockito.atMostOnce()).getWriter();
+		Mockito.verify(mockS3b, Mockito.times(1)).getWriter();
 		Mockito.verify(mockS3b, Mockito.atLeastOnce()).close();
 		Mockito.verify(mockS3u, Mockito.atLeastOnce()).createFilename(POSTCD);
 		Mockito.verify(mockS3u, Mockito.atLeastOnce()).openS3(FILENM);
@@ -268,21 +267,16 @@ class BuildRdbFileTest {
 		assertEquals(EMPTY_RDB_MSG, e.getMessage());
 
 		// ASSERTIONS
-		Mockito.verify(mockAqDao, Mockito.atLeastOnce()).getParameters();
-		Mockito.verify(mockAqDao, Mockito.atMostOnce()).getParameters();
-		Mockito.verify(mockLoc, Mockito.atLeastOnce()).toStates(STATE);
-		Mockito.verify(mockLoc, Mockito.atLeastOnce()).filenameDecorator(STATE);
-		Mockito.verify(mockS3b, Mockito.atLeastOnce()).getWriter();
-		Mockito.verify(mockS3b, Mockito.atMostOnce()).getWriter();
-		Mockito.verify(mockS3b, Mockito.atLeastOnce()).close();
+		Mockito.verify(mockAqDao, Mockito.times(1)).getParameters();
+		Mockito.verify(mockLoc, Mockito.times(1)).toStates(STATE);
+		Mockito.verify(mockLoc, Mockito.times(1)).filenameDecorator(STATE);
+		Mockito.verify(mockS3b, Mockito.times(1)).getWriter();
+		Mockito.verify(mockS3b, Mockito.times(1)).close();
 		Mockito.verify(mockS3b, Mockito.never()).sendS3();
-		Mockito.verify(mockS3u, Mockito.atLeastOnce()).createFilename(POSTCD);
-		Mockito.verify(mockS3u, Mockito.atLeastOnce()).openS3(FILENM);
-		Mockito.verify(mockS3u, Mockito.atMostOnce()).openS3(FILENM);
-		Mockito.verify(mockSqs, Mockito.atLeastOnce()).addSQSMessage(EMPTY_RDB_MSG);
-		Mockito.verify(mockSqs, Mockito.atMostOnce()).addSQSMessage(EMPTY_RDB_MSG);
-		Mockito.verify(mockDao, Mockito.atLeastOnce()).sendDiscreteGroundWater(stateAsList, writer, mockAqDao.getParameters());
-		Mockito.verify(mockDao, Mockito.atMostOnce()).sendDiscreteGroundWater(stateAsList, writer, mockAqDao.getParameters());
+		Mockito.verify(mockS3u, Mockito.times(1)).createFilename(POSTCD);
+		Mockito.verify(mockS3u, Mockito.times(1)).openS3(FILENM);
+		Mockito.verify(mockSqs, Mockito.times(1)).addSQSMessage(EMPTY_RDB_MSG);
+		Mockito.verify(mockDao, Mockito.times(1)).sendDiscreteGroundWater(stateAsList, writer, mockAqDao.getParameters());
 		assertTrue(outStreamClosed);
 		assertTrue(dstWriterClosed);
 	}

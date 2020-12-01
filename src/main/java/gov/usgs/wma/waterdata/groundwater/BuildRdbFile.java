@@ -96,6 +96,8 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 			RdbWriter rdbWriter = createRdbWriter(writer).writeHeader();
 			dao.sendDiscreteGroundWater(states, rdbWriter, aqDao.getParameters());
 
+			// Currently, an empty rdb file is a business rule violation as it
+			// would delete all the sites in NWISWEB for a given location (IOW-728).
 			if (rdbWriter.getDataRowCount() == 0) {
 				mess = "empty RDB file created.";
 				sqsUtil.addSQSMessage("ERROR: " + mess + details);
