@@ -25,6 +25,9 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 	protected S3BucketUtil s3BucketUtil;
 
 	@Autowired
+	protected SqsUtil sqsUtil;
+
+	@Autowired
 	protected AqToNwisParmDao aqDao;
 
 	@Autowired
@@ -75,12 +78,17 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 		ResultObject result = new ResultObject();
 
 		List<String> states = locationFolderUtil.toStates(locationFolder);
+		String mess = "";
 
 		String suffix = locationFolderUtil.filenameDecorator(locationFolder);
-		if (StringUtils.isEmpty(suffix)) {
-			throw new RuntimeException("Given location folder has no state entry: " + locationFolder);
+		if (!StringUtils.hasText(suffix)) {
+			mess = "Given location folder has no state entry: " + locationFolder;
+			sqsUtil.addSQSMessage("ERROR: " + mess);
+			throw new RuntimeException(mess);
 		}
 		String filename = s3BucketUtil.createFilename(suffix);
+		String details = String.format(" [LocationFolder '%s', States: %s, S3file=%s]", locationFolder,
+			states.toString(), filename);
 
 		try (S3Bucket s3bucket = s3BucketUtil.openS3(filename)) {
 
@@ -89,17 +97,21 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 			dao.sendDiscreteGroundWater(states, rdbWriter, aqDao.getParameters());
 
 			if (rdbWriter.getDataRowCount() == 0) {
-				throw new RuntimeException("empty RDB file created.");
+				mess = "empty RDB file created.";
+				sqsUtil.addSQSMessage("ERROR: " + mess + details);
+				throw new RuntimeException(mess);
 			}
 
 			s3bucket.sendS3();
 
 			result.setCount( (int)rdbWriter.getDataRowCount() );
 			result.setMessage("Count is rows written to file: " + s3bucket.getKeyName());
+			mess = String.format("INFO: RDB file created, %d rows %s",
+					rdbWriter.getDataRowCount(), details);
+			sqsUtil.addSQSMessage(mess);
 		} catch (Exception e) {
-			String details = String.format(" [LocationFolder '%s', States: %s, S3file=%s]", locationFolder,
-					states.toString(), filename);
-			String mess = "Error writing RDB file to S3: " + e.getMessage() + details;
+			mess = "Error writing RDB file to S3: " + e.getMessage() + details;
+			sqsUtil.addSQSMessage(mess);
 			throw new RuntimeException(mess, e);
 		}
 

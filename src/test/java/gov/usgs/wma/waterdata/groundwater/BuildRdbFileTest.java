@@ -23,6 +23,8 @@ class BuildRdbFileTest {
 	final String FILENM = "mock-file-name";
 	final String EMPTY_RDB_MSG = "Error writing RDB file to S3: empty RDB file created." +
 			" [LocationFolder 'Wisconsin', States: [Wisconsin], S3file=" + FILENM + "]";
+	final String RDB_INFO_MSG = "INFO: RDB file created, 6 rows " +
+			" [LocationFolder 'Wisconsin', States: [Wisconsin], S3file=" + FILENM + "]";
 	RdbWriter writer;
 	OutputStream out;
 	Writer destination;
@@ -82,6 +84,8 @@ class BuildRdbFileTest {
 		Mockito.when(mockS3u.createFilename(POSTCD)).thenReturn(FILENM);
 		Mockito.when(mockS3u.openS3(FILENM)).thenReturn(mockS3b);
 
+		SqsUtil mockSqs = Mockito.mock(SqsUtil.class);
+
 		DiscreteGroundWaterDao mockDao = Mockito.mock(DiscreteGroundWaterDao.class);
 
 		AqToNwisParmDao mockAqDao = Mockito.mock(AqToNwisParmDao.class);
@@ -102,6 +106,7 @@ class BuildRdbFileTest {
 		builder.dao = mockDao;
 		builder.aqDao = mockAqDao;
 		builder.s3BucketUtil = mockS3u;
+		builder.sqsUtil = mockSqs;
 		builder.locationFolderUtil = mockLoc;
 
 		// ACTION UNDER TEST
@@ -117,6 +122,8 @@ class BuildRdbFileTest {
 		Mockito.verify(mockS3b, Mockito.atLeastOnce()).close();
 		Mockito.verify(mockS3u, Mockito.atLeastOnce()).createFilename(POSTCD);
 		Mockito.verify(mockS3u, Mockito.atLeastOnce()).openS3(FILENM);
+		Mockito.verify(mockSqs, Mockito.atLeastOnce()).addSQSMessage(RDB_INFO_MSG);
+		Mockito.verify(mockSqs, Mockito.atMostOnce()).addSQSMessage(RDB_INFO_MSG);
 		Mockito.verify(mockLoc, Mockito.atLeastOnce()).toStates(STATE);
 		Mockito.verify(mockLoc, Mockito.atLeastOnce()).filenameDecorator(STATE);
 		assertTrue(dstWriterClosed);
@@ -230,6 +237,8 @@ class BuildRdbFileTest {
 		Mockito.when(mockS3u.createFilename(POSTCD)).thenReturn(FILENM);
 		Mockito.when(mockS3u.openS3(FILENM)).thenReturn(mockS3b);
 
+		SqsUtil mockSqs = Mockito.mock(SqsUtil.class);
+
 		DiscreteGroundWaterDao mockDao = Mockito.mock(DiscreteGroundWaterDao.class);
 		AqToNwisParmDao mockAqDao = Mockito.mock(AqToNwisParmDao.class);
 
@@ -251,6 +260,7 @@ class BuildRdbFileTest {
 		builder.aqDao = mockAqDao;
 		builder.dao = mockDao;
 		builder.s3BucketUtil = mockS3u;
+		builder.sqsUtil = mockSqs;
 		builder.locationFolderUtil = mockLoc;
 
 		// ACTION UNDER TEST
@@ -269,6 +279,8 @@ class BuildRdbFileTest {
 		Mockito.verify(mockS3u, Mockito.atLeastOnce()).createFilename(POSTCD);
 		Mockito.verify(mockS3u, Mockito.atLeastOnce()).openS3(FILENM);
 		Mockito.verify(mockS3u, Mockito.atMostOnce()).openS3(FILENM);
+		Mockito.verify(mockSqs, Mockito.atLeastOnce()).addSQSMessage(EMPTY_RDB_MSG);
+		Mockito.verify(mockSqs, Mockito.atMostOnce()).addSQSMessage(EMPTY_RDB_MSG);
 		Mockito.verify(mockDao, Mockito.atLeastOnce()).sendDiscreteGroundWater(stateAsList, writer, mockAqDao.getParameters());
 		Mockito.verify(mockDao, Mockito.atMostOnce()).sendDiscreteGroundWater(stateAsList, writer, mockAqDao.getParameters());
 		assertTrue(outStreamClosed);
