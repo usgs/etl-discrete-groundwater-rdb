@@ -88,7 +88,7 @@ public enum LevelStatusCode {
 		return mapped;
 	}
 
-	public boolean qualifierPresent(Collection<String> aqQualifiers) {
+	public boolean isPresent(Collection<String> aqQualifiers) {
 		return aqQualifiers.contains(getAqDescription()) 
 				|| aqQualifiers.contains(getAqCode());
 	}

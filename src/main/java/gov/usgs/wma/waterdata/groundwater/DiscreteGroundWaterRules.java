@@ -63,7 +63,7 @@ public class DiscreteGroundWaterRules {
 
 						Optional<LevelStatusCode> lsc = LevelStatusCode.stream()
 													  .filter(a -> a.isMapped())
-								                      .filter(a -> a.qualifierPresent(aqQuals))
+								                      .filter(a -> a.isPresent(aqQuals))
 								                      .findFirst();
 
 						if (lsc.isPresent()) {
