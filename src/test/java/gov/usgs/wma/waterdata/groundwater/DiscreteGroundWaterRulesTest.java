@@ -1,9 +1,9 @@
 package gov.usgs.wma.waterdata.groundwater;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DiscreteGroundWaterRulesTest {
 
@@ -49,6 +49,21 @@ class DiscreteGroundWaterRulesTest {
 				                        + "\"JUNK junk ;lkj;lkjakhsd\","
 				                        + "\"" +  LevelStatusCode.FOREIGN.getAqDescription() + "\","
 				                        + "\"" +  LevelStatusCode.ABOVE.getAqDescription() + "\"," //This is the first in the enum
+				                        + "\"" +  LevelStatusCode.TIDE_AFFECTED.getAqDescription() + "\","
+				                        + "\"JUNK junk ;lkj;lkjakhsd\""
+				                        + "]";
+
+		rules.apply(dgw);
+		assertEquals(LevelStatusCode.ABOVE.getNwisCode(), dgw.readingQualifiers);
+	}
+
+	@Test
+	void qualifiersMultipleRecognizedValuesMapsFirstOneInEnumOrderCodeOrDescription() throws Exception {
+
+		dgw.readingQualifiers = "["
+				                        + "\"JUNK junk ;lkj;lkjakhsd\","
+				                        + "\"" +  LevelStatusCode.FOREIGN.getAqDescription() + "\","
+				                        + "\"" +  LevelStatusCode.ABOVE.getAqCode() + "\"," //This is the first in the enum
 				                        + "\"" +  LevelStatusCode.TIDE_AFFECTED.getAqDescription() + "\","
 				                        + "\"JUNK junk ;lkj;lkjakhsd\""
 				                        + "]";
