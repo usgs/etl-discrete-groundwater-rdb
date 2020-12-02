@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Now mapping Aquarius short approval_level to NWISWeb
 -   Now mapping Aquarius approval_level to NWISWeb rdb column 'lev_age_cd'
 -   Remove parameter code 61055 from final RDB output
+-   The RDB column lev_src_cd is now 'S' for USGS measurements and 'A' for all other.
+   This is due to measurement_source no longer being a supported concept in the Aquarius TS system.
 
 ### Added
 -   Initial Implementation

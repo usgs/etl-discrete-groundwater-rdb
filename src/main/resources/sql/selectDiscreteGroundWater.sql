@@ -2,7 +2,6 @@ select
     d.site_identification_number,
     d.agency_code,
     d.vertical_datum_code,
-    d.measurement_source_code,
     d.measuring_agency_code,
     d.level_accuracy_code,
     d.result_measure_qualifiers::varchar,

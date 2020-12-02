@@ -92,7 +92,7 @@ class DiscreteGroundWaterRowMapperTest {
 		assertEquals(dgw.agencyCode, actual.agencyCode);
 		assertEquals(dgw.siteIdentificationNumber, actual.siteIdentificationNumber);
 		assertEquals(dgw.verticalDatumCode, actual.verticalDatumCode); // only if vertical measurement
-		assertEquals(dgw.measurementSourceCode, actual.measurementSourceCode);
+		assertEquals("S", actual.measurementSourceCode); //'S' mapping is a business rule
 		assertEquals(dgw.measuringAgencyCode, actual.measuringAgencyCode);
 		assertEquals(dgw.levelAccuracyCode, actual.levelAccuracyCode); // two digits after decimal point
 		assertEquals(dgw.readingQualifiers, actual.readingQualifiers); // Numeric or empty
