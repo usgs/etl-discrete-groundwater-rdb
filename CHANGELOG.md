@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Null fields now write an empty string instead of 'null'
 -   Now mapping Aquarius Qualifier descriptions to the RDB column 'lev_status_cd'
 -   Now mapping Aquarius approval_level to NWISWeb rdb column 'lev_age_cd'
+-   The RDB column lev_src_cd is now 'S' for USGS measurements and 'A' for all other.
+   This is due to measurement_source no longer being a supported concept in the Aquarius TS system.
 
 ### Added
 -   Initial Implementation
