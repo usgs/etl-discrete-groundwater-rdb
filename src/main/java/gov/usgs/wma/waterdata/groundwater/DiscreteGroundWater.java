@@ -21,7 +21,7 @@ public class DiscreteGroundWater {
 	//sl_datum_cd
 	protected String     verticalDatumCode;
 	//sl_lev_va
-	//lev_src_cd
+	//lev_src_cd (calculated)
 	protected String     measurementSourceCode;
 	//lev_agency_cd
 	protected String     measuringAgencyCode;

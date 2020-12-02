@@ -95,6 +95,28 @@ public class DiscreteGroundWaterRules {
 			domObj.approvalLevel = newApprovalStr;
 		}
 
+		//Rule:  measurementSourceCode (lev_src_cd in the rdb) is determined based on the collecting agency:
+		//If the measuring_agency_code is 'USGS', the lev_src_cd is 'S'
+		//If the measuring_agency_code is anything other than 'USGS', lev_src_cd is 'A'.
+		//In all other cases, lev_src_cd is left empty
+		//
+		//Ref:  https://internal.cida.usgs.gov/jira/browse/IOW-737
+		//Complete list of legacy NWISWeb lev_src_cd's (of which we are only mapping to 2 of them) :
+		//  https://help.waterdata.usgs.gov/code/water_level_src_cd_query?fmt=html
+		{
+			String agency = StringUtils.trimWhitespace(domObj.measuringAgencyCode);
+			String srcCode = "";    //Default for empty or null
+
+			if (! StringUtils.isEmpty(agency)) {
+				if (agency.equals("USGS")) {
+					srcCode = "S";   //Measured by the reporting agency
+				} else {
+					srcCode = "A";  //Measured by some other agency
+				}
+			}
+
+			domObj.measurementSourceCode = srcCode;
+		}
 
 	}
 }
