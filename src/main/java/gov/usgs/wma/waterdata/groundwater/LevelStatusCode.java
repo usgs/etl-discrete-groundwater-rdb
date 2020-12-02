@@ -1,6 +1,7 @@
 package gov.usgs.wma.waterdata.groundwater;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.stream.Stream;
 
 /**
@@ -85,6 +86,11 @@ public enum LevelStatusCode {
 	 */
 	public boolean isMapped() {
 		return mapped;
+	}
+
+	public boolean qualifierPresent(Collection<String> aqQualifiers) {
+		return aqQualifiers.contains(getAqDescription()) 
+				|| aqQualifiers.contains(getAqCode());
 	}
 
 }
