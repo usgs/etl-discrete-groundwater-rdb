@@ -42,7 +42,7 @@ class RdbWriterTest {
 		dgw.belowLandSurface = true;
 		// entry code [S]see or [L]land
 		dgw.verticalDatumCode = ""; // only if vertical measurement
-		dgw.measurementSourceCode = "";
+		dgw.measurementSourceCode = "S";
 		dgw.measuringAgencyCode = "USGS";
 		dgw.levelAccuracyCode = "2"; // two digits after decimal point
 		dgw.readingQualifiers = "5"; // single digit or empty
@@ -186,6 +186,7 @@ class RdbWriterTest {
 		assertEquals("4042342342", rdbWriter.getLastValueFor("site_no"));
 		assertEquals("2", rdbWriter.getLastValueFor("lev_acy_cd"));
 		assertEquals("L", rdbWriter.getLastValueFor("lev_ent_cd"));
+		assertEquals("S", rdbWriter.getLastValueFor("lev_src_cd"));
 		assertEquals("USGS", rdbWriter.getLastValueFor("lev_agency_cd"));
 		assertEquals("S", rdbWriter.getLastValueFor("lev_meth_cd"));
 		assertEquals("P", rdbWriter.getLastValueFor("lev_age_cd"));

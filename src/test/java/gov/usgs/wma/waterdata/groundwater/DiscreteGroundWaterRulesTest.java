@@ -15,6 +15,7 @@ class DiscreteGroundWaterRulesTest {
 		dgw = new DiscreteGroundWater();
 		dgw.readingQualifiers = "[\"" + LevelStatusCode.ABOVE.getAqDescription() + "\"]";
 		dgw.approvalLevel = "1200";
+		dgw.measuringAgencyCode = "USGS";
 	}
 
 
@@ -168,6 +169,43 @@ class DiscreteGroundWaterRulesTest {
 		dgw.approvalLevel = "\t\n\r";
 		rules.apply(dgw);
 		assertEquals("P", dgw.approvalLevel);
+	}
+
+	//
+	//measurementSourceCode Rule
+
+	@Test
+	void sourceCodeUsgsAgencyMapsTo_S() {
+		rules.apply(dgw);   //"USGS agency set in beforeEach
+		assertEquals("S", dgw.measurementSourceCode);
+	}
+
+	@Test
+	void sourceCodeNonUSGSAgencyMapsTo_A() {
+		dgw.measuringAgencyCode = "XYZ";
+		rules.apply(dgw);
+		assertEquals("A", dgw.measurementSourceCode);
+	}
+
+	@Test
+	void sourceCodeNullAgencyMapsTo_Emptyu() {
+		dgw.measuringAgencyCode = null;
+		rules.apply(dgw);
+		assertEquals("", dgw.measurementSourceCode);
+	}
+
+	@Test
+	void sourceCodeEmptyAgencyMapsTo_Emptyu() {
+		dgw.measuringAgencyCode = "";
+		rules.apply(dgw);
+		assertEquals("", dgw.measurementSourceCode);
+	}
+
+	@Test
+	void sourceCodeWhitespaceAgencyMapsTo_Emptyu() {
+		dgw.measuringAgencyCode = "\t ";
+		rules.apply(dgw);
+		assertEquals("", dgw.measurementSourceCode);
 	}
 
 }
