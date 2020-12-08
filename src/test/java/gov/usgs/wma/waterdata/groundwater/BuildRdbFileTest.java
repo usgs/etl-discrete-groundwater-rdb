@@ -84,8 +84,6 @@ class BuildRdbFileTest {
 		Mockito.when(mockS3u.createFilename(POSTCD)).thenReturn(FILENM);
 		Mockito.when(mockS3u.openS3(FILENM)).thenReturn(mockS3b);
 
-		SqsUtil mockSqs = Mockito.mock(SqsUtil.class);
-
 		DiscreteGroundWaterDao mockDao = Mockito.mock(DiscreteGroundWaterDao.class);
 
 		AqToNwisParmDao mockAqDao = Mockito.mock(AqToNwisParmDao.class);
@@ -106,7 +104,6 @@ class BuildRdbFileTest {
 		builder.dao = mockDao;
 		builder.aqDao = mockAqDao;
 		builder.s3BucketUtil = mockS3u;
-		builder.sqsUtil = mockSqs;
 		builder.locationFolderUtil = mockLoc;
 
 		// ACTION UNDER TEST
@@ -122,8 +119,6 @@ class BuildRdbFileTest {
 		Mockito.verify(mockS3b, Mockito.atLeastOnce()).close();
 		Mockito.verify(mockS3u, Mockito.atLeastOnce()).createFilename(POSTCD);
 		Mockito.verify(mockS3u, Mockito.atLeastOnce()).openS3(FILENM);
-		Mockito.verify(mockSqs, Mockito.atLeastOnce()).addSQSMessage(RDB_INFO_MSG);
-		Mockito.verify(mockSqs, Mockito.atMostOnce()).addSQSMessage(RDB_INFO_MSG);
 		Mockito.verify(mockLoc, Mockito.atLeastOnce()).toStates(STATE);
 		Mockito.verify(mockLoc, Mockito.atLeastOnce()).filenameDecorator(STATE);
 		assertTrue(dstWriterClosed);
@@ -236,8 +231,6 @@ class BuildRdbFileTest {
 		Mockito.when(mockS3u.createFilename(POSTCD)).thenReturn(FILENM);
 		Mockito.when(mockS3u.openS3(FILENM)).thenReturn(mockS3b);
 
-		SqsUtil mockSqs = Mockito.mock(SqsUtil.class);
-
 		DiscreteGroundWaterDao mockDao = Mockito.mock(DiscreteGroundWaterDao.class);
 		AqToNwisParmDao mockAqDao = Mockito.mock(AqToNwisParmDao.class);
 
@@ -259,7 +252,6 @@ class BuildRdbFileTest {
 		builder.aqDao = mockAqDao;
 		builder.dao = mockDao;
 		builder.s3BucketUtil = mockS3u;
-		builder.sqsUtil = mockSqs;
 		builder.locationFolderUtil = mockLoc;
 
 		// ACTION UNDER TEST
@@ -275,7 +267,6 @@ class BuildRdbFileTest {
 		Mockito.verify(mockS3b, Mockito.never()).sendS3();
 		Mockito.verify(mockS3u, Mockito.times(1)).createFilename(POSTCD);
 		Mockito.verify(mockS3u, Mockito.times(1)).openS3(FILENM);
-		Mockito.verify(mockSqs, Mockito.times(1)).addSQSMessage(EMPTY_RDB_MSG);
 		Mockito.verify(mockDao, Mockito.times(1)).sendDiscreteGroundWater(stateAsList, writer, mockAqDao.getParameters());
 		assertTrue(outStreamClosed);
 		assertTrue(dstWriterClosed);
