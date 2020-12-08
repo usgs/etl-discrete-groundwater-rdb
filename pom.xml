@@ -97,11 +97,6 @@
             <artifactId>aws-java-sdk-s3</artifactId>
             <version>1.11.911</version>
         </dependency>
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-sqs</artifactId>
-            <version>1.11.908</version>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

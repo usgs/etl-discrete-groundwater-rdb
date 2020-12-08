@@ -51,8 +51,6 @@ functions:
           input:
             locationFolder: ALL
           enabled: true
-      - sqs:
-          arn: arn:aws:sqs:${self:provider.region}:${self:custom.accountNumber}:aqts-capture-etl-rdb-log-${self:provider.stage}
     environment:
       FUNCTION_NAME: loadRdb
       AWS_DEPLOYMENT_REGION: ${self:provider.region}
@@ -121,12 +119,6 @@ resources:
         EvaluationPeriods: 1
         AlarmActions:
           - Ref: snsTopic
-    logQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: aqts-capture-etl-rdb-log-${self:provider.stage}
-        MessageRetentionPeriod: 1209600
-        VisibilityTimeout : 180
 
 plugins:
   - serverless-plugin-git-variables
