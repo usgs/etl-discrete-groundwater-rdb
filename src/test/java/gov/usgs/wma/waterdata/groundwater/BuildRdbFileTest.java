@@ -21,6 +21,10 @@ class BuildRdbFileTest {
 	final String POSTCD = "WI";
 	final String POSTCD_BAD = "";
 	final String FILENM = "mock-file-name";
+	final String EMPTY_RDB_MSG = "Error writing RDB file to S3: empty RDB file created." +
+			" [LocationFolder 'Wisconsin', States: [Wisconsin], S3file=" + FILENM + "]";
+	final String RDB_INFO_MSG = "INFO: RDB file created, 6 rows " +
+			" [LocationFolder 'Wisconsin', States: [Wisconsin], S3file=" + FILENM + "]";
 	RdbWriter writer;
 	OutputStream out;
 	Writer destination;
@@ -205,12 +209,65 @@ class BuildRdbFileTest {
 		assertEquals(0, writer.getHeaderRowCount(), "The header should NOT be written in the RDB file builder for bad location folder.");
 		Mockito.verify(mockLoc, Mockito.atLeastOnce()).toStates(STATE);
 		Mockito.verify(mockLoc, Mockito.atLeastOnce()).filenameDecorator(STATE);
-		Mockito.verify(mockS3b, Mockito.atLeastOnce()).getWriter();
-		Mockito.verify(mockS3b, Mockito.atMostOnce()).getWriter();
+		Mockito.verify(mockS3b, Mockito.times(1)).getWriter();
 		Mockito.verify(mockS3b, Mockito.atLeastOnce()).close();
 		Mockito.verify(mockS3u, Mockito.atLeastOnce()).createFilename(POSTCD);
 		Mockito.verify(mockS3u, Mockito.atLeastOnce()).openS3(FILENM);
 		Mockito.verify(mockDao, Mockito.never()).sendDiscreteGroundWater(stateAsList, writer, getParameterList());
+		assertTrue(outStreamClosed);
+		assertTrue(dstWriterClosed);
+	}
+
+	@Test
+	void testEmptyRdbException() throws Exception {
+		// SETUP
+
+		S3Bucket mockS3b = Mockito.mock(S3Bucket.class);
+		mockS3b.writer = destination;
+		Mockito.when(mockS3b.getWriter()).thenReturn(destination);
+		Mockito.doCallRealMethod().when(mockS3b).close();
+
+		S3BucketUtil mockS3u = Mockito.mock(S3BucketUtil.class);
+		Mockito.when(mockS3u.createFilename(POSTCD)).thenReturn(FILENM);
+		Mockito.when(mockS3u.openS3(FILENM)).thenReturn(mockS3b);
+
+		DiscreteGroundWaterDao mockDao = Mockito.mock(DiscreteGroundWaterDao.class);
+		AqToNwisParmDao mockAqDao = Mockito.mock(AqToNwisParmDao.class);
+
+		LocationFolder mockLoc = Mockito.mock(LocationFolder.class);
+		Mockito.when(mockLoc.getLocationFolders()).thenReturn(stateAsList);
+		Mockito.when(mockLoc.toStates(STATE)).thenReturn(stateAsList);
+		Mockito.when(mockLoc.filenameDecorator(STATE)).thenReturn(POSTCD);
+		Mockito.when(mockAqDao.getParameters()).thenReturn(getParameterList());
+
+		BuildRdbFile builder = new BuildRdbFile() {
+			@Override
+			protected RdbWriter createRdbWriter(Writer destination) {
+				writer = Mockito.mock(RdbWriter.class);
+				Mockito.when(writer.writeHeader()).thenReturn(writer);
+				Mockito.when(writer.getDataRowCount()).thenReturn(0L);
+				return writer;
+			}
+		};
+		builder.aqDao = mockAqDao;
+		builder.dao = mockDao;
+		builder.s3BucketUtil = mockS3u;
+		builder.locationFolderUtil = mockLoc;
+
+		// ACTION UNDER TEST
+		RuntimeException e = assertThrows(RuntimeException.class, ()->builder.apply(req), "Expected RuntimeException to have been thrown");
+		assertEquals(EMPTY_RDB_MSG, e.getMessage());
+
+		// ASSERTIONS
+		Mockito.verify(mockAqDao, Mockito.times(1)).getParameters();
+		Mockito.verify(mockLoc, Mockito.times(1)).toStates(STATE);
+		Mockito.verify(mockLoc, Mockito.times(1)).filenameDecorator(STATE);
+		Mockito.verify(mockS3b, Mockito.times(1)).getWriter();
+		Mockito.verify(mockS3b, Mockito.times(1)).close();
+		Mockito.verify(mockS3b, Mockito.never()).sendS3();
+		Mockito.verify(mockS3u, Mockito.times(1)).createFilename(POSTCD);
+		Mockito.verify(mockS3u, Mockito.times(1)).openS3(FILENM);
+		Mockito.verify(mockDao, Mockito.times(1)).sendDiscreteGroundWater(stateAsList, writer, mockAqDao.getParameters());
 		assertTrue(outStreamClosed);
 		assertTrue(dstWriterClosed);
 	}

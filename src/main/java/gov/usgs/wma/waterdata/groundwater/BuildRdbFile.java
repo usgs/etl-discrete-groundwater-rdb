@@ -75,12 +75,16 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 		ResultObject result = new ResultObject();
 
 		List<String> states = locationFolderUtil.toStates(locationFolder);
+		String mess = "";
 
 		String suffix = locationFolderUtil.filenameDecorator(locationFolder);
-		if (StringUtils.isEmpty(suffix)) {
-			throw new RuntimeException("Given location folder has no state entry: " + locationFolder);
+		if (!StringUtils.hasText(suffix)) {
+			mess = "Given location folder has no state entry: " + locationFolder;
+			throw new RuntimeException(mess);
 		}
 		String filename = s3BucketUtil.createFilename(suffix);
+		String details = String.format(" [LocationFolder '%s', States: %s, S3file=%s]", locationFolder,
+			states.toString(), filename);
 
 		try (S3Bucket s3bucket = s3BucketUtil.openS3(filename)) {
 
@@ -88,12 +92,23 @@ public class BuildRdbFile implements Function<RequestObject, ResultObject> {
 			RdbWriter rdbWriter = createRdbWriter(writer).writeHeader();
 			dao.sendDiscreteGroundWater(states, rdbWriter, aqDao.getParameters());
 
+			// Currently, an empty rdb file is a business rule violation as it
+			// would delete all the sites in NWISWEB for a given location (IOW-728).
+			if (rdbWriter.getDataRowCount() == 0) {
+				mess = "empty RDB file created.";
+				throw new RuntimeException(mess);
+			}
+
 			s3bucket.sendS3();
 
 			result.setCount( (int)rdbWriter.getDataRowCount() );
 			result.setMessage("Count is rows written to file: " + s3bucket.getKeyName());
+			mess = String.format("INFO: RDB file created, %d rows %s",
+					rdbWriter.getDataRowCount(), details);
+			System.out.println(mess);
 		} catch (Exception e) {
-			throw new RuntimeException("Error writing RDB file to S3, " + filename, e);
+			mess = "Error writing RDB file to S3: " + e.getMessage() + details;
+			throw new RuntimeException(mess, e);
 		}
 
 		// currently returning the rows count written to the file
