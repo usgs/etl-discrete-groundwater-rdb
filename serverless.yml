@@ -51,6 +51,7 @@ functions:
           input:
             locationFolder: ALL
           enabled: true
+    reservedConcurrency: 55
     environment:
       FUNCTION_NAME: loadRdb
       AWS_DEPLOYMENT_REGION: ${self:provider.region}
