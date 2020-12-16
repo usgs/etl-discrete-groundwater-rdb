@@ -120,6 +120,9 @@ public class DiscreteGroundWaterRules {
 		// Rule:  All datums that are currently named "MSL" are in varying stages of being migrated to "LSML", but there
 		// are records that still contain the "MSL" datum.  We want to change all those to "LMSL".
 		//
+		// Note that this rule can probably be removed in the future when migration to "LMSL" is fully realized.
+		// This is a belt-and-suspenders approach to make sure we do not feed NWISWeb "MSL" datums.
+		//
 		// Ref:  https://internal.cida.usgs.gov/jira/browse/IOW-775
 		{
 			String incomingDatum = StringUtils.trimWhitespace(domObj.verticalDatumCode);
