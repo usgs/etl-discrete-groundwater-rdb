@@ -16,6 +16,7 @@ class DiscreteGroundWaterRulesTest {
 		dgw.readingQualifiers = "[\"" + LevelStatusCode.ABOVE.getAqDescription() + "\"]";
 		dgw.approvalLevel = "1200";
 		dgw.measuringAgencyCode = "USGS";
+		dgw.verticalDatumCode = "MSL";
 	}
 
 
@@ -176,7 +177,7 @@ class DiscreteGroundWaterRulesTest {
 
 	@Test
 	void sourceCodeUsgsAgencyMapsTo_S() {
-		rules.apply(dgw);   //"USGS agency set in beforeEach
+		rules.apply(dgw);   //"USGS" agency set in beforeEach
 		assertEquals("S", dgw.measurementSourceCode);
 	}
 
@@ -208,4 +209,54 @@ class DiscreteGroundWaterRulesTest {
 		assertEquals("", dgw.measurementSourceCode);
 	}
 
+	//
+	// all "MSL" datums are "LMSL" datums Rule
+
+	@Test
+	void verticalDatumCode_MSL_MapsTo_LMSL() {
+		rules.apply(dgw); // "MSL" vertical datum code set in beforeEach
+		assertEquals("LMSL", dgw.verticalDatumCode);
+	}
+
+	@Test
+	void verticalDatumCode_NonMSL_MapsTo_nonMSL() {
+		dgw.verticalDatumCode = "NGVD29";
+		rules.apply(dgw);
+		assertEquals("NGVD29", dgw.verticalDatumCode);
+	}
+
+	@Test
+	void verticalDatumCode_Null_MapsTo_EmptyString() {
+		dgw.verticalDatumCode = null;
+		rules.apply(dgw);
+		assertEquals("", dgw.verticalDatumCode);
+	}
+
+	@Test
+	void verticalDatumCode_Empty_MapsTo_EmptyString() {
+		dgw.verticalDatumCode = "";
+		rules.apply(dgw);
+		assertEquals("", dgw.verticalDatumCode);
+	}
+
+	@Test
+	void verticalDatumCode_Whitespace_MapsTo_EmptyString() {
+		dgw.verticalDatumCode =  "\t ";
+		rules.apply(dgw);
+		assertEquals("", dgw.verticalDatumCode);
+	}
+
+	@Test
+	void verticalDatumCode_WhitespaceMSL_MapsTo_LMSL() {
+		dgw.verticalDatumCode =  "\t MSL ";
+		rules.apply(dgw);
+		assertEquals("LMSL", dgw.verticalDatumCode);
+	}
+
+	@Test
+	void verticalDatumCode_LMSL_MapsTo_LMSL() {
+		dgw.verticalDatumCode =  "LMSL";
+		rules.apply(dgw);
+		assertEquals("LMSL", dgw.verticalDatumCode);
+	}
 }

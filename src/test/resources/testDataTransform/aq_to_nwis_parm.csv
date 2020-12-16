@@ -5,6 +5,7 @@ parm_cd,datum,unit,above_datum,below_land_surface
 72228,GUVD63,ft,false,true
 72230,HILOCAL,ft,false,true
 72150,MSL,ft,true,false
+72150,LMSL,ft,true,false
 62611,NAVD88,ft,true,false
 62613,NAVD88,m,true,false
 62610,NGVD29,ft,true,false
