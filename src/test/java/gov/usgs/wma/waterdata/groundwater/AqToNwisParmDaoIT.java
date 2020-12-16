@@ -50,6 +50,6 @@ public class AqToNwisParmDaoIT {
 	@Test
 	public void testParameterCount() {
 		List<Parameter> parameters = dao.getParameters();
-        assertEquals(18, parameters.size());
+        assertEquals(19, parameters.size());
     }
 }
