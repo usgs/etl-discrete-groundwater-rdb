@@ -117,7 +117,7 @@ public class DiscreteGroundWaterRules {
 			domObj.measurementSourceCode = srcCode;
 		}
 
-		// Rule:  All datums that are currently named "MSL" are in varying stages of being migrated to "LSML", but there
+		// Rule:  All datums that are currently named "MSL" are in varying stages of being migrated to "LMSL", but there
 		// are records that still contain the "MSL" datum.  We want to change all those to "LMSL".
 		//
 		// Note that this rule can probably be removed in the future when migration to "LMSL" is fully realized.

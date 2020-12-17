@@ -47,7 +47,7 @@ functions:
       - schedule:
           name: etl-discrete-groundwater-rdb-${self:provider.stage}-event-all
           description: "Schedule event to generate RDB file by invoking etl-discrete-groundwater-rdb lambda"
-          rate: cron(0 13 * * ? *)
+          rate: cron(0 14 * * ? *)
           input:
             locationFolder: ALL
           enabled: true
@@ -84,24 +84,12 @@ resources:
       Properties:
         DisplayName: ${self:service}-${self:provider.stage}-topic
         TopicName: ${self:service}-${self:provider.stage}-topic
-    concurrencyAlarm:
-      Type: AWS::CloudWatch::Alarm
+    snsSubscription:
+      Type: AWS::SNS:Subscription
       Properties:
-        AlarmName: ${self:service}-${self:provider.stage}-concurrency-alarm
-        AlarmDescription: Notify when concurrency exceeds the specified threshold
-        Namespace: 'AWS/Lambda'
-        Dimensions:
-          - Name: FunctionName
-            Value:
-              Ref: LoadRdbLambdaFunction
-        MetricName: ConcurrentExecutions
-        Statistic: Maximum
-        ComparisonOperator: GreaterThanOrEqualToThreshold
-        Threshold: 150
-        Period: 60
-        EvaluationPeriods: 1
-        AlarmActions:
-          - Ref: snsTopic
+        Endpoint: ssoper@contractor.usgs.gov
+        Protocol: email
+        TopicArn: {"Ref": "snsTopic"}
     errorAlarm:
       Type: AWS::CloudWatch::Alarm
       Properties:
@@ -115,7 +103,7 @@ resources:
         MetricName: Errors
         Statistic: Sum
         ComparisonOperator: GreaterThanOrEqualToThreshold
-        Threshold: 10
+        Threshold: 1
         Period: 60
         EvaluationPeriods: 1
         AlarmActions:
