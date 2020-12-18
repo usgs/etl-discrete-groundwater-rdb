@@ -12,6 +12,7 @@ provider:
     name: iow-cloud-applications
   stackTags:
     "wma:applicationId": "ETL Discrete Groundwater as RDB"
+    "wma:project_id": "aqtscapture"
     "wma:contact": "Jim Kreft jkreft@usgs.gov"
     "wma:environment": ${self:provider.stage}
     "wma:taggingVersion": "1.0"
