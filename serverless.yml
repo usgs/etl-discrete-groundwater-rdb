@@ -38,6 +38,7 @@ custom:
   observationDb:
     connectInfo: ${ssm:/aws/reference/secretsmanager/WQP-EXTERNAL-${self:provider.stage}~true}
   bucketName: iow-rdb-files
+  mailingList: ${ssm:/aws/reference/secretsmanager/AQTS-CAPTURE-MAILING-LISTS.RDB_FAILURES_LIST~true}
 
 functions:
   loadRdb:
@@ -87,7 +88,7 @@ resources:
     snsSubscription:
       Type: AWS::SNS:Subscription
       Properties:
-        Endpoint: ssoper@contractor.usgs.gov
+        Endpoint: ${self:custom.mailingList}
         Protocol: email
         TopicArn: {"Ref": "snsTopic"}
     errorAlarm:
