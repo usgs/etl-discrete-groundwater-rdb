@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   The RDB column lev_src_cd is now 'S' for USGS measurements and 'A' for all other.
    This is due to measurement_source no longer being a supported concept in the Aquarius TS system.
 -   Vertical datum codes are now 'LMSL' if they were 'MSL' - 'MSL' datums are being phased out.
+-   Add mailing list to receive failure notifications
 
 ### Added
 -   Initial Implementation
