@@ -38,7 +38,7 @@ custom:
   observationDb:
     connectInfo: ${ssm:/aws/reference/secretsmanager/WQP-EXTERNAL-${self:provider.stage}~true}
   bucketName: iow-rdb-files
-  mailingList: ${ssm:/aws/reference/secretsmanager/AQTS-CAPTURE-MAILING-LISTS.RDB_FAILURES_LIST~true}
+  mailingList: ${ssm:/aws/reference/secretsmanager/AQTS-CAPTURE-MAILING-LISTS~true}
 
 functions:
   loadRdb:
@@ -87,7 +87,7 @@ resources:
         TopicName: ${self:service}-${self:provider.stage}-topic
         Subscription:
           - Protocol: email
-            Endpoint: ${self:custom.mailingList}
+            Endpoint: ${self:custom.mailingList.RDB_FAILURES_LIST}
     errorAlarm:
       Type: AWS::CloudWatch::Alarm
       Properties:
