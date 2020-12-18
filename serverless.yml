@@ -85,12 +85,9 @@ resources:
       Properties:
         DisplayName: ${self:service}-${self:provider.stage}-topic
         TopicName: ${self:service}-${self:provider.stage}-topic
-    snsSubscription:
-      Type: AWS::SNS:Subscription
-      Properties:
-        Endpoint: ${self:custom.mailingList}
-        Protocol: email
-        TopicArn: {"Ref": "snsTopic"}
+        Subscription:
+          - Protocol: email
+            Endpoint: ${self:custom.mailingList}
     errorAlarm:
       Type: AWS::CloudWatch::Alarm
       Properties:
