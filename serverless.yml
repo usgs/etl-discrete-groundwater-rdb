@@ -43,6 +43,8 @@ custom:
 functions:
   loadRdb:
     handler: gov.usgs.wma.waterdata.groundwater.BuildRdbFileHandler
+    onError:
+      - Ref: snsTopic
     role: arn:aws:iam::${self:custom.accountNumber}:role/csr-Lambda-Role
     events:
       - schedule:
@@ -88,24 +90,24 @@ resources:
         Subscription:
           - Protocol: email
             Endpoint: ${self:custom.mailingList.RDB_FAILURES_LIST}
-    errorAlarm:
-      Type: AWS::CloudWatch::Alarm
-      Properties:
-        AlarmName: ${self:service}-${self:provider.stage}-error-alarm
-        AlarmDescription: Notify when number of errors exceeds the specified threshold
-        Namespace: 'AWS/Lambda'
-        Dimensions:
-          - Name: FunctionName
-            Value:
-              Ref: LoadRdbLambdaFunction
-        MetricName: Errors
-        Statistic: Sum
-        ComparisonOperator: GreaterThanOrEqualToThreshold
-        Threshold: 1
-        Period: 60
-        EvaluationPeriods: 1
-        AlarmActions:
-          - Ref: snsTopic
+#    errorAlarm:
+#      Type: AWS::CloudWatch::Alarm
+#      Properties:
+#        AlarmName: ${self:service}-${self:provider.stage}-error-alarm
+#        AlarmDescription: Notify when number of errors exceeds the specified threshold
+#        Namespace: 'AWS/Lambda'
+#        Dimensions:
+#          - Name: FunctionName
+#            Value:
+#              Ref: LoadRdbLambdaFunction
+#        MetricName: Errors
+#        Statistic: Sum
+#        ComparisonOperator: GreaterThanOrEqualToThreshold
+#        Threshold: 1
+#        Period: 60
+#        EvaluationPeriods: 1
+#        AlarmActions:
+#          - Ref: snsTopic
 
 plugins:
   - serverless-plugin-git-variables
