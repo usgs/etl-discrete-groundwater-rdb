@@ -44,7 +44,7 @@ functions:
   loadRdb:
     handler: gov.usgs.wma.waterdata.groundwater.BuildRdbFileHandler
     onError:
-      - Ref: snsTopic
+      - Ref: arn:aws:sns:${self:provider.region}:${self:custom.accountNumber}:etl-discrete-groundwater-rdb-${self:provider.stage}-topic
     role: arn:aws:iam::${self:custom.accountNumber}:role/csr-Lambda-Role
     events:
       - schedule:
