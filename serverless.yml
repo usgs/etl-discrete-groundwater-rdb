@@ -2,12 +2,18 @@ service: etl-discrete-groundwater-rdb
 
 provider:
   name: aws
+  rolePermissionsBoundary:
+    Fn::Sub:
+      - "arn:aws:iam::${accountId}:policy/csr-Developer-Permissions-Boundary"
+      - accountId:
+          Ref: "AWS::AccountId"
   region: ${opt:region, 'us-west-2'}
   stage: ${opt:stage, 'TEST'}
   runtime: java11
   memorySize: 2304
   timeout: 360
   logRetentionInDays: 90
+  vpc: ${self:custom.vpc}
   deploymentBucket:
     name: iow-cloud-applications
   stackTags:
@@ -39,16 +45,21 @@ custom:
   observationDb:
     connectInfo: ${ssm:/aws/reference/secretsmanager/WQP-EXTERNAL-${self:provider.stage}~true}
   bucketName: iow-rdb-files
+  mailingList: ${ssm:/aws/reference/secretsmanager/AQTS-CAPTURE-MAILING-LISTS~true}
 
 functions:
   loadRdb:
     handler: gov.usgs.wma.waterdata.groundwater.BuildRdbFileHandler
-    role: arn:aws:iam::${self:custom.accountNumber}:role/csr-Lambda-Role
+    role:
+      Fn::Sub:
+        - arn:aws:iam::${accountId}:role/csr-Lambda-Role
+        - accountId:
+            Ref: AWS::AccountId
     events:
       - schedule:
           name: etl-discrete-groundwater-rdb-${self:provider.stage}-event-all
           description: "Schedule event to generate RDB file by invoking etl-discrete-groundwater-rdb lambda"
-          rate: cron(0 13 * * ? *)
+          rate: cron(0 14 * * ? *)
           input:
             locationFolder: ALL
           enabled: true
@@ -72,7 +83,6 @@ functions:
       TIER: ${self:provider.stage}
       S3_BUCKET_NAME: ${self:custom.bucketName}-${self:custom.environments.${self:provider.stage}}
       LAMBDA_ARN: arn:aws:lambda:${self:provider.region}:${self:custom.accountNumber}:function:etl-discrete-groundwater-rdb-${self:provider.stage}-loadRdb
-    vpc: ${self:custom.vpc}
 
 resources:
   Resources:
@@ -85,24 +95,9 @@ resources:
       Properties:
         DisplayName: ${self:service}-${self:provider.stage}-topic
         TopicName: ${self:service}-${self:provider.stage}-topic
-    concurrencyAlarm:
-      Type: AWS::CloudWatch::Alarm
-      Properties:
-        AlarmName: ${self:service}-${self:provider.stage}-concurrency-alarm
-        AlarmDescription: Notify when concurrency exceeds the specified threshold
-        Namespace: 'AWS/Lambda'
-        Dimensions:
-          - Name: FunctionName
-            Value:
-              Ref: LoadRdbLambdaFunction
-        MetricName: ConcurrentExecutions
-        Statistic: Maximum
-        ComparisonOperator: GreaterThanOrEqualToThreshold
-        Threshold: 150
-        Period: 60
-        EvaluationPeriods: 1
-        AlarmActions:
-          - Ref: snsTopic
+        Subscription:
+          - Protocol: email
+            Endpoint: ${self:custom.mailingList.RDB_FAILURES_LIST}
     errorAlarm:
       Type: AWS::CloudWatch::Alarm
       Properties:
@@ -116,7 +111,7 @@ resources:
         MetricName: Errors
         Statistic: Sum
         ComparisonOperator: GreaterThanOrEqualToThreshold
-        Threshold: 10
+        Threshold: 1
         Period: 60
         EvaluationPeriods: 1
         AlarmActions:
