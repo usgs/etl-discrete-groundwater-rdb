@@ -84,7 +84,7 @@
        <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-lambda</artifactId>
-            <version>1.11.911</version>
+            <version>1.11.927</version>
             <exclusions>
                 <exclusion>
                     <artifactId>joda-time</artifactId>
