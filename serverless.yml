@@ -31,10 +31,7 @@ custom:
   environments:
     TEST: test
     QA: qa
-    PROD-INTERNAL: prod-internal
-    test: test
-    qa: qa
-    prod-internal: prod-internal
+    PROD-EXTERNAL: prod-external
   exportGitVariables: false
   accountNumber : ${ssm:/iow/aws/accountNumber}
   vpc:
