@@ -132,10 +132,10 @@ cobertura:
 maven_artifactory:
   extends: .base_rules
   stage: deploy
-  # only perform deploy for master branch on the owning repo
+  # only perform deploy for main branch on the owning repo
   rules:
-    # only make artifacts for master on a merge request get deployed and not for user accounts
-    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_URL =~ "/wma/"'
+    # only make artifacts for main on a merge request get deployed and not for user accounts
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_URL =~ "/wma/"'
       when: on_success
     - when: never
   script:
