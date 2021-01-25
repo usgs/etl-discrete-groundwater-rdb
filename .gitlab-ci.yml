@@ -1,0 +1,144 @@
+# default image unless a job sepcifies one (the definition of default)
+# image: $CI_REGISTRY/wma/continuous-integration/maven-build-image/maven-3-jdk-11
+# this image is not found in CHS GitLab but is found in the public isntance
+image: maven:3.6.3-jdk-11
+
+variables:
+  # Use a maven repository nested in this repo to improve caching
+  MAVEN_OPTS: " -Dmaven.repo.local=.m2/repository "
+  SETTINGS: .m2/settings.xml
+
+# this will keep a zip of the dirs around for subsequent runs and jobs
+cache:
+  paths:
+    - .m2/repository
+
+stages:
+  # define stages and reference them in jobs below
+  # custom jobs are allows, like here publish
+  # I am using publish deploying test results
+  - build
+  - test
+  - publish
+  - deploy
+
+
+.base_rules:
+  rules:
+    # if the commit ends in WIP the do not test
+    - if: $CI_COMMIT_MESSAGE =~ /-[Ww][Ii][Pp]$/
+      when: never
+    # it appears this is necessary whenever there is a never rule
+    - when: on_success
+
+
+# arbitrarily name the pipeline jobs
+clean_build:
+  extends: .base_rules
+  # specify the stage form the defined stages above
+  stage: build
+  # what to do for this job
+  script:
+    - echo "Pages URL for this project"
+    - echo "$CI_PAGES_URL"
+    # skipping tests just to make it clear this is the build stage
+    - mvn clean package $MAVEN_CLI_OPTS -Dmaven.test.skip=true
+  artifacts:
+    paths:
+      # keeps files for followup jobs
+      - target
+    # default expire is actually 7 days
+    expire_in: 7 days
+  # tags help the runner select an instance, a default can be config
+  # not strictly necessary. useful if different runners have special resources.
+  tags:
+    - chs-shared
+
+
+unit_test_and_coverage:
+  extends: .base_rules
+  image: docker
+  services:
+    # chs-shared has a dind tag as well and might not need this service.
+    # cloudformation-dev did not have a dind tag and might not have it installed - this is requried
+    - docker:dind
+  stage: test
+  # rules:
+  #   # turn off long running integration tests for now during debuging maven deploy
+  #   - when: never
+  script:
+    - docker network create aqtsNet
+    - docker run 
+          --rm 
+          --network=aqtsNet 
+          -v /var/run/docker.sock:/var/run/docker.sock 
+          -v /root/.m2:/root/.m2
+          -v $(pwd):/tmp/source 
+          -w /tmp/source 
+          -e TRANSFORM_TESTING_DATABASE_PORT=5432 
+          -e LOCAL_TRANSFORM_TESTING_DATABASE_PORT=5437 
+          -e TRANSFORM_TESTING_DATABASE_ADDRESS=aqtsDb 
+          -e TESTING_DATABASE_NETWORK=aqtsNet 
+          -e OBSERVATION_TESTING_DATABASE_PORT=5432 
+          -e LOCAL_OBSERVATION_TESTING_DATABASE_PORT=5444 
+          -e OBSERVATION_TESTING_DATABASE_ADDRESS=wqpDb 
+          -e ROOT_LOG_LEVEL=INFO 
+          maven:3.6.3-jdk-11 
+          mvn $MAVEN_CLI_OPTS 
+          org.jacoco:jacoco-maven-plugin:prepare-agent 
+          verify
+          org.jacoco:jacoco-maven-plugin:report 
+    - docker network rm aqtsNet
+    # it appears that we must cat the coverage report for gitlab to create a badge
+    - cat target/site/jacoco/index.html
+    - cp -r target/site/jacoco public
+  artifacts:
+    paths:
+      # need to keep this for browsing/troubleshooting
+      - target
+      - public
+      # because a refined process will not include the full target dir
+      #- target/site/jacoco/index.html
+    reports:
+      # default appears to be junit.xml
+      junit:
+        # the example docs use these entries
+        - target/surefire-reports/TEST-*.xml
+        - target/failsafe-reports/TEST-*.xml
+    # example expire
+    #expire_in: 60 days
+  tags:
+    - chs-shared
+
+
+cobertura:
+  extends: .base_rules
+  stage: publish
+  image: haynes/jacoco2cobertura:1.0.4
+  # rules:
+  #   # turn off - long running integration tests are off for now during debuging maven deploy
+  #   - when: never
+  script:
+    # convert report from jacoco to cobertura
+    - 'python /opt/cover2cover.py target/site/jacoco/jacoco.xml src/main/java > target/cobertura.xml'
+    # read the <source></source> tag and prepend the path to every filename attribute
+    - 'python /opt/source2filename.py target/cobertura.xml'
+  artifacts:
+    reports:
+      # coverage report, default is cobertura-coverage.xml
+      cobertura: target/cobertura.xml
+
+
+maven_artifactory:
+  extends: .base_rules
+  stage: deploy
+  # only perform deploy for master branch on the owning repo
+  rules:
+    # only make artifacts for master on a merge request get deployed and not for user accounts
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_URL =~ "/wma/"'
+      when: on_success
+    - when: never
+  script:
+    # make the settings.xml file from variable because of secrets
+    - echo "$SETTINGS_XML" > $SETTINGS
+    - mvn deploy $MAVEN_CLI_OPTS -Dmaven.test.skip=true -DskipTests -DskipITs -Ddocker.skip -Ddockerfile.skip --settings $SETTINGS
