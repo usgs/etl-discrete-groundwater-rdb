@@ -11,7 +11,7 @@ provider:
   stage: ${opt:stage, 'TEST'}
   runtime: java11
   memorySize: 2304
-  timeout: 360
+  timeout: 600
   logRetentionInDays: 90
   vpc: ${self:custom.vpc}
   deploymentBucket:
