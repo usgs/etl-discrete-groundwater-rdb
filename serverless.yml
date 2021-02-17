@@ -87,6 +87,10 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:custom.bucketName}-${self:custom.environments.${self:provider.stage}}
+        LifecycleConfiguration:
+          Rules:
+            - ExpirationInDays: 2
+              Status: Enabled
     snsTopic:
       Type: AWS::SNS::Topic
       Properties:
