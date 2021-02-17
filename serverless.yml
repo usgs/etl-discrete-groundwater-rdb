@@ -43,6 +43,11 @@ custom:
     connectInfo: ${ssm:/aws/reference/secretsmanager/WQP-EXTERNAL-${self:provider.stage}~true}
   bucketName: iow-rdb-files
   mailingList: ${ssm:/aws/reference/secretsmanager/AQTS-CAPTURE-MAILING-LISTS~true}
+  rdbSchedule:
+    DEV: cron(0 14 * * ? *)
+    TEST: cron(0 14 * * ? *)
+    QA: cron(0 14 * * ? *)
+    PROD-EXTERNAL: cron(0 10 * * ? *)
 
 functions:
   loadRdb:
@@ -56,7 +61,7 @@ functions:
       - schedule:
           name: etl-discrete-groundwater-rdb-${self:provider.stage}-event-all
           description: "Schedule event to generate RDB file by invoking etl-discrete-groundwater-rdb lambda"
-          rate: cron(0 14 * * ? *)
+          rate: ${self:custom.rdbSchedule.${self:provider.stage}}
           input:
             locationFolder: ALL
           enabled: true
