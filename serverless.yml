@@ -44,9 +44,9 @@ custom:
   bucketName: iow-rdb-files
   mailingList: ${ssm:/aws/reference/secretsmanager/AQTS-CAPTURE-MAILING-LISTS~true}
   rdbSchedule:
-    DEV: cron(0 14 * * ? *)
-    TEST: cron(0 14 * * ? *)
-    QA: cron(0 14 * * ? *)
+    DEV: cron(0 13 * * ? *)
+    TEST: cron(0 13 * * ? *)
+    QA: cron(0 13 * * ? *)
     PROD-EXTERNAL: cron(0 10 * * ? *)
 
 functions:
